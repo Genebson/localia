@@ -93,4 +93,4 @@ export const filteredProperties = derived([filters, allProperties], ([$filters, 
 	});
 });
 
-export const totalProperties = derived(allProperties, ($allProperties) => staticProperties.length + $allProperties.length);
+export const totalProperties = derived(allProperties, ($allProperties) => $allProperties.filter((p: Property) => p.featured).length);
