@@ -124,7 +124,6 @@
 			location,
 			address,
 			image: imagePreviews[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
-			images: imagePreviews,
 			propertyType: propertyTypeMap[propertyType] || 'apartment',
 			attributes: {
 				bedrooms: parseInt(bedrooms) || 0,
