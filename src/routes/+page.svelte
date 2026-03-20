@@ -30,14 +30,14 @@
 
 		<div class="flex flex-wrap justify-center gap-4 mt-8">
 			<button
-				on:click={() => { filters.setOperation('buy'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				on:click={() => document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' })}
 				class="px-6 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<Building2 class="w-4 h-4" />
 				Departamentos
 			</button>
 			<button
-				on:click={() => { filters.setOperation('rent'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				on:click={() => document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' })}
 				class="px-6 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<TrendingUp class="w-4 h-4" />
