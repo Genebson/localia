@@ -35,6 +35,9 @@ jobs:
         env:
           NODE_VERSION: '20'
 
+      - name: Prepare for GitHub Pages
+        run: cp build/200.html build/index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
