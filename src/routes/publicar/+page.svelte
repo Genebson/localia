@@ -5,6 +5,7 @@
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { propertiesStore, getPropertyById } from '$lib/stores/properties';
+	import type { PropertyType } from '$lib/data/properties';
 
 	let editId = $page.url.searchParams.get('edit');
 	let isEditing = !!editId;
@@ -102,6 +103,18 @@
 
 		await new Promise(resolve => setTimeout(resolve, 500));
 
+		const propertyTypeMap: Record<string, PropertyType> = {
+			'Departamento': 'apartment',
+			'Casa': 'house',
+			'PH': 'apartment',
+			'Local comercial': 'commercial',
+			'Oficina': 'commercial',
+			'Terreno': 'terrain',
+			'Quincho': 'house',
+			'Dúplex': 'apartment',
+			'Penthouse': 'penthouse'
+		};
+
 		const propertyData = {
 			title,
 			description,
@@ -112,6 +125,7 @@
 			address,
 			image: imagePreviews[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
 			images: imagePreviews,
+			propertyType: propertyTypeMap[propertyType] || 'apartment',
 			attributes: {
 				bedrooms: parseInt(bedrooms) || 0,
 				bathrooms: parseInt(bathrooms) || 0,

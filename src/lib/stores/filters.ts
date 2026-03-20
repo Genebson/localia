@@ -85,6 +85,10 @@ export const filteredProperties = derived([filters, allProperties], ([$filters, 
 			}
 		}
 
+		if ($filters.propertyType && property.propertyType !== $filters.propertyType) {
+			return false;
+		}
+
 		return true;
 	});
 });

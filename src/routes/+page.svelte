@@ -30,22 +30,22 @@
 
 		<div class="flex flex-wrap justify-center gap-4 mt-8">
 			<button
-				on:click={() => document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' })}
-				class="px-6 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+				on:click={() => { filters.setPropertyType($filters.propertyType === 'apartment' ? '' : 'apartment'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				class="px-6 py-2.5 {$filters.propertyType === 'apartment' ? 'bg-white text-primary' : 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<Building2 class="w-4 h-4" />
 				Departamentos
 			</button>
 			<button
-				on:click={() => document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' })}
-				class="px-6 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+				on:click={() => { filters.setPropertyType($filters.propertyType === 'house' ? '' : 'house'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				class="px-6 py-2.5 {$filters.propertyType === 'house' ? 'bg-white text-primary' : 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<TrendingUp class="w-4 h-4" />
 				Casas
 			</button>
 			<button
-				on:click={() => document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' })}
-				class="px-6 py-2.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+				on:click={() => { filters.setPropertyType($filters.propertyType === 'terrain' ? '' : 'terrain'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				class="px-6 py-2.5 {$filters.propertyType === 'terrain' ? 'bg-white text-primary' : 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<Shield class="w-4 h-4" />
 				Terrenos

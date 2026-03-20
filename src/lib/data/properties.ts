@@ -1,3 +1,5 @@
+export type PropertyType = 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial';
+
 export interface Property {
 	id: string;
 	title: string;
@@ -9,6 +11,7 @@ export interface Property {
 	address: string;
 	image: string;
 	images?: string[];
+	propertyType: PropertyType;
 	attributes: {
 		bedrooms: number;
 		bathrooms: number;
@@ -30,6 +33,7 @@ export const properties: Property[] = [
 		location: 'Palermo, Buenos Aires',
 		address: 'Fitz Roy 1547',
 		image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80',
+		propertyType: 'apartment',
 		attributes: { bedrooms: 2, bathrooms: 1, area: 58 },
 		operation: 'buy',
 		featured: true
@@ -43,6 +47,7 @@ export const properties: Property[] = [
 		location: 'Martinez, San Isidro',
 		address: 'Av. del Libertador 12450',
 		image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',
+		propertyType: 'house',
 		attributes: { bedrooms: 4, bathrooms: 3, area: 280 },
 		operation: 'buy',
 		featured: true
@@ -56,6 +61,7 @@ export const properties: Property[] = [
 		location: 'Recoleta, Buenos Aires',
 		address: 'Av. Santa Fe 2456',
 		image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
+		propertyType: 'apartment',
 		attributes: { bedrooms: 1, bathrooms: 1, area: 35 },
 		operation: 'rent'
 	},
@@ -68,6 +74,7 @@ export const properties: Property[] = [
 		location: 'Belgrano, Buenos Aires',
 		address: 'Cuba 890',
 		image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
+		propertyType: 'penthouse',
 		attributes: { bedrooms: 3, bathrooms: 2, area: 145 },
 		operation: 'buy'
 	},
@@ -80,6 +87,7 @@ export const properties: Property[] = [
 		location: 'Villa Crespo, Buenos Aires',
 		address: 'Av. Corrientes 5100',
 		image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+		propertyType: 'apartment',
 		attributes: { bedrooms: 2, bathrooms: 1, area: 75 },
 		operation: 'buy'
 	},
@@ -92,6 +100,7 @@ export const properties: Property[] = [
 		location: 'Catalinas, Buenos Aires',
 		address: 'Tucumán 745',
 		image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
+		propertyType: 'commercial',
 		attributes: { bedrooms: 0, bathrooms: 1, area: 120 },
 		operation: 'rent'
 	},
@@ -104,6 +113,7 @@ export const properties: Property[] = [
 		location: 'San Telmo, Buenos Aires',
 		address: 'Defensa 1024',
 		image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+		propertyType: 'apartment',
 		attributes: { bedrooms: 1, bathrooms: 1, area: 65 },
 		operation: 'buy'
 	},
@@ -116,6 +126,7 @@ export const properties: Property[] = [
 		location: 'Carmen de Areco, Buenos Aires',
 		address: 'Belgrano 456',
 		image: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=800&q=80',
+		propertyType: 'house',
 		attributes: { bedrooms: 5, bathrooms: 4, area: 420 },
 		operation: 'buy',
 		featured: true
@@ -129,6 +140,7 @@ export const properties: Property[] = [
 		location: 'Las Cañitas, Buenos Aires',
 		address: 'Báez 156',
 		image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
+		propertyType: 'apartment',
 		attributes: { bedrooms: 2, bathrooms: 2, area: 90 },
 		operation: 'rent'
 	},
@@ -141,6 +153,7 @@ export const properties: Property[] = [
 		location: 'Nordelta, Tigre',
 		address: 'Manzana 45 Lote 12',
 		image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
+		propertyType: 'terrain',
 		attributes: { bedrooms: 0, bathrooms: 0, area: 850 },
 		operation: 'buy'
 	},
@@ -153,6 +166,7 @@ export const properties: Property[] = [
 		location: 'Puerto Madero, Buenos Aires',
 		address: 'Alicia Moreau de Justo 1088',
 		image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
+		propertyType: 'penthouse',
 		attributes: { bedrooms: 4, bathrooms: 5, area: 380 },
 		operation: 'buy',
 		featured: true
@@ -166,6 +180,7 @@ export const properties: Property[] = [
 		location: 'Olivos, Vicente López',
 		address: 'Av. Maipú 2350',
 		image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80',
+		propertyType: 'house',
 		attributes: { bedrooms: 3, bathrooms: 2, area: 200 },
 		operation: 'buy'
 	},
@@ -178,6 +193,7 @@ export const properties: Property[] = [
 		location: 'Almagro, Buenos Aires',
 		address: 'Av. Rivadavia 4200',
 		image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
+		propertyType: 'apartment',
 		attributes: { bedrooms: 1, bathrooms: 1, area: 28 },
 		operation: 'rent'
 	},
@@ -190,6 +206,7 @@ export const properties: Property[] = [
 		location: 'Núñez, Buenos Aires',
 		address: 'Cuba 2100',
 		image: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&q=80',
+		propertyType: 'apartment',
 		attributes: { bedrooms: 2, bathrooms: 2, area: 110 },
 		operation: 'buy'
 	},
@@ -202,6 +219,7 @@ export const properties: Property[] = [
 		location: 'Flores, Buenos Aires',
 		address: 'Av. Rivadavia 6800',
 		image: 'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=800&q=80',
+		propertyType: 'commercial',
 		attributes: { bedrooms: 0, bathrooms: 1, area: 95 },
 		operation: 'buy'
 	}
