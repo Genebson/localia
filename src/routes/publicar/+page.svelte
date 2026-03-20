@@ -170,7 +170,7 @@
 				</p>
 				<div class="flex flex-col sm:flex-row gap-3 justify-center">
 					<button
-						on:click={() => goto('/mis-propiedades')}
+						on:click={() => goto('{base}/mis-propiedades')}
 						class="px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
 					>
 						Mis propiedades
@@ -471,7 +471,7 @@
 				<div class="flex justify-end gap-4">
 					<button
 						type="button"
-						on:click={() => goto('/mis-propiedades')}
+						on:click={() => goto('{base}/mis-propiedades')}
 						class="px-6 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg transition-colors hover:bg-gray-50"
 					>
 						Cancelar
