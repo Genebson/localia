@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { Heart, Bed, Bath, Maximize, MapPin, Building2, Calendar, Share2, ArrowLeft, Check } from 'lucide-svelte';
 	import { allProperties } from '$lib/stores/properties';
@@ -63,7 +64,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 <main class="pt-16 md:pt-20 min-h-screen bg-background">
 	{#if property}
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-			<a href="/" class="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition-colors mb-6">
+			<a href="{base}/" class="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition-colors mb-6">
 				<ArrowLeft class="w-4 h-4" />
 				Volver a propiedades
 			</a>
@@ -214,7 +215,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 			</div>
 			<h1 class="text-2xl font-bold text-gray-900 mb-2">Propiedad no encontrada</h1>
 			<p class="text-gray-500 mb-6">La propiedad que buscas no existe o fue eliminada.</p>
-			<a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors">
+			<a href="{base}/" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors">
 				<ArrowLeft class="w-4 h-4" />
 				Volver al inicio
 			</a>

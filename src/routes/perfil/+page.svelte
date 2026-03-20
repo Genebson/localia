@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Heart, Eye, Building2, User, Calendar, MapPin, Bed, Bath, Maximize } from 'lucide-svelte';
+	import { base } from '$app/paths';
 	import { currentUser, isAgent } from '$lib/stores/auth';
 	import { favoriteProperties } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
@@ -85,7 +86,7 @@
 					</div>
 					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 						{#each $favoriteProperties as favProperty (favProperty.id)}
-							<a href="/property/{favProperty.id}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+							<a href="{base}/property/{favProperty.id}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
 								<div class="aspect-[16/10] overflow-hidden">
 									<img src={favProperty.image} alt={favProperty.title} class="w-full h-full object-cover" />
 								</div>
@@ -112,7 +113,7 @@
 					</div>
 					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 						{#each viewedList as prop (prop.id)}
-							<a href="/property/{prop.id}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+							<a href="{base}/property/{prop.id}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
 								<div class="aspect-[16/10] overflow-hidden">
 									<img src={prop.image} alt={prop.title} class="w-full h-full object-cover" />
 								</div>
@@ -152,7 +153,7 @@
 					<h2 class="text-xl font-semibold text-gray-900 mb-2">Tu perfil está vacío</h2>
 					<p class="text-gray-500 mb-6">Explorá propiedades y guardá las que te gusten para verlas después.</p>
 					<a
-						href="/"
+						href="{base}/"
 						class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
 					>
 						Explorar propiedades

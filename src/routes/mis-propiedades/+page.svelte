@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Building2, Edit, Trash2, Plus, Eye, EyeOff, MapPin, Bed, Bath, Maximize } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { auth, currentUser, isAgent } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { propertiesStore, allProperties } from '$lib/stores/properties';
@@ -73,7 +74,7 @@
 					<p class="text-gray-500">{userProperties.length} {userProperties.length === 1 ? 'propiedad' : 'propiedades'} publicadas</p>
 				</div>
 				<a
-					href="/publicar"
+					href="{base}/publicar"
 					class="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors"
 				>
 					<Plus class="w-5 h-5" />
@@ -89,7 +90,7 @@
 					<h2 class="text-xl font-semibold text-gray-900 mb-2">No tenés propiedades</h2>
 					<p class="text-gray-500 mb-6">Empezá a publicar propiedades y llegan a miles de compradores.</p>
 					<a
-						href="/publicar"
+						href="{base}/publicar"
 						class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
 					>
 						<Plus class="w-5 h-5" />
@@ -153,14 +154,14 @@
 										</div>
 										<div class="flex items-center gap-2">
 											<button
-												on:click={() => goto('/property/' + property.id)}
+												on:click={() => goto(`${base}/property/${property.id}`)}
 												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
 												title="Ver"
 											>
 												<Eye class="w-5 h-5" />
 											</button>
 											<a
-												href="/publicar?edit={property.id}"
+												href="{base}/publicar?edit={property.id}"
 												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
 												title="Editar"
 											>

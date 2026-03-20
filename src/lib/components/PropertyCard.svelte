@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Heart, Bed, Bath, Maximize } from 'lucide-svelte';
+	import { base } from '$app/paths';
 	import type { Property } from '$lib/data/properties';
 	import { favorites } from '$lib/stores/favorites';
 
@@ -14,7 +15,7 @@
 	}
 </script>
 
-<a href="/property/{property.id}" class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
+<a href="{base}/property/{property.id}" class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
 	<div class="relative aspect-[16/10] overflow-hidden bg-gray-100">
 		<img
 			src={property.image}

@@ -3,6 +3,7 @@
 	import { Menu, X, User, LogOut, Building2, ChevronDown } from 'lucide-svelte';
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { filters } from '$lib/stores/filters';
+	import { base } from '$app/paths';
 	import { openAuthModal } from '$lib/stores/authModal';
 
 	let isMenuOpen = false;
@@ -48,7 +49,7 @@
 <header class="fixed top-0 left-0 right-0 z-40 transition-all duration-200 {isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'}">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex items-center justify-between h-16 md:h-20">
-			<a href="/" class="flex items-center gap-2">
+			<a href="{base}/" class="flex items-center gap-2">
 				<img src="/localia/localia.svg" alt="Localia" class="h-10 w-10 object-contain" />
 				<span class="text-xl font-bold text-primary">Localia</span>
 			</a>
@@ -68,7 +69,7 @@
 				</button>
 
 				{#if $isAgent}
-					<a href="/publicar" class="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors">
+					<a href="{base}/publicar" class="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors">
 						Publicar propiedad
 					</a>
 				{/if}
@@ -99,11 +100,11 @@
 										<p class="text-xs text-accent mt-1">Matrícula: {$currentUser.matricula}</p>
 									{/if}
 								</div>
-								<a href="/perfil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+								<a href="{base}/perfil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
 									Mi perfil
 								</a>
 								{#if $isAgent}
-									<a href="/mis-propiedades" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+									<a href="{base}/mis-propiedades" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
 										Mis propiedades
 									</a>
 								{/if}
@@ -166,7 +167,7 @@
 				</button>
 
 				{#if $isAgent}
-					<a href="/publicar" class="block py-3 bg-accent text-white font-semibold text-center rounded-lg">
+					<a href="{base}/publicar" class="block py-3 bg-accent text-white font-semibold text-center rounded-lg">
 						Publicar propiedad
 					</a>
 				{/if}
@@ -188,7 +189,7 @@
 						</div>
 						<a href="#" class="block py-2 text-gray-700">Mi perfil</a>
 						{#if $isAgent}
-							<a href="/mis-propiedades" class="block py-2 text-gray-700">Mis propiedades</a>
+							<a href="{base}/mis-propiedades" class="block py-2 text-gray-700">Mis propiedades</a>
 						{/if}
 						<button
 							on:click={handleLogout}
