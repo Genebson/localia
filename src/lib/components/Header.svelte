@@ -49,7 +49,7 @@
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex items-center justify-between h-16 md:h-20">
 			<a href="/" class="flex items-center gap-2">
-				<img src="/localia.svg" alt="Localia" class="h-10 w-10 object-contain" />
+				<img src="/localia/localia.svg" alt="Localia" class="h-10 w-10 object-contain" />
 				<span class="text-xl font-bold text-primary">Localia</span>
 			</a>
 
