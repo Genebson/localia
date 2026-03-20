@@ -51,7 +51,7 @@
 		<div class="flex items-center justify-between h-16 md:h-20">
 			<a href="{base}/" class="flex items-center gap-2">
 				<img src="/localia/localia.svg" alt="Localia" class="h-10 w-10 object-contain" />
-				<span class="text-xl font-bold text-primary">Localia</span>
+				<span class="text-xl font-bold text-green-600">Localia</span>
 			</a>
 
 			<nav class="hidden md:flex items-center gap-4">
