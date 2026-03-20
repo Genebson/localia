@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Search } from 'lucide-svelte';
-	import { filters } from '$lib/stores/filters';
+	import { filters, syncFiltersToUrl } from '$lib/stores/filters';
 
 	let operation: 'buy' | 'rent' = 'buy';
 	let location = '';
@@ -8,6 +8,7 @@
 	function handleSubmit() {
 		filters.setOperation(operation);
 		filters.setLocation(location);
+		syncFiltersToUrl();
 		const propertiesSection = document.getElementById('properties');
 		if (propertiesSection) {
 			propertiesSection.scrollIntoView({ behavior: 'smooth' });

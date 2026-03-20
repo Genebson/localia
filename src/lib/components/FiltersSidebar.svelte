@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { X } from 'lucide-svelte';
-	import { filters } from '$lib/stores/filters';
+	import { filters, syncFiltersToUrl } from '$lib/stores/filters';
 
 	export let isOpen = false;
 	export let onClose: () => void = () => {};
+
+	let priceSyncTimer: ReturnType<typeof setTimeout>;
 
 	function clearFilters() {
 		filters.reset();
@@ -20,6 +22,19 @@
 		} else {
 			filters.setOperation(op);
 		}
+		syncFiltersToUrl();
+	}
+
+	function handleMinPrice(value: string) {
+		filters.setMinPrice(value);
+		clearTimeout(priceSyncTimer);
+		priceSyncTimer = setTimeout(syncFiltersToUrl, 500);
+	}
+
+	function handleMaxPrice(value: string) {
+		filters.setMaxPrice(value);
+		clearTimeout(priceSyncTimer);
+		priceSyncTimer = setTimeout(syncFiltersToUrl, 500);
 	}
 </script>
 
@@ -56,7 +71,7 @@
 					<h3 class="font-medium text-sm text-gray-700 mb-3">Moneda</h3>
 					<div class="flex gap-2">
 						<button
-							on:click={() => filters.setCurrency('all')}
+							on:click={() => { filters.setCurrency('all'); syncFiltersToUrl(); }}
 							class="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors {$filters.currency === 'all' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 						>
 							Todas
@@ -82,14 +97,14 @@
 						<input
 							type="number"
 							value={$filters.minPrice}
-							on:input={(e) => filters.setMinPrice(e.currentTarget.value)}
+							on:input={(e) => handleMinPrice(e.currentTarget.value)}
 							placeholder="Min"
 							class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
 						/>
 						<input
 							type="number"
 							value={$filters.maxPrice}
-							on:input={(e) => filters.setMaxPrice(e.currentTarget.value)}
+							on:input={(e) => handleMaxPrice(e.currentTarget.value)}
 							placeholder="Max"
 							class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
 						/>
@@ -101,7 +116,7 @@
 					<div class="flex gap-2">
 						{#each [1, 2, 3, 4] as num}
 							<button
-								on:click={() => filters.setBedrooms($filters.bedrooms === num ? null : num)}
+								on:click={() => { filters.setBedrooms($filters.bedrooms === num ? null : num); syncFiltersToUrl(); }}
 								class="w-12 h-12 rounded-lg text-sm font-medium transition-colors {$filters.bedrooms === num ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 							>
 								{num}{num === 4 ? '+' : ''}
@@ -139,7 +154,7 @@
 						type="radio"
 						name="operation"
 						checked={$filters.operation === 'buy'}
-						on:change={() => filters.setOperation('buy')}
+						on:change={() => { filters.setOperation('buy'); syncFiltersToUrl(); }}
 						class="w-5 h-5 border-gray-300 text-primary focus:ring-primary"
 					/>
 					<span class="text-gray-600 group-hover:text-gray-900 transition-colors">Comprar</span>
@@ -149,7 +164,7 @@
 						type="radio"
 						name="operation"
 						checked={$filters.operation === 'rent'}
-						on:change={() => filters.setOperation('rent')}
+						on:change={() => { filters.setOperation('rent'); syncFiltersToUrl(); }}
 						class="w-5 h-5 border-gray-300 text-primary focus:ring-primary"
 					/>
 					<span class="text-gray-600 group-hover:text-gray-900 transition-colors">Alquilar</span>
@@ -159,7 +174,7 @@
 						type="radio"
 						name="operation"
 						checked={$filters.operation === 'all'}
-						on:change={() => filters.setOperation('all')}
+						on:change={() => { filters.setOperation('all'); syncFiltersToUrl(); }}
 						class="w-5 h-5 border-gray-300 text-primary focus:ring-primary"
 					/>
 					<span class="text-gray-600 group-hover:text-gray-900 transition-colors">Todos</span>
@@ -171,19 +186,19 @@
 			<h3 class="font-medium text-sm text-gray-700 mb-3">Moneda</h3>
 			<div class="flex gap-2">
 				<button
-					on:click={() => filters.setCurrency('all')}
+					on:click={() => { filters.setCurrency('all'); syncFiltersToUrl(); }}
 					class="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors {$filters.currency === 'all' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 				>
 					Todas
 				</button>
 				<button
-					on:click={() => filters.setCurrency('USD')}
+					on:click={() => { filters.setCurrency('USD'); syncFiltersToUrl(); }}
 					class="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors {$filters.currency === 'USD' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 				>
 					USD
 				</button>
 				<button
-					on:click={() => filters.setCurrency('ARS')}
+					on:click={() => { filters.setCurrency('ARS'); syncFiltersToUrl(); }}
 					class="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors {$filters.currency === 'ARS' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 				>
 					ARS
@@ -197,14 +212,14 @@
 				<input
 					type="number"
 					value={$filters.minPrice}
-					on:input={(e) => filters.setMinPrice(e.currentTarget.value)}
+					on:input={(e) => handleMinPrice(e.currentTarget.value)}
 					placeholder="Min"
 					class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 				/>
 				<input
 					type="number"
 					value={$filters.maxPrice}
-					on:input={(e) => filters.setMaxPrice(e.currentTarget.value)}
+					on:input={(e) => handleMaxPrice(e.currentTarget.value)}
 					placeholder="Max"
 					class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 				/>
@@ -216,7 +231,7 @@
 			<div class="flex gap-2">
 				{#each [1, 2, 3, 4] as num}
 					<button
-						on:click={() => filters.setBedrooms($filters.bedrooms === num ? null : num)}
+						on:click={() => { filters.setBedrooms($filters.bedrooms === num ? null : num); syncFiltersToUrl(); }}
 						class="flex-1 h-10 rounded-lg text-sm font-medium transition-colors {$filters.bedrooms === num ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 					>
 						{num}{num === 4 ? '+' : ''}

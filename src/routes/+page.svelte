@@ -1,13 +1,27 @@
 <script lang="ts">
 	import { Filter, Building2, TrendingUp, Shield, ChevronDown, MapPin } from 'lucide-svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import FiltersSidebar from '$lib/components/FiltersSidebar.svelte';
 	import PropertyCard from '$lib/components/PropertyCard.svelte';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { isAgent } from '$lib/stores/auth';
-	import { filters, filteredProperties, totalProperties } from '$lib/stores/filters';
+	import { filters, filteredProperties, totalProperties, syncFiltersToUrl } from '$lib/stores/filters';
+	import { onMount } from 'svelte';
 
 	let filtersOpen = false;
+	let lastUrl = '';
+
+	function filterAndSync(updater: () => void) {
+		updater();
+		syncFiltersToUrl();
+	}
+
+	$: if (typeof window !== 'undefined' && $page.url.href !== lastUrl) {
+		lastUrl = $page.url.href;
+		filters.initFromUrl($page.url);
+	}
 </script>
 
 <section class="relative bg-gradient-to-br from-primary via-primary to-primary-light overflow-hidden">
@@ -30,21 +44,21 @@
 
 		<div class="flex flex-wrap justify-center gap-4 mt-8">
 			<button
-				on:click={() => { filters.setPropertyType($filters.propertyType === 'apartment' ? '' : 'apartment'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				on:click={() => { filters.setPropertyType($filters.propertyType === 'apartment' ? '' : 'apartment'); syncFiltersToUrl(); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
 				class="px-6 py-2.5 {$filters.propertyType === 'apartment' ? 'bg-white text-primary' : 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<Building2 class="w-4 h-4" />
 				Departamentos
 			</button>
 			<button
-				on:click={() => { filters.setPropertyType($filters.propertyType === 'house' ? '' : 'house'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				on:click={() => { filters.setPropertyType($filters.propertyType === 'house' ? '' : 'house'); syncFiltersToUrl(); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
 				class="px-6 py-2.5 {$filters.propertyType === 'house' ? 'bg-white text-primary' : 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<TrendingUp class="w-4 h-4" />
 				Casas
 			</button>
 			<button
-				on:click={() => { filters.setPropertyType($filters.propertyType === 'terrain' ? '' : 'terrain'); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
+				on:click={() => { filters.setPropertyType($filters.propertyType === 'terrain' ? '' : 'terrain'); syncFiltersToUrl(); document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' }); }}
 				class="px-6 py-2.5 {$filters.propertyType === 'terrain' ? 'bg-white text-primary' : 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
 				<Shield class="w-4 h-4" />
