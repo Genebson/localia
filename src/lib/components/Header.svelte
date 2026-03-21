@@ -107,9 +107,6 @@
 									<a href="{base}/mis-propiedades" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
 										Mis propiedades
 									</a>
-									<a href="{base}/subir" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-										Subir propiedad
-									</a>
 								{/if}
 								<button
 									on:click={handleLogout}
