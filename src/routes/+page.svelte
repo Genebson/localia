@@ -102,28 +102,31 @@
 				{/if}
 			</p>
 		</div>
-		<button
-			on:click={() => filtersOpen = true}
-			class="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-		>
-			<Filter class="w-4 h-4" />
-			Filtros
-		</button>
-		<div class="hidden md:flex lg:hidden items-center gap-1 border border-gray-200 rounded-lg overflow-hidden">
+		<div class="flex items-center gap-1 border border-gray-200 rounded-lg overflow-hidden">
 			<button
-				on:click={() => viewMode = 'grid'}
-				class="p-2 transition-colors {viewMode === 'grid' ? 'bg-primary text-white' : 'text-gray-500 hover:bg-gray-50'}"
-				title="Grid view"
+				on:click={() => filtersOpen = true}
+				class="md:hidden flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+				title="Filtros"
 			>
-				<LayoutGrid class="w-4 h-4" />
+				<Filter class="w-4 h-4" />
+				<span class="text-sm font-medium">Filtros</span>
 			</button>
-			<button
-				on:click={() => viewMode = 'map'}
-				class="p-2 transition-colors {viewMode === 'map' ? 'bg-primary text-white' : 'text-gray-500 hover:bg-gray-50'}"
-				title="Map view"
-			>
-				<Map class="w-4 h-4" />
-			</button>
+			<div class="hidden md:flex items-center gap-1">
+				<button
+					on:click={() => viewMode = 'grid'}
+					class="p-2 transition-colors {viewMode === 'grid' ? 'bg-primary text-white' : 'text-gray-500 hover:bg-gray-50'}"
+					title="Grid view"
+				>
+					<LayoutGrid class="w-4 h-4" />
+				</button>
+				<button
+					on:click={() => viewMode = 'map'}
+					class="p-2 transition-colors {viewMode === 'map' ? 'bg-primary text-white' : 'text-gray-500 hover:bg-gray-50'}"
+					title="Map view"
+				>
+					<Map class="w-4 h-4" />
+				</button>
+			</div>
 		</div>
 	</div>
 
