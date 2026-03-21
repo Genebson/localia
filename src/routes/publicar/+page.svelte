@@ -135,9 +135,9 @@
 				const isTerrain = hints.includes('terreno') || hints.includes('land');
 
 				extractedData = {
-					title: selectedFile
+					title: (selectedFile
 						? selectedFile.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-						: `Propiedad en ${new URL(urlInput).hostname.replace('www.', '').split('.')[0]}`,
+						: `Propiedad en ${new URL(urlInput).hostname.replace('www.', '').split('.')[0]}`).slice(0, 80),
 					description: 'Excelente propiedad en ubicación privilegiada. Ambientes luminosos, buena distribución, cercanía a medios de transporte y comercios. Ideal para vivir o invertir.',
 					price: String(Math.floor(Math.random() * 500000) + 100000),
 					currency: isRent ? 'ARS' : 'USD',
@@ -486,7 +486,7 @@
 
 						<div>
 							<label class="block text-sm font-medium text-gray-700 mb-1">Título de la propiedad *</label>
-							<input type="text" bind:value={title} placeholder="ej: Departamento de 2 ambientes en Palermo"
+							<input type="text" bind:value={title} maxlength={80} placeholder="ej: Departamento de 2 ambientes en Palermo"
 								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
 						</div>
 
