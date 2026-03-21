@@ -184,6 +184,7 @@
 	}
 
 	function handleSubmit() {
+		if (extractedData) applyExtractedData();
 		error = '';
 		if (!title.trim() || !price || !location) {
 			error = 'Completá los campos obligatorios: título, precio y ubicación.';
