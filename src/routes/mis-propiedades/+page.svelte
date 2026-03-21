@@ -100,22 +100,26 @@
 			{:else}
 				<div class="space-y-4">
 					{#each userProperties as property (property.id)}
-						<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+						<div class="bg-white rounded-xl shadow-sm overflow-hidden group">
 							<div class="flex flex-col md:flex-row">
 								<div class="md:w-64 h-48 md:h-auto flex-shrink-0">
-									<img
-										src={property.image}
-										alt={property.title}
-										class="w-full h-full object-cover"
-									/>
+									<a href="{base}/property/{property.id}" class="block w-full h-full">
+										<img
+											src={property.image}
+											alt={property.title}
+											class="w-full h-full object-cover"
+										/>
+									</a>
 								</div>
 								<div class="flex-1 p-6">
-								<div class="flex items-start justify-between gap-4">
-									<div class="flex-1 min-w-0">
-										<div class="flex flex-wrap items-center gap-2 mb-2">
-											<h3 class="text-lg font-semibold text-gray-900 truncate max-w-full">
-												{property.title}
-											</h3>
+									<div class="flex items-start justify-between gap-4">
+										<div class="flex-1 min-w-0">
+											<div class="flex flex-wrap items-center gap-2 mb-2">
+												<a href="{base}/property/{property.id}" class="hover:text-primary transition-colors">
+													<h3 class="text-lg font-semibold text-gray-900 truncate max-w-full">
+														{property.title}
+													</h3>
+												</a>
 												{#if property.featured}
 													<span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
 														Visible
@@ -153,13 +157,6 @@
 											</div>
 										</div>
 										<div class="flex items-center gap-2">
-											<button
-												on:click={() => goto(`${base}/property/${property.id}`)}
-												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-												title="Ver"
-											>
-												<Eye class="w-5 h-5" />
-											</button>
 											<a
 												href="{base}/publicar?edit={property.id}"
 												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
