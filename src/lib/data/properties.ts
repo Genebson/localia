@@ -1,4 +1,7 @@
 export type PropertyType = 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial';
+export type PropertyState = 'nueva' | 'bueno' | 'reformar';
+export type EnergyRating = 'alta' | 'media' | 'baja';
+export type FloorLevel = 'ground' | 'intermediate' | 'top';
 
 export interface Property {
 	id: string;
@@ -21,6 +24,28 @@ export interface Property {
 	featured?: boolean;
 	agentEmail?: string;
 	isUserProperty?: boolean;
+	// New fields
+	rooms?: number;
+	bathrooms?: number;
+	estado?: PropertyState;
+	features?: string[];
+	floor?: FloorLevel;
+	energyRating?: EnergyRating;
+	hasFloorPlan?: boolean;
+	hasVirtualTour?: boolean;
+	isFromBank?: boolean;
+	petFriendly?: boolean;
+	airConditioning?: boolean;
+	builtInWardrobes?: boolean;
+	elevator?: boolean;
+	balcony?: boolean;
+	outdoor?: boolean;
+	garage?: boolean;
+	garden?: boolean;
+	pool?: boolean;
+	storageRoom?: boolean;
+	accessible?: boolean;
+	publishedAt?: string;
 }
 
 export const properties: Property[] = [
