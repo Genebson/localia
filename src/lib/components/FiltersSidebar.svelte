@@ -39,7 +39,7 @@
 </script>
 
 {#if isOpen}
-	<div class="fixed inset-0 z-50 md:hidden">
+	<div class="fixed inset-0 z-50">
 		<div class="absolute inset-0 bg-black/50" on:click={onClose} on:keydown={(e) => e.key === 'Escape' && onClose()} role="button" tabindex="0" aria-label="Cerrar filtros"></div>
 		<div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto">
 			<div class="sticky top-0 flex items-center justify-between p-4 border-b border-gray-100 bg-white">
