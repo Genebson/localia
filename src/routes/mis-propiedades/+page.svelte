@@ -110,12 +110,12 @@
 									/>
 								</div>
 								<div class="flex-1 p-6">
-									<div class="flex items-start justify-between gap-4">
-										<div class="flex-1 min-w-0">
-											<div class="flex items-center gap-2 mb-2">
-												<h3 class="text-lg font-semibold text-gray-900 truncate">
-													{property.title}
-												</h3>
+								<div class="flex items-start justify-between gap-4">
+									<div class="flex-1 min-w-0">
+										<div class="flex flex-wrap items-center gap-2 mb-2">
+											<h3 class="text-lg font-semibold text-gray-900 truncate max-w-full">
+												{property.title}
+											</h3>
 												{#if property.featured}
 													<span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
 														Visible
