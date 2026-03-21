@@ -486,7 +486,7 @@
 
 						<div>
 							<label class="block text-sm font-medium text-gray-700 mb-1">Título de la propiedad *</label>
-							<input type="text" bind:value={title} maxlength={80} placeholder="ej: Departamento de 2 ambientes en Palermo"
+							<input type="text" bind:value={title} maxlength={70} placeholder="ej: Departamento de 2 ambientes en Palermo"
 								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
 						</div>
 
