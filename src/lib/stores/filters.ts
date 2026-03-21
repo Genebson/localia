@@ -1,6 +1,6 @@
 import { writable, derived, get } from 'svelte/store';
 import { goto } from '$app/navigation';
-import { type Property, type PropertyState, type EnergyRating, type FloorLevel } from '$lib/data/properties';
+import { type Property, type PropertyState, type Equipment } from '$lib/data/properties';
 import { propertiesStore, allProperties } from './properties';
 
 export interface Filters {
@@ -15,11 +15,7 @@ export interface Filters {
 	bathrooms: number | null;
 	estado: PropertyState | '';
 	features: string[];
-	floor: FloorLevel | '';
-	energyRating: EnergyRating | '';
-	hasFloorPlan: boolean | null;
-	hasVirtualTour: boolean | null;
-	isFromBank: boolean | null;
+	equipamiento: Equipment | '';
 	petFriendly: boolean | null;
 	airConditioning: boolean | null;
 	elevator: boolean | null;
@@ -45,11 +41,7 @@ const DEFAULT_FILTERS: Filters = {
 	bathrooms: null,
 	estado: '',
 	features: [],
-	floor: '',
-	energyRating: '',
-	hasFloorPlan: null,
-	hasVirtualTour: null,
-	isFromBank: null,
+	equipamiento: '',
 	petFriendly: null,
 	airConditioning: null,
 	elevator: null,
@@ -85,8 +77,7 @@ function createFiltersStore() {
 				: [...f.features, feat];
 			return { ...f, features };
 		}),
-		setFloor: (v: FloorLevel | '') => update(f => ({ ...f, floor: v })),
-		setEnergyRating: (v: EnergyRating | '') => update(f => ({ ...f, energyRating: v })),
+		setEquipamiento: (v: Equipment | '') => update(f => ({ ...f, equipamiento: v })),
 		setBoolean: (key: keyof Filters, v: boolean | null) => update(f => ({ ...f, [key]: v })),
 		setPublishedDays: (v: number | null) => update(f => ({ ...f, publishedDays: v })),
 		reset: () => {
@@ -104,24 +95,20 @@ function createFiltersStore() {
 				propertyType: url.searchParams.get('propertyType') || '',
 				rooms: url.searchParams.get('rooms') ? parseInt(url.searchParams.get('rooms')!) : null,
 				bathrooms: url.searchParams.get('bathrooms') ? parseInt(url.searchParams.get('bathrooms')!) : null,
-				estado: (url.searchParams.get('estado') as PropertyState) || '',
-				features: url.searchParams.get('features') ? url.searchParams.get('features')!.split(',') : [],
-				floor: (url.searchParams.get('floor') as FloorLevel) || '',
-				energyRating: (url.searchParams.get('energyRating') as EnergyRating) || '',
-				hasFloorPlan: url.searchParams.get('hasFloorPlan') ? url.searchParams.get('hasFloorPlan') === 'true' : null,
-				hasVirtualTour: url.searchParams.get('hasVirtualTour') ? url.searchParams.get('hasVirtualTour') === 'true' : null,
-				isFromBank: url.searchParams.get('isFromBank') ? url.searchParams.get('isFromBank') === 'true' : null,
-				petFriendly: url.searchParams.get('petFriendly') ? url.searchParams.get('petFriendly') === 'true' : null,
-				airConditioning: url.searchParams.get('airConditioning') ? url.searchParams.get('airConditioning') === 'true' : null,
-				elevator: url.searchParams.get('elevator') ? url.searchParams.get('elevator') === 'true' : null,
-				balcony: url.searchParams.get('balcony') ? url.searchParams.get('balcony') === 'true' : null,
-				outdoor: url.searchParams.get('outdoor') ? url.searchParams.get('outdoor') === 'true' : null,
-				garage: url.searchParams.get('garage') ? url.searchParams.get('garage') === 'true' : null,
-				garden: url.searchParams.get('garden') ? url.searchParams.get('garden') === 'true' : null,
-				pool: url.searchParams.get('pool') ? url.searchParams.get('pool') === 'true' : null,
-				storageRoom: url.searchParams.get('storageRoom') ? url.searchParams.get('storageRoom') === 'true' : null,
-				accessible: url.searchParams.get('accessible') ? url.searchParams.get('accessible') === 'true' : null,
-				publishedDays: url.searchParams.get('publishedDays') ? parseInt(url.searchParams.get('publishedDays')!) : null
+			estado: (url.searchParams.get('estado') as PropertyState) || '',
+			features: url.searchParams.get('features') ? url.searchParams.get('features')!.split(',') : [],
+			equipamiento: (url.searchParams.get('equipamiento') as Equipment) || '',
+			petFriendly: url.searchParams.get('petFriendly') ? url.searchParams.get('petFriendly') === 'true' : null,
+			airConditioning: url.searchParams.get('airConditioning') ? url.searchParams.get('airConditioning') === 'true' : null,
+			elevator: url.searchParams.get('elevator') ? url.searchParams.get('elevator') === 'true' : null,
+			balcony: url.searchParams.get('balcony') ? url.searchParams.get('balcony') === 'true' : null,
+			outdoor: url.searchParams.get('outdoor') ? url.searchParams.get('outdoor') === 'true' : null,
+			garage: url.searchParams.get('garage') ? url.searchParams.get('garage') === 'true' : null,
+			garden: url.searchParams.get('garden') ? url.searchParams.get('garden') === 'true' : null,
+			pool: url.searchParams.get('pool') ? url.searchParams.get('pool') === 'true' : null,
+			storageRoom: url.searchParams.get('storageRoom') ? url.searchParams.get('storageRoom') === 'true' : null,
+			accessible: url.searchParams.get('accessible') ? url.searchParams.get('accessible') === 'true' : null,
+			publishedDays: url.searchParams.get('publishedDays') ? parseInt(url.searchParams.get('publishedDays')!) : null
 			});
 		}
 	};
@@ -143,11 +130,7 @@ export function syncFiltersToUrl() {
 	if (f.bathrooms !== null) params.set('bathrooms', String(f.bathrooms));
 	if (f.estado) params.set('estado', f.estado);
 	if (f.features.length > 0) params.set('features', f.features.join(','));
-	if (f.floor) params.set('floor', f.floor);
-	if (f.energyRating) params.set('energyRating', f.energyRating);
-	if (f.hasFloorPlan !== null) params.set('hasFloorPlan', String(f.hasFloorPlan));
-	if (f.hasVirtualTour !== null) params.set('hasVirtualTour', String(f.hasVirtualTour));
-	if (f.isFromBank !== null) params.set('isFromBank', String(f.isFromBank));
+	if (f.equipamiento) params.set('equipamiento', f.equipamiento);
 	if (f.petFriendly !== null) params.set('petFriendly', String(f.petFriendly));
 	if (f.airConditioning !== null) params.set('airConditioning', String(f.airConditioning));
 	if (f.elevator !== null) params.set('elevator', String(f.elevator));
@@ -218,13 +201,8 @@ export const filteredProperties = derived([filters, allProperties], ([$filters, 
 			}
 		}
 
-		if ($filters.floor && property.floor !== $filters.floor) return false;
+		if ($filters.equipamiento && property.equipamiento !== $filters.equipamiento) return false;
 
-		if ($filters.energyRating && property.energyRating !== $filters.energyRating) return false;
-
-		if ($filters.hasFloorPlan !== null && (property.hasFloorPlan !== $filters.hasFloorPlan)) return false;
-		if ($filters.hasVirtualTour !== null && (property.hasVirtualTour !== $filters.hasVirtualTour)) return false;
-		if ($filters.isFromBank !== null && (property.isFromBank !== $filters.isFromBank)) return false;
 		if ($filters.petFriendly !== null && (property.petFriendly !== $filters.petFriendly)) return false;
 		if ($filters.airConditioning !== null && (property.airConditioning !== $filters.airConditioning)) return false;
 		if ($filters.elevator !== null && (property.elevator !== $filters.elevator)) return false;

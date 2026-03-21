@@ -1,7 +1,6 @@
 export type PropertyType = 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial';
 export type PropertyState = 'nueva' | 'bueno' | 'reformar';
-export type EnergyRating = 'alta' | 'media' | 'baja';
-export type FloorLevel = 'ground' | 'intermediate' | 'top';
+export type Equipment = 'amueblado' | 'cocina-equipada';
 
 export interface Property {
 	id: string;
@@ -29,14 +28,9 @@ export interface Property {
 	bathrooms?: number;
 	estado?: PropertyState;
 	features?: string[];
-	floor?: FloorLevel;
-	energyRating?: EnergyRating;
-	hasFloorPlan?: boolean;
-	hasVirtualTour?: boolean;
-	isFromBank?: boolean;
+	equipamiento?: Equipment;
 	petFriendly?: boolean;
 	airConditioning?: boolean;
-	builtInWardrobes?: boolean;
 	elevator?: boolean;
 	balcony?: boolean;
 	outdoor?: boolean;
