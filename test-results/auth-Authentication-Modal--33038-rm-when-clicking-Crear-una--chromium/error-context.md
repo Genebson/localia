@@ -1,0 +1,454 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - dialog [ref=e3]:
+    - button [ref=e4] [cursor=pointer]
+    - generic [ref=e5]:
+      - button "Cerrar" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - heading "Crear cuenta" [level=2] [ref=e12]
+          - paragraph [ref=e13]: Unite a Localia
+        - generic [ref=e14]:
+          - button "Buscador" [ref=e15] [cursor=pointer]:
+            - img [ref=e16]
+            - text: Buscador
+          - button "Agente" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+            - text: Agente
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - generic [ref=e26]: Nombre completo
+            - generic [ref=e27]:
+              - img [ref=e28]
+              - textbox "Tu nombre" [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: Email
+            - generic [ref=e34]:
+              - img [ref=e35]
+              - textbox "tu@email.com" [ref=e38]
+          - generic [ref=e39]:
+            - generic [ref=e40]: Contraseña
+            - generic [ref=e41]:
+              - img [ref=e42]
+              - textbox "••••••••" [ref=e45]
+              - button [ref=e46] [cursor=pointer]:
+                - img [ref=e47]
+          - button "Crear cuenta" [ref=e50] [cursor=pointer]
+        - paragraph [ref=e52]:
+          - text: ¿Ya tenés cuenta?
+          - button "Iniciá sesión" [active] [ref=e53] [cursor=pointer]
+  - generic [ref=e54]:
+    - banner [ref=e55]:
+      - generic [ref=e57]:
+        - link "Localia Localia" [ref=e58] [cursor=pointer]:
+          - /url: /localia/
+          - img "Localia" [ref=e59]
+          - generic [ref=e60]: Localia
+        - navigation [ref=e61]:
+          - button "Comprar" [ref=e62] [cursor=pointer]
+          - button "Alquilar" [ref=e63] [cursor=pointer]
+          - button "Herramientas" [ref=e65] [cursor=pointer]:
+            - text: Herramientas
+            - img [ref=e66]
+          - generic [ref=e68]:
+            - button "Iniciar sesión" [ref=e69] [cursor=pointer]
+            - button "Registrarse" [ref=e70] [cursor=pointer]
+    - main [ref=e71]:
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - heading "Encontrá tu próximo hogar" [level=1] [ref=e78]
+          - paragraph [ref=e79]: Miles de propiedades te esperan. Casas, departamentos y más en las mejores zonas.
+        - generic [ref=e81]:
+          - generic [ref=e82]:
+            - button "Comprar" [ref=e83] [cursor=pointer]
+            - button "Alquilar" [ref=e84] [cursor=pointer]
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - img [ref=e87]
+              - textbox "Ciudad, barrio o dirección" [ref=e90]
+            - spinbutton [ref=e91]
+            - spinbutton [ref=e92]
+          - button "Buscar" [ref=e93] [cursor=pointer]
+        - generic [ref=e94]:
+          - button "Departamentos" [ref=e95] [cursor=pointer]:
+            - img [ref=e96]
+            - text: Departamentos
+          - button "Casas" [ref=e100] [cursor=pointer]:
+            - img [ref=e101]
+            - text: Casas
+          - button "Terrenos" [ref=e104] [cursor=pointer]:
+            - img [ref=e105]
+            - text: Terrenos
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - img [ref=e112]
+          - generic [ref=e116]:
+            - paragraph [ref=e117]: ¿Sos agente inmobiliario?
+            - paragraph [ref=e118]: Publicá tus propiedades y llegá a miles de compradores
+        - button "Quiero publicar mi propiedad" [ref=e119] [cursor=pointer]:
+          - text: Quiero publicar mi propiedad
+          - img [ref=e120]
+      - generic [ref=e122]:
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - heading "Propiedades" [level=2] [ref=e125]
+            - paragraph [ref=e126]: 5 propiedades encontradas
+          - generic [ref=e127]:
+            - button "Grid view" [ref=e128] [cursor=pointer]:
+              - img [ref=e129]
+            - button "Map view" [ref=e134] [cursor=pointer]:
+              - img [ref=e135]
+        - generic [ref=e137]:
+          - complementary [ref=e138]:
+            - generic [ref=e139]:
+              - generic [ref=e140]:
+                - heading "Filtros" [level=2] [ref=e141]
+                - button "Limpiar" [ref=e142] [cursor=pointer]
+              - generic [ref=e143]:
+                - button "Operación" [ref=e144] [cursor=pointer]:
+                  - text: Operación
+                  - img [ref=e145]
+                - generic [ref=e148]:
+                  - generic [ref=e149] [cursor=pointer]:
+                    - radio "Todas" [checked] [ref=e150]
+                    - generic [ref=e151]: Todas
+                  - generic [ref=e152] [cursor=pointer]:
+                    - radio "Comprar" [ref=e153]
+                    - generic [ref=e154]: Comprar
+                  - generic [ref=e155] [cursor=pointer]:
+                    - radio "Alquilar" [ref=e156]
+                    - generic [ref=e157]: Alquilar
+              - generic [ref=e158]:
+                - button "Estado" [ref=e159] [cursor=pointer]:
+                  - text: Estado
+                  - img [ref=e160]
+                - generic [ref=e163]:
+                  - generic [ref=e164] [cursor=pointer]:
+                    - radio "Obra nueva" [ref=e165]
+                    - generic [ref=e166]: Obra nueva
+                  - generic [ref=e167] [cursor=pointer]:
+                    - radio "Buen estado" [ref=e168]
+                    - generic [ref=e169]: Buen estado
+                  - generic [ref=e170] [cursor=pointer]:
+                    - radio "A reformar" [ref=e171]
+                    - generic [ref=e172]: A reformar
+              - generic [ref=e173]:
+                - button "Habitaciones y baños" [ref=e174] [cursor=pointer]:
+                  - text: Habitaciones y baños
+                  - img [ref=e175]
+                - generic [ref=e178]:
+                  - generic [ref=e179]:
+                    - paragraph [ref=e180]: Habitaciones
+                    - generic [ref=e181]:
+                      - button "0" [ref=e182] [cursor=pointer]
+                      - button "1" [ref=e183] [cursor=pointer]
+                      - button "2" [ref=e184] [cursor=pointer]
+                      - button "3" [ref=e185] [cursor=pointer]
+                      - button "4+" [ref=e186] [cursor=pointer]
+                  - generic [ref=e187]:
+                    - paragraph [ref=e188]: Baños
+                    - generic [ref=e189]:
+                      - button "1" [ref=e190] [cursor=pointer]
+                      - button "2" [ref=e191] [cursor=pointer]
+                      - button "3+" [ref=e192] [cursor=pointer]
+              - generic [ref=e193]:
+                - button "Zona" [ref=e194] [cursor=pointer]:
+                  - text: Zona
+                  - img [ref=e195]
+                - generic [ref=e198]:
+                  - generic [ref=e199]:
+                    - generic [ref=e200] [cursor=pointer]:
+                      - radio "Cerca de la plaza" [ref=e201]
+                      - generic [ref=e202]: Cerca de la plaza
+                    - generic [ref=e203] [cursor=pointer]:
+                      - radio "Barrio Norte" [ref=e204]
+                      - generic [ref=e205]: Barrio Norte
+                    - generic [ref=e206] [cursor=pointer]:
+                      - radio "Barrio Sur" [ref=e207]
+                      - generic [ref=e208]: Barrio Sur
+                    - generic [ref=e209] [cursor=pointer]:
+                      - radio "Zona del Club" [ref=e210]
+                      - generic [ref=e211]: Zona del Club
+                    - generic [ref=e212] [cursor=pointer]:
+                      - radio "Centro" [ref=e213]
+                      - generic [ref=e214]: Centro
+                  - generic [ref=e215] [cursor=pointer]:
+                    - checkbox "Aire libre" [ref=e216]
+                    - generic [ref=e217]: Aire libre
+              - button "Características" [ref=e219] [cursor=pointer]:
+                - text: Características
+                - img [ref=e220]
+              - button "Equipamiento" [ref=e223] [cursor=pointer]:
+                - text: Equipamiento
+                - img [ref=e224]
+              - button "Fecha de publicación" [ref=e227] [cursor=pointer]:
+                - text: Fecha de publicación
+                - img [ref=e228]
+          - generic [ref=e231]:
+            - link "1 of 5 Select a slide to show Agregar a favoritos Destacado Venta Departamento de 2 ambientes en Centro USD 185.000 Centro, Mercedes, Buenos Aires Hace 2 días 2 dorm. 1 baño 58 m²" [ref=e232] [cursor=pointer]:
+              - /url: /localia/property/018d1a2b-3c4e-7f89-ab01-234567890abc
+              - generic [ref=e233]:
+                - region [ref=e234]:
+                  - generic [ref=e235]:
+                    - tabpanel "1 of 5" [ref=e236]
+                    - tabpanel [ref=e237]
+                    - tabpanel [ref=e238]
+                    - tabpanel [ref=e239]
+                    - tabpanel [ref=e240]
+                  - tablist "Select a slide to show":
+                    - tab "Go to slide 1" [selected] [ref=e241]
+                    - tab "Go to slide 2" [ref=e242]
+                    - tab "Go to slide 3" [ref=e243]
+                    - tab "Go to slide 4" [ref=e244]
+                    - tab "Go to slide 5" [ref=e245]
+                - button "Agregar a favoritos" [ref=e246]:
+                  - img [ref=e247]
+                - generic [ref=e249]: Destacado
+                - generic [ref=e250]: Venta
+              - generic [ref=e251]:
+                - heading "Departamento de 2 ambientes en Centro" [level=3] [ref=e253]
+                - paragraph [ref=e254]: USD 185.000
+                - paragraph [ref=e255]:
+                  - img [ref=e256]
+                  - text: Centro, Mercedes, Buenos Aires
+                - paragraph [ref=e259]: Hace 2 días
+                - generic [ref=e260]:
+                  - generic [ref=e261]:
+                    - img [ref=e262]
+                    - generic [ref=e264]: 2 dorm.
+                  - generic [ref=e265]:
+                    - img [ref=e266]
+                    - generic [ref=e269]: 1 baño
+                  - generic [ref=e270]:
+                    - img [ref=e271]
+                    - generic [ref=e276]: 58 m²
+            - link "1 of 5 Select a slide to show Agregar a favoritos Destacado Venta Casa quincho en Barrio Norte USD 520.000 Barrio Norte, Mercedes, Buenos Aires Hace 4 días 4 dorm. 3 baños 280 m²" [ref=e277] [cursor=pointer]:
+              - /url: /localia/property/018d1a2b-3c4e-7f89-ab02-234567890abd
+              - generic [ref=e278]:
+                - region [ref=e279]:
+                  - generic [ref=e280]:
+                    - tabpanel "1 of 5" [ref=e281]
+                    - tabpanel [ref=e282]
+                    - tabpanel [ref=e283]
+                    - tabpanel [ref=e284]
+                    - tabpanel [ref=e285]
+                  - tablist "Select a slide to show":
+                    - tab "Go to slide 1" [selected] [ref=e286]
+                    - tab "Go to slide 2" [ref=e287]
+                    - tab "Go to slide 3" [ref=e288]
+                    - tab "Go to slide 4" [ref=e289]
+                    - tab "Go to slide 5" [ref=e290]
+                - button "Agregar a favoritos" [ref=e291]:
+                  - img [ref=e292]
+                - generic [ref=e294]: Destacado
+                - generic [ref=e295]: Venta
+              - generic [ref=e296]:
+                - heading "Casa quincho en Barrio Norte" [level=3] [ref=e298]
+                - paragraph [ref=e299]: USD 520.000
+                - paragraph [ref=e300]:
+                  - img [ref=e301]
+                  - text: Barrio Norte, Mercedes, Buenos Aires
+                - paragraph [ref=e304]: Hace 4 días
+                - generic [ref=e305]:
+                  - generic [ref=e306]:
+                    - img [ref=e307]
+                    - generic [ref=e309]: 4 dorm.
+                  - generic [ref=e310]:
+                    - img [ref=e311]
+                    - generic [ref=e314]: 3 baños
+                  - generic [ref=e315]:
+                    - img [ref=e316]
+                    - generic [ref=e321]: 280 m²
+            - link "1 of 5 Select a slide to show Agregar a favoritos Destacado Venta Chalet en Zona del Club USD 280.000 Zona del Club, Mercedes, Buenos Aires Hace 1 sem 5 dorm. 4 baños 420 m²" [ref=e322] [cursor=pointer]:
+              - /url: /localia/property/018d1a2b-3c4e-7f89-ab08-234567890ac3
+              - generic [ref=e323]:
+                - region [ref=e324]:
+                  - generic [ref=e325]:
+                    - tabpanel "1 of 5" [ref=e326]
+                    - tabpanel [ref=e327]
+                    - tabpanel [ref=e328]
+                    - tabpanel [ref=e329]
+                    - tabpanel [ref=e330]
+                  - tablist "Select a slide to show":
+                    - tab "Go to slide 1" [selected] [ref=e331]
+                    - tab "Go to slide 2" [ref=e332]
+                    - tab "Go to slide 3" [ref=e333]
+                    - tab "Go to slide 4" [ref=e334]
+                    - tab "Go to slide 5" [ref=e335]
+                - button "Agregar a favoritos" [ref=e336]:
+                  - img [ref=e337]
+                - generic [ref=e339]: Destacado
+                - generic [ref=e340]: Venta
+              - generic [ref=e341]:
+                - heading "Chalet en Zona del Club" [level=3] [ref=e343]
+                - paragraph [ref=e344]: USD 280.000
+                - paragraph [ref=e345]:
+                  - img [ref=e346]
+                  - text: Zona del Club, Mercedes, Buenos Aires
+                - paragraph [ref=e349]: Hace 1 sem
+                - generic [ref=e350]:
+                  - generic [ref=e351]:
+                    - img [ref=e352]
+                    - generic [ref=e354]: 5 dorm.
+                  - generic [ref=e355]:
+                    - img [ref=e356]
+                    - generic [ref=e359]: 4 baños
+                  - generic [ref=e360]:
+                    - img [ref=e361]
+                    - generic [ref=e366]: 420 m²
+            - link "1 of 5 Select a slide to show Agregar a favoritos Destacado Venta Penthouse en Centro USD 1.200.000 Centro, Mercedes, Buenos Aires Hace 2 días 4 dorm. 5 baños 380 m²" [ref=e367] [cursor=pointer]:
+              - /url: /localia/property/018d1a2b-3c4e-7f89-ab0b-234567890ac6
+              - generic [ref=e368]:
+                - region [ref=e369]:
+                  - generic [ref=e370]:
+                    - tabpanel "1 of 5" [ref=e371]
+                    - tabpanel [ref=e372]
+                    - tabpanel [ref=e373]
+                    - tabpanel [ref=e374]
+                    - tabpanel [ref=e375]
+                  - tablist "Select a slide to show":
+                    - tab "Go to slide 1" [selected] [ref=e376]
+                    - tab "Go to slide 2" [ref=e377]
+                    - tab "Go to slide 3" [ref=e378]
+                    - tab "Go to slide 4" [ref=e379]
+                    - tab "Go to slide 5" [ref=e380]
+                - button "Agregar a favoritos" [ref=e381]:
+                  - img [ref=e382]
+                - generic [ref=e384]: Destacado
+                - generic [ref=e385]: Venta
+              - generic [ref=e386]:
+                - heading "Penthouse en Centro" [level=3] [ref=e388]
+                - paragraph [ref=e389]: USD 1.200.000
+                - paragraph [ref=e390]:
+                  - img [ref=e391]
+                  - text: Centro, Mercedes, Buenos Aires
+                - paragraph [ref=e394]: Hace 2 días
+                - generic [ref=e395]:
+                  - generic [ref=e396]:
+                    - img [ref=e397]
+                    - generic [ref=e399]: 4 dorm.
+                  - generic [ref=e400]:
+                    - img [ref=e401]
+                    - generic [ref=e404]: 5 baños
+                  - generic [ref=e405]:
+                    - img [ref=e406]
+                    - generic [ref=e411]: 380 m²
+            - link "1 of 5 Select a slide to show Agregar a favoritos Destacado Venta Chacra de 12 hectáreas en Zona del Club USD 450.000 Zona del Club, Mercedes, Buenos Aires Hace 6 días 4 dorm. 3 baños 120000 m²" [ref=e412] [cursor=pointer]:
+              - /url: /localia/property/018d1a2b-3c4e-7f89-int01-0000000001
+              - generic [ref=e413]:
+                - region [ref=e414]:
+                  - generic [ref=e415]:
+                    - tabpanel "1 of 5" [ref=e416]
+                    - tabpanel [ref=e417]
+                    - tabpanel [ref=e418]
+                    - tabpanel [ref=e419]
+                    - tabpanel [ref=e420]
+                  - tablist "Select a slide to show":
+                    - tab "Go to slide 1" [selected] [ref=e421]
+                    - tab "Go to slide 2" [ref=e422]
+                    - tab "Go to slide 3" [ref=e423]
+                    - tab "Go to slide 4" [ref=e424]
+                    - tab "Go to slide 5" [ref=e425]
+                - button "Agregar a favoritos" [ref=e426]:
+                  - img [ref=e427]
+                - generic [ref=e429]: Destacado
+                - generic [ref=e430]: Venta
+              - generic [ref=e431]:
+                - heading "Chacra de 12 hectáreas en Zona del Club" [level=3] [ref=e433]
+                - paragraph [ref=e434]: USD 450.000
+                - paragraph [ref=e435]:
+                  - img [ref=e436]
+                  - text: Zona del Club, Mercedes, Buenos Aires
+                - paragraph [ref=e439]: Hace 6 días
+                - generic [ref=e440]:
+                  - generic [ref=e441]:
+                    - img [ref=e442]
+                    - generic [ref=e444]: 4 dorm.
+                  - generic [ref=e445]:
+                    - img [ref=e446]
+                    - generic [ref=e449]: 3 baños
+                  - generic [ref=e450]:
+                    - img [ref=e451]
+                    - generic [ref=e456]: 120000 m²
+      - generic [ref=e458]:
+        - generic [ref=e459]:
+          - heading "¿Por qué elegir Localia?" [level=2] [ref=e460]
+          - paragraph [ref=e461]: Las ventajas de buscar con nosotros
+        - generic [ref=e462]:
+          - generic [ref=e463]:
+            - img [ref=e465]
+            - heading "Propiedades verificadas" [level=3] [ref=e467]
+            - paragraph [ref=e468]: Todas las propiedades pasan por un proceso de verificación antes de publicarse.
+          - generic [ref=e469]:
+            - img [ref=e471]
+            - heading "Ubicaciones privilegiadas" [level=3] [ref=e474]
+            - paragraph [ref=e475]: Encontrá propiedades en los barrios y zonas más cotizados del mercado.
+          - generic [ref=e476]:
+            - img [ref=e478]
+            - heading "Precios competitivos" [level=3] [ref=e481]
+            - paragraph [ref=e482]: Compará precios de mercado y encontrá las mejores ofertas del momento.
+    - contentinfo [ref=e483]:
+      - generic [ref=e484]:
+        - generic [ref=e485]:
+          - generic [ref=e486]:
+            - link "Localia" [ref=e487] [cursor=pointer]:
+              - /url: /localia/
+              - img [ref=e489]
+              - generic [ref=e492]: Localia
+            - paragraph [ref=e493]: Tu próximo hogar está en Localia. Encontrá casas, departamentos y más en las mejores zonas.
+          - generic [ref=e494]:
+            - heading "Explorar" [level=3] [ref=e495]
+            - list [ref=e496]:
+              - listitem [ref=e497]:
+                - link "Comprar" [ref=e498] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e499]:
+                - link "Alquilar" [ref=e500] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e501]:
+                - link "Publicar propiedad" [ref=e502] [cursor=pointer]:
+                  - /url: /localia/publicar
+              - listitem [ref=e503]:
+                - link "Agentes" [ref=e504] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e505]:
+            - heading "Empresa" [level=3] [ref=e506]
+            - list [ref=e507]:
+              - listitem [ref=e508]:
+                - link "Sobre nosotros" [ref=e509] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e510]:
+                - link "Términos y condiciones" [ref=e511] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e512]:
+                - link "Política de privacidad" [ref=e513] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e514]:
+                - link "Contacto" [ref=e515] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e516]:
+            - heading "Contacto" [level=3] [ref=e517]
+            - list [ref=e518]:
+              - listitem [ref=e519]:
+                - img [ref=e520]
+                - link "hola@localia.com" [ref=e523] [cursor=pointer]:
+                  - /url: mailto:hola@localia.com
+              - listitem [ref=e524]:
+                - img [ref=e525]
+                - link "+54 11 4567 8900" [ref=e527] [cursor=pointer]:
+                  - /url: tel:+541145678900
+            - generic [ref=e528]:
+              - link "Instagram" [ref=e529] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e530]
+              - link "Facebook" [ref=e533] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e534]
+              - link "LinkedIn" [ref=e536] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e537]
+        - paragraph [ref=e542]: © 2026 Localia. Todos los derechos reservados.
+```
