@@ -16,7 +16,7 @@
 	import PropertyCard from '$lib/components/PropertyCard.svelte';
 	import MapView from '$lib/components/MapView.svelte';
 	import { authModalOpen } from '$lib/stores/authModal';
-	import { isAgent } from '$lib/stores/auth';
+	import { auth, isAgent } from '$lib/stores/auth';
 	import {
 		filters,
 		filteredProperties,
@@ -101,7 +101,7 @@
 	</div>
 </section>
 
-{#if !$isAgent}
+{#if !$auth}
 	<section class="bg-accent/10 border-y border-accent/20">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			<div class="flex flex-col md:flex-row items-center justify-between gap-4">
