@@ -1,5 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
+	import { onMount } from 'svelte';
 	import { Sparkles, Upload, Check } from 'lucide-svelte';
+	import { isAgent, currentUser } from '$lib/stores/auth';
+	import { authModalOpen } from '$lib/stores/authModal';
+
+	$: isAuthorized = $currentUser && $isAgent;
+
+	onMount(() => {
+		if (!$currentUser) {
+			authModalOpen.set(true);
+			goto(base + '/');
+		} else if (!$isAgent) {
+			goto(base + '/');
+		}
+	});
 
 	interface StagingExample {
 		id: string;

@@ -330,7 +330,7 @@ Herramienta de staging virtual con inteligencia artificial (mock).
 
 ### Acceso
 
-Disponible para todos los usuarios (no requiere autenticación).
+Solo usuarios con rol de agente pueden acceder. Si un buscador intenta entrar, será redirigido.
 
 ---
 
@@ -403,7 +403,7 @@ Todas las propiedades mockeadas incluyen datos para todos los filtros:
 | `/masterplan`          | Lista de loteos                 | Público |
 | `/masterplan/[id]`     | Plano interactivo de loteo      | Público |
 | `/tablero`             | Cartelera de búsquedas          | Público |
-| `/furnisher`           | Staging virtual con IA          | Público |
+| `/furnisher`           | Staging virtual con IA          | Agentes |
 | `/publicar`            | Formulario de publicación       | Agentes |
 | `/mis-propiedades`     | Propiedades del agente          | Agentes |
 | `/perfil`              | Perfil y gestión de agencia     | Agentes |
