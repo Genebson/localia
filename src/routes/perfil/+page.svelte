@@ -205,9 +205,9 @@
 					<div class="flex items-center justify-between mb-4">
 						<div class="flex items-center gap-3">
 							<div
-								class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+								class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center"
 							>
-								<Building2 class="w-5 h-5 text-purple-600" />
+								<Building2 class="w-5 h-5 text-primary" />
 							</div>
 							<div>
 								<h2 class="text-lg font-bold text-gray-900">Mi Inmobiliaria</h2>
@@ -248,7 +248,7 @@
 							<p class="text-gray-500 mb-4">Aún no tenés tu inmobiliaria creada</p>
 							<button
 								on:click={openAgencyModal}
-								class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors mx-auto"
+								class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-light transition-colors mx-auto"
 							>
 								<Plus class="w-4 h-4" /> Crear mi inmobiliaria
 							</button>

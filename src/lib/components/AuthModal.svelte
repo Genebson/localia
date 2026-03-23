@@ -35,6 +35,8 @@
 			return;
 		}
 
+		let effectiveRole: UserRole;
+
 		if (mode === 'register') {
 			if (!name) {
 				error = 'El nombre es obligatorio';
@@ -48,9 +50,12 @@
 				error = 'La matrícula debe tener al menos 5 caracteres';
 				return;
 			}
+			effectiveRole = selectedRole;
+		} else {
+			effectiveRole = email.includes('agente') ? 'agent' : 'user';
 		}
 
-		auth.login(email, password, selectedRole, name || undefined, matricula || undefined);
+		auth.login(email, password, effectiveRole, name || undefined, matricula || undefined);
 		onClose();
 		resetForm();
 	}

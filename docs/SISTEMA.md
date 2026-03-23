@@ -244,9 +244,9 @@ Al hacer clic en un loteo se abre el plano interactivo con:
 
 - **SVG parcelado** — Plano del terreno dividido en parcelas numeradas
 - **Colores por estado:**
-  - Verde: Disponible
-  - Amarillo: Reservado
-  - Rojo: Vendido
+    - Verde: Disponible
+    - Amarillo: Reservado
+    - Rojo: Vendido
 - **Hover sobre parcela** — Muestra tooltip con manzana, lote y precio
 - **Click en parcela** — Abre modal con detalles y botón de contacto por WhatsApp
 - **Sidebar** — Lista de parcelas disponibles para consulta rápida
@@ -301,9 +301,9 @@ Herramienta de CRM que simula la integración con WhatsApp.
 
 - **Layout tipo WhatsApp** con panel de conversaciones
 - **3 conversaciones mockeadas** mostrando el flujo real del CRM:
-  1. Lead que consulta una propiedad → ChePibe pide presupuesto → se registra en CRM
-  2. Agente envía un mensaje formateado para un cliente
-  3. Agente consulta por propiedades disponibles → ChePibe busca y responde
+    1. Lead que consulta una propiedad → ChePibe pide presupuesto → se registra en CRM
+    2. Agente envía un mensaje formateado para un cliente
+    3. Agente consulta por propiedades disponibles → ChePibe busca y responde
 - **Input para interactuar** — Envía mensajes mock que reciben respuestas automáticas
 - **Badge "CRM Conectado"**
 
@@ -321,9 +321,9 @@ Herramienta de staging virtual con inteligencia artificial (mock).
 
 - **Header**: "Mejorá tus fotos con IA"
 - **3 ejemplos before/after**:
-  - Living vacío → Living amueblado (Estilo Escandinavo)
-  - Dormitorio desordenado → Limpio y modernizado (Estilo Moderno)
-  - Casa de época → Diseño moderno (Wipe & Replace)
+    - Living vacío → Living amueblado (Estilo Escandinavo)
+    - Dormitorio desordenado → Limpio y modernizado (Estilo Moderno)
+    - Casa de época → Diseño moderno (Wipe & Replace)
 - **Slider interactivo** — Arrastrar para comparar antes y después
 - **Estilos disponibles**: Escandinavo, Minimalista, Moderno, Nórdico, Industrial
 - **Botón "Aplicar a mi foto"** — Simula la carga de una imagen propia

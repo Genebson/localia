@@ -9,7 +9,6 @@
 	let isMenuOpen = false;
 	let isScrolled = false;
 	let isUserMenuOpen = false;
-	let isToolsMenuOpen = false;
 
 	function handleScroll() {
 		isScrolled = window.scrollY > 20;
@@ -21,10 +20,6 @@
 
 	function toggleUserMenu() {
 		isUserMenuOpen = !isUserMenuOpen;
-	}
-
-	function toggleToolsMenu() {
-		isToolsMenuOpen = !isToolsMenuOpen;
 	}
 
 	function handleLogout() {
@@ -46,9 +41,6 @@
 		if (isUserMenuOpen && e.target instanceof Element && !e.target.closest('.user-menu')) {
 			isUserMenuOpen = false;
 		}
-		if (isToolsMenuOpen && e.target instanceof Element && !e.target.closest('.tools-menu')) {
-			isToolsMenuOpen = false;
-		}
 	}
 </script>
 
@@ -63,79 +55,10 @@
 		<div class="flex items-center justify-between h-16 md:h-20">
 			<a href="{base}/" class="flex items-center gap-2">
 				<img src="/localia/localia.svg" alt="Localia" class="h-10 w-10 object-contain" />
-				<span class="text-xl font-bold text-green-600">Localia</span>
+				<span class="text-xl font-bold text-primary">Localia</span>
 			</a>
 
 			<nav class="hidden md:flex items-center gap-4">
-				<button
-					on:click={() => setOperation('buy')}
-					class="text-gray-600 hover:text-primary font-medium transition-colors"
-				>
-					Comprar
-				</button>
-				<button
-					on:click={() => setOperation('rent')}
-					class="text-gray-600 hover:text-primary font-medium transition-colors"
-				>
-					Alquilar
-				</button>
-
-				<div class="relative tools-menu">
-					<button
-						on:click={toggleToolsMenu}
-						class="flex items-center gap-1 text-gray-600 hover:text-primary font-medium transition-colors"
-					>
-						Herramientas
-						<ChevronDown class="w-4 h-4" />
-					</button>
-
-					{#if isToolsMenuOpen}
-						<div
-							class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2"
-						>
-							<a
-								href="{base}/masterplan"
-								on:click={() => (isToolsMenuOpen = false)}
-								class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-							>
-								Masterplans
-							</a>
-							<a
-								href="{base}/tablero"
-								on:click={() => (isToolsMenuOpen = false)}
-								class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-							>
-								Tablero de búsquedas
-							</a>
-							<a
-								href="{base}/furnisher"
-								on:click={() => (isToolsMenuOpen = false)}
-								class="block px-4 py-2 m-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all"
-							>
-								<div class="flex items-center justify-between">
-									<div class="flex items-center gap-2">
-										<span class="text-lg">✨</span>
-										<span class="font-semibold">Furnisher</span>
-									</div>
-									<span class="text-xs bg-white/20 px-2 py-0.5 rounded-full"
-										>Nuevo</span
-									>
-								</div>
-							</a>
-							{#if $isAgent}
-								<div class="border-t border-gray-100 my-1"></div>
-								<a
-									href="{base}/chepibe"
-									on:click={() => (isToolsMenuOpen = false)}
-									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-								>
-									ChePibe CRM
-								</a>
-							{/if}
-						</div>
-					{/if}
-				</div>
-
 				{#if $isAgent}
 					<a
 						href="{base}/publicar"
@@ -166,7 +89,7 @@
 
 						{#if isUserMenuOpen}
 							<div
-								class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2"
+								class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2"
 							>
 								<div class="px-4 py-2 border-b border-gray-100">
 									<p class="text-sm font-medium text-gray-900">
@@ -184,7 +107,7 @@
 									on:click={() => (isUserMenuOpen = false)}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
 								>
-									Mi perfil
+									Mi Perfil
 								</a>
 								{#if $isAgent}
 									<a
@@ -192,9 +115,59 @@
 										on:click={() => (isUserMenuOpen = false)}
 										class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
 									>
-										Mis propiedades
+										Mis Propiedades
 									</a>
 								{/if}
+								<div class="border-t border-gray-100 my-1"></div>
+								<a
+									href="{base}/masterplan"
+									on:click={() => (isUserMenuOpen = false)}
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+								>
+									Masterplan
+								</a>
+								<a
+									href="{base}/tablero"
+									on:click={() => (isUserMenuOpen = false)}
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+								>
+									Tablero de Búsquedas
+								</a>
+								{#if $isAgent}
+									<a
+										href="{base}/furnisher"
+										on:click={() => (isUserMenuOpen = false)}
+										class="block px-4 py-2 m-1 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg shadow-sm hover:shadow-md transition-all"
+									>
+										<div class="flex items-center justify-between">
+											<div class="flex items-center gap-2">
+												<span class="text-lg">✨</span>
+												<span class="font-semibold">Furnisher</span>
+											</div>
+											<span
+												class="text-xs bg-white/20 px-2 py-0.5 rounded-full"
+												>Nuevo</span
+											>
+										</div>
+									</a>
+									<a
+										href="{base}/chepibe"
+										on:click={() => (isUserMenuOpen = false)}
+										class="block px-4 py-2 m-1 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg shadow-sm hover:shadow-md transition-all"
+									>
+										<div class="flex items-center justify-between">
+											<div class="flex items-center gap-2">
+												<span>💬</span>
+												<span class="font-semibold">ChePibe</span>
+											</div>
+											<span
+												class="text-xs bg-white/20 px-2 py-0.5 rounded-full"
+												>Nuevo</span
+											>
+										</div>
+									</a>
+								{/if}
+								<div class="border-t border-gray-100 my-1"></div>
 								<button
 									on:click={handleLogout}
 									class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
@@ -240,57 +213,6 @@
 	{#if isMenuOpen}
 		<div class="md:hidden bg-white border-t border-gray-100 shadow-lg">
 			<nav class="px-4 py-4 space-y-3">
-				<button
-					on:click={() => setOperation('buy')}
-					class="block w-full text-left py-2 text-gray-700 font-medium"
-				>
-					Comprar
-				</button>
-				<button
-					on:click={() => setOperation('rent')}
-					class="block w-full text-left py-2 text-gray-700 font-medium"
-				>
-					Alquilar
-				</button>
-
-				<div class="border-t border-gray-100 my-2 pt-2">
-					<p class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">
-						Herramientas
-					</p>
-					<a
-						href="{base}/masterplan"
-						on:click={() => (isMenuOpen = false)}
-						class="block py-2 text-gray-700"
-					>
-						Masterplans
-					</a>
-					<a
-						href="{base}/tablero"
-						on:click={() => (isMenuOpen = false)}
-						class="block py-2 text-gray-700"
-					>
-						Tablero de búsquedas
-					</a>
-					<a
-						href="{base}/furnisher"
-						on:click={() => (isMenuOpen = false)}
-						class="block py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg px-3 -mx-3 font-semibold"
-					>
-						✨ Furnisher <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1"
-							>Nuevo</span
-						>
-					</a>
-					{#if $isAgent}
-						<a
-							href="{base}/chepibe"
-							on:click={() => (isMenuOpen = false)}
-							class="block py-2 text-gray-700"
-						>
-							ChePibe CRM
-						</a>
-					{/if}
-				</div>
-
 				{#if $isAgent}
 					<a
 						href="{base}/publicar"
@@ -321,15 +243,49 @@
 						<a
 							href="{base}/perfil"
 							on:click={() => (isMenuOpen = false)}
-							class="block py-2 text-gray-700">Mi perfil</a
+							class="block py-2 text-gray-700">Mi Perfil</a
 						>
 						{#if $isAgent}
 							<a
 								href="{base}/mis-propiedades"
 								on:click={() => (isMenuOpen = false)}
-								class="block py-2 text-gray-700">Mis propiedades</a
+								class="block py-2 text-gray-700">Mis Propiedades</a
 							>
 						{/if}
+						<div class="border-t border-gray-100 my-2"></div>
+						<a
+							href="{base}/masterplan"
+							on:click={() => (isMenuOpen = false)}
+							class="block py-2 text-gray-700">Masterplan</a
+						>
+						<a
+							href="{base}/tablero"
+							on:click={() => (isMenuOpen = false)}
+							class="block py-2 text-gray-700">Tablero de Búsquedas</a
+						>
+						{#if $isAgent}
+							<a
+								href="{base}/furnisher"
+								on:click={() => (isMenuOpen = false)}
+								class="block py-2 px-3 mx-0 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg font-semibold text-center"
+							>
+								✨ Furnisher <span
+									class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1"
+									>Nuevo</span
+								>
+							</a>
+							<a
+								href="{base}/chepibe"
+								on:click={() => (isMenuOpen = false)}
+								class="block py-2 px-3 mx-0 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg font-semibold text-center"
+							>
+								💬 ChePibe <span
+									class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1"
+									>Nuevo</span
+								>
+							</a>
+						{/if}
+						<div class="border-t border-gray-100 my-2"></div>
 						<button
 							on:click={handleLogout}
 							class="block py-2 text-red-600 w-full text-left"

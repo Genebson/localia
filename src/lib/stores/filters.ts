@@ -246,7 +246,7 @@ export const filteredProperties = derived(
 
 			if ($filters.features.length > 0) {
 				for (const feat of $filters.features) {
-					const prop = property as Record<string, unknown>;
+					const prop = property as unknown as Record<string, unknown>;
 					if (prop[feat] !== true) return false;
 				}
 			}

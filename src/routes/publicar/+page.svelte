@@ -384,6 +384,29 @@
 				</button>
 			</div>
 		</div>
+	{:else if !$isAgent}
+		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
+			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
+				<div
+					class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4"
+				>
+					<Building2 class="w-8 h-8 text-primary" />
+				</div>
+				<h1 class="text-2xl font-bold text-gray-900 mb-2">Solo para inmobiliarias</h1>
+				<p class="text-gray-500 mb-4">
+					Solo los agentes inmobiliarios pueden publicar propiedades.
+				</p>
+				<p class="text-gray-500 mb-6">
+					Si tenés una matrícula profesional, registrate como agente.
+				</p>
+				<button
+					on:click={handleLoginRedirect}
+					class="w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
+				>
+					Registrarme como agente
+				</button>
+			</div>
+		</div>
 	{:else}
 		<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			<div class="mb-6">

@@ -9,7 +9,7 @@
 			<div class="lg:col-span-1">
 				<a href="{base}/" class="flex items-center gap-2 mb-4">
 					<div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-						<Home class="w-5 h-5 text-green-600" />
+						<Home class="w-5 h-5 text-primary" />
 					</div>
 					<span class="text-xl font-bold text-white">Localia</span>
 				</a>

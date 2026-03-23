@@ -375,7 +375,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								{#if agentAgency}
 									<a
 										href="{base}/inmobiliaria/{agentAgency.slug}"
-										class="flex items-center justify-center gap-2 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+										class="flex items-center justify-center gap-2 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors"
 									>
 										Ver inmobiliaria <ExternalLink class="w-4 h-4" />
 									</a>

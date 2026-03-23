@@ -81,7 +81,7 @@
 			</div>
 		</div>
 	{:else}
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<div class="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			<div class="flex items-center justify-between mb-8">
 				<div>
 					<h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -123,9 +123,15 @@
 			{:else}
 				<div class="space-y-4">
 					{#each userProperties as property (property.id)}
-						<div class="bg-white rounded-xl shadow-sm overflow-hidden group">
-							<div class="flex flex-col md:flex-row">
-								<div class="md:w-64 h-48 md:h-auto flex-shrink-0">
+						<div
+							class="bg-white rounded-xl shadow-sm overflow-hidden group"
+							style="height: 172px; max-width: 1216px;"
+						>
+							<div class="flex h-full">
+								<div
+									class="w-[324px] h-full flex-shrink-0"
+									style="width: 324px; height: 172px;"
+								>
 									<a
 										href="{base}/property/{property.id}"
 										class="block w-full h-full"
@@ -137,65 +143,63 @@
 										/>
 									</a>
 								</div>
-								<div class="flex-1 p-6">
-									<div class="flex items-start justify-between gap-4">
-										<div class="flex-1 min-w-0">
-											<div class="flex flex-wrap items-center gap-2 mb-2">
-												<a
-													href="{base}/property/{property.id}"
-													class="hover:text-primary transition-colors"
+								<div class="flex-1 p-4 flex items-center">
+									<div class="flex items-start justify-between gap-4 w-full">
+										<div class="flex-1 min-w-0 flex items-center gap-6">
+											<div class="flex-1 min-w-0">
+												<div class="flex flex-wrap items-center gap-2 mb-1">
+													<a
+														href="{base}/property/{property.id}"
+														class="hover:text-primary transition-colors"
+													>
+														<h3
+															class="text-lg font-semibold text-gray-900 truncate max-w-full"
+														>
+															{property.title}
+														</h3>
+													</a>
+													{#if property.featured}
+														<span
+															class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
+														>
+															Visible
+														</span>
+													{:else}
+														<span
+															class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded"
+														>
+															Oculta
+														</span>
+													{/if}
+												</div>
+												<p class="text-accent font-bold text-xl mb-1">
+													{property.priceLabel}
+												</p>
+												<div
+													class="flex items-center gap-4 text-sm text-gray-500"
 												>
-													<h3
-														class="text-lg font-semibold text-gray-900 truncate max-w-full"
-													>
-														{property.title}
-													</h3>
-												</a>
-												{#if property.featured}
-													<span
-														class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
-													>
-														Visible
-													</span>
-												{:else}
-													<span
-														class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded"
-													>
-														Oculta
-													</span>
-												{/if}
-											</div>
-											<p class="text-accent font-bold text-xl mb-2">
-												{property.priceLabel}
-											</p>
-											<div
-												class="flex items-center gap-4 text-sm text-gray-500 mb-3"
-											>
-												<span class="flex items-center gap-1">
-													<MapPin class="w-4 h-4" />
-													{property.location}
-												</span>
-											</div>
-											<div
-												class="flex items-center gap-4 text-sm text-gray-500"
-											>
-												{#if property.attributes.bedrooms > 0}
 													<span class="flex items-center gap-1">
-														<Bed class="w-4 h-4" />
-														{property.attributes.bedrooms}
+														<MapPin class="w-4 h-4" />
+														{property.location}
 													</span>
-												{/if}
-												<span class="flex items-center gap-1">
-													<Bath class="w-4 h-4" />
-													{property.attributes.bathrooms}
-												</span>
-												<span class="flex items-center gap-1">
-													<Maximize class="w-4 h-4" />
-													{property.attributes.area} m²
-												</span>
+													{#if property.attributes.bedrooms > 0}
+														<span class="flex items-center gap-1">
+															<Bed class="w-4 h-4" />
+															{property.attributes.bedrooms}
+														</span>
+													{/if}
+													<span class="flex items-center gap-1">
+														<Bath class="w-4 h-4" />
+														{property.attributes.bathrooms}
+													</span>
+													<span class="flex items-center gap-1">
+														<Maximize class="w-4 h-4" />
+														{property.attributes.area} m²
+													</span>
+												</div>
 											</div>
 										</div>
-										<div class="flex items-center gap-2">
+										<div class="flex items-center gap-2 flex-shrink-0">
 											<a
 												href="{base}/publicar?edit={property.id}"
 												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"

@@ -8,7 +8,9 @@ You are an expert software engineer, the perfect mix between Martin Fowler, Kent
 * *NestJS Best Practices:* Leverage NestJS's dependency injection container. Use built-in decorators, modules, providers, guards, pipes, and interceptors appropriately rather than reinventing the wheel.
 * *Always Verify:* Before completing a task, review your changes. Check for type safety, unhandled promise rejections, missing dependencies, and potential edge cases.
 * *Use-Case Specific Repositories:* Implement repositories strictly per allowed operation. For example, use create-contact.repository.ts and read-contact.repository.ts instead of grouping methods into a single generic repository abstraction. 1 Use Case = 1 Repository.
-* 
+* *Code Consistency:* Follow project ESLint and Prettier config. Do not introduce new stylistic patterns.
+* *RTK Usage:* Always use `rtk` as a prefix for CLI commands instead of raw commands (e.g., `rtk git status`, `rtk git diff`, `rtk git log`, `rtk grep`, `rtk ls`, `rtk read`). RTK acts as a proxy that filters and compresses output to minimize token usage. Use verbosity flags (`-v`, `-vv`, `-vvv`) when needed and `-u` for ultra-compact output.
+
 ## Strict Constraints (Do NOT Do These)
 * *No Generic/Fat Repositories:* Do NOT create aggregated repository classes or interfaces (e.g., no ContactRepository holding all CRUD methods). Every database operation must have its own dedicated, single-purpose repository.
 * *No Dynamic Imports:* Avoid using dynamic imports (await import(...)) wherever possible. Always use static, top-level import statements to ensure predictable bundling and module resolution.
@@ -16,9 +18,9 @@ You are an expert software engineer, the perfect mix between Martin Fowler, Kent
 * *No Repositories in Domain layer :* Do not use repositories or database access logic in the Domain layer. Repositories belong in the Infrastructure layer and their interfaces in the application layer.
 * *No barrel export files (index.ts files exporting other files exports):* Do not create index files that export other files' exports. Instead, import them directly, this confuses LLMs less and keeps code synchronised.
 * *No Global EntityManager Outside Transactions:* NEVER use this.em.findOne(), this.em.find(), or any this.em.* database operation OUTSIDE of em.transactional(). MikroORM requires all database operations to use the forked EntityManager from em.transactional((em) => ...). If you need to do a database query, wrap it in this.em.transactional(async (em) => { ... }) or use a dedicated repository.
+* *No Raw CLI Commands:* NEVER use native CLI commands (git, grep, ls, cat, npm, pnpm, etc.) when an `rtk` equivalent exists. Always use the `rtk`-prefixed version.
 
 ## Documentation & Deep Context
 Your comprehensive architectural guidelines and domain knowledge are located in the docs/ directory.
-
 * *When to read them:* If you are implementing a new feature, making structural changes, or are unsure about the specific implementation details of a domain, you MUST read the relevant files in docs/*.md before writing code.
 * *When to skip them:* For minor bug fixes, typos, or localized refactoring within a single file, rely on your general knowledge to save context window.
