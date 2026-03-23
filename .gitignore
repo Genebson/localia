@@ -31,3 +31,12 @@ vite.config.ts.timestamp-*
 .vscode/
 .skippio/
 skills-lock.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Sisyphus
+/.sisyphus/
