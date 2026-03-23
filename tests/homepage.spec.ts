@@ -1,4 +1,33 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+async function logout(page: Page) {
+	await page.goto('/');
+	await page.waitForLoadState('networkidle');
+	try {
+		const userMenuButton = page.locator('.user-menu > button');
+		if (await userMenuButton.isVisible({ timeout: 1000 })) {
+			await userMenuButton.click();
+			await page.waitForTimeout(300);
+			const logoutBtn = page.getByRole('button', { name: 'Cerrar sesión' });
+			if (await logoutBtn.isVisible({ timeout: 1000 })) {
+				await logoutBtn.click();
+				await page.waitForTimeout(500);
+			}
+		}
+	} catch {
+		// User not logged in, continue
+	}
+}
+
+async function loginAs(page: Page, email: string) {
+	await logout(page);
+	await page.getByRole('button', { name: 'Iniciar sesión' }).click();
+	await page.waitForTimeout(500);
+	await page.locator('input[type="email"]').fill(email);
+	await page.locator('input[type="password"]').fill('password123');
+	await page.locator('[role="dialog"] button:has-text("Iniciar sesión")').click();
+	await page.waitForTimeout(2000);
+}
 
 test.describe('Homepage', () => {
 	test.beforeEach(async ({ page }) => {
@@ -52,6 +81,23 @@ test.describe('Homepage - Filters', () => {
 	test('should clear all filters with "Limpiar" button', async ({ page }) => {
 		await page.goto('/?operation=buy&estado=nueva');
 		await page.getByRole('button', { name: 'Limpiar' }).click();
+	});
+});
+
+test.describe('Homepage - Agent CTA', () => {
+	test('should show "¿Sos agente?" CTA when not logged in', async ({ page }) => {
+		await logout(page);
+		await expect(page.getByText('¿Sos agente inmobiliario?')).toBeVisible();
+	});
+
+	test('should NOT show "¿Sos agente?" CTA when logged in as buscador', async ({ page }) => {
+		await loginAs(page, 'buscador@test.com');
+		await expect(page.getByText('¿Sos agente inmobiliario?')).not.toBeVisible();
+	});
+
+	test('should NOT show "¿Sos agente?" CTA when logged in as agente', async ({ page }) => {
+		await loginAs(page, 'agente@test.com');
+		await expect(page.getByText('¿Sos agente inmobiliario?')).not.toBeVisible();
 	});
 });
 
