@@ -1,16 +1,101 @@
 <script lang="ts">
-	import { Heart, Eye, Building2, User, Calendar, MapPin, Bed, Bath, Maximize } from 'lucide-svelte';
+	import { Heart, Eye, Building2, User, Calendar, MapPin, Bed, Bath, Maximize, ExternalLink, Plus, X, Check } from 'lucide-svelte';
 	import { base } from '$app/paths';
 	import { currentUser, isAgent } from '$lib/stores/auth';
 	import { favoriteProperties } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
 	import { allProperties } from '$lib/stores/properties';
 	import { authModalOpen } from '$lib/stores/authModal';
+	import { agencyStore } from '$lib/stores/agencies';
 
 	$: viewedList = $viewed.map(id => $allProperties.find(p => p.id === id)).filter((p): p is NonNullable<typeof p> => p !== undefined);
 
+	$: userAgency = $currentUser?.id ? $agencyStore.find(a => a.agentId === $currentUser.id) : undefined;
+
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
+	}
+
+	let showAgencyModal = false;
+	let agencyForm = {
+		name: '',
+		tagline: '',
+		description: '',
+		phone: '',
+		email: '',
+		whatsapp: ''
+	};
+	let agencySuccess = false;
+	let agencyError = '';
+
+	function openAgencyModal() {
+		if (userAgency) {
+			agencyForm = {
+				name: userAgency.name,
+				tagline: userAgency.tagline,
+				description: userAgency.description,
+				phone: userAgency.phone,
+				email: userAgency.email,
+				whatsapp: userAgency.whatsapp || ''
+			};
+		} else {
+			agencyForm = { name: '', tagline: '', description: '', phone: '', email: '', whatsapp: '' };
+		}
+		showAgencyModal = true;
+		agencySuccess = false;
+		agencyError = '';
+	}
+
+	function closeAgencyModal() {
+		showAgencyModal = false;
+	}
+
+	function handleAgencySubmit() {
+		agencyError = '';
+		if (!agencyForm.name.trim()) {
+			agencyError = 'El nombre es obligatorio.';
+			return;
+		}
+		if (!agencyForm.phone.trim()) {
+			agencyError = 'El teléfono es obligatorio.';
+			return;
+		}
+		if (!agencyForm.email.trim()) {
+			agencyError = 'El email es obligatorio.';
+			return;
+		}
+
+		const slug = agencyForm.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+		if (userAgency) {
+			agencyStore.update(userAgency.id, {
+				name: agencyForm.name.trim(),
+				tagline: agencyForm.tagline.trim(),
+				description: agencyForm.description.trim(),
+				phone: agencyForm.phone.trim(),
+				email: agencyForm.email.trim(),
+				whatsapp: agencyForm.whatsapp.trim() || undefined
+			});
+		} else {
+			agencyStore.create({
+				slug,
+				name: agencyForm.name.trim(),
+				tagline: agencyForm.tagline.trim() || 'Tu hogar ideal está acá',
+				description: agencyForm.description.trim() || 'Bienvenido a nuestra inmobiliaria.',
+				phone: agencyForm.phone.trim(),
+				email: agencyForm.email.trim(),
+				whatsapp: agencyForm.whatsapp.trim() || agencyForm.phone.trim(),
+				logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(agencyForm.name)}&background=1E3A5F&color=fff&size=128`,
+				banner: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
+				team: [{ name: $currentUser!.name, role: 'Agente', phone: agencyForm.phone.trim() }],
+				agentId: $currentUser!.id
+			});
+		}
+
+		agencySuccess = true;
+		setTimeout(() => {
+			showAgencyModal = false;
+		}, 1500);
 	}
 </script>
 
@@ -76,6 +161,48 @@
 					</div>
 				</div>
 			</div>
+
+			{#if $isAgent}
+				<div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
+					<div class="flex items-center justify-between mb-4">
+						<div class="flex items-center gap-3">
+							<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+								<Building2 class="w-5 h-5 text-purple-600" />
+							</div>
+							<div>
+								<h2 class="text-lg font-bold text-gray-900">Mi Inmobiliaria</h2>
+								<p class="text-sm text-gray-500">Tu página de inmobiliaria</p>
+							</div>
+						</div>
+					</div>
+					{#if userAgency}
+						<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+							<div class="flex items-center gap-3">
+								<img src={userAgency.logo} alt={userAgency.name} class="w-12 h-12 rounded-lg" />
+								<div>
+									<p class="font-semibold text-gray-900">{userAgency.name}</p>
+									<p class="text-sm text-gray-500">{userAgency.tagline}</p>
+								</div>
+							</div>
+							<div class="flex items-center gap-2">
+								<button on:click={openAgencyModal} class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+									Editar
+								</button>
+								<a href="{base}/inmobiliaria/{userAgency.slug}" class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-light transition-colors">
+									Ver página <ExternalLink class="w-4 h-4" />
+								</a>
+							</div>
+						</div>
+					{:else}
+						<div class="text-center py-6">
+							<p class="text-gray-500 mb-4">Aún no tenés tu inmobiliaria creada</p>
+							<button on:click={openAgencyModal} class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors mx-auto">
+								<Plus class="w-4 h-4" /> Crear mi inmobiliaria
+							</button>
+						</div>
+					{/if}
+				</div>
+			{/if}
 
 			{#if $favoriteProperties.length > 0}
 				<section class="mb-10">
@@ -163,3 +290,65 @@
 		</div>
 	{/if}
 </main>
+
+{#if showAgencyModal}
+	<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+		<div class="absolute inset-0 bg-black/50" on:click={closeAgencyModal} on:keydown={(e) => e.key === 'Escape' && closeAgencyModal()} role="button" tabindex="0" aria-label="Cerrar"></div>
+		<div class="relative bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+			<button on:click={closeAgencyModal} class="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full">
+				<X class="w-5 h-5 text-gray-500" />
+			</button>
+			<h2 class="text-xl font-bold text-gray-900 mb-6">{userAgency ? 'Editar mi inmobiliaria' : 'Crear mi inmobiliaria'}</h2>
+
+			{#if agencySuccess}
+				<div class="text-center py-8">
+					<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+						<Check class="w-8 h-8 text-green-600" />
+					</div>
+					<p class="text-lg font-semibold text-gray-900">¡Guardado!</p>
+				</div>
+			{:else}
+				{#if agencyError}
+					<div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+						{agencyError}
+					</div>
+				{/if}
+				<form on:submit|preventDefault={handleAgencySubmit} class="space-y-4">
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la inmobiliaria *</label>
+						<input type="text" bind:value={agencyForm.name} required placeholder="Ej: Inmobiliaria López"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
+						<input type="tel" bind:value={agencyForm.phone} required placeholder="Ej: 5491123456789"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+						<input type="email" bind:value={agencyForm.email} required placeholder="Ej: contacto@inmobiliaria.com"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
+						<input type="tel" bind:value={agencyForm.whatsapp} placeholder="Ej: 5491123456789"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+						<input type="text" bind:value={agencyForm.tagline} placeholder="Ej: Tu hogar ideal está acá"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+						<textarea bind:value={agencyForm.description} rows="3" placeholder="Contanos sobre tu inmobiliaria..."
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"></textarea>
+					</div>
+					<button type="submit" class="w-full py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors">
+						{userAgency ? 'Guardar cambios' : 'Crear inmobiliaria'}
+					</button>
+				</form>
+			{/if}
+		</div>
+	</div>
+{/if}

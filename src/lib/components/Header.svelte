@@ -9,6 +9,7 @@
 	let isMenuOpen = false;
 	let isScrolled = false;
 	let isUserMenuOpen = false;
+	let isToolsMenuOpen = false;
 
 	function handleScroll() {
 		isScrolled = window.scrollY > 20;
@@ -20,6 +21,10 @@
 
 	function toggleUserMenu() {
 		isUserMenuOpen = !isUserMenuOpen;
+	}
+
+	function toggleToolsMenu() {
+		isToolsMenuOpen = !isToolsMenuOpen;
 	}
 
 	function handleLogout() {
@@ -40,6 +45,9 @@
 	function handleWindowClick(e: MouseEvent) {
 		if (isUserMenuOpen && e.target instanceof Element && !e.target.closest('.user-menu')) {
 			isUserMenuOpen = false;
+		}
+		if (isToolsMenuOpen && e.target instanceof Element && !e.target.closest('.tools-menu')) {
+			isToolsMenuOpen = false;
 		}
 	}
 </script>
@@ -67,6 +75,42 @@
 				>
 					Alquilar
 				</button>
+
+				<div class="relative tools-menu">
+					<button
+						on:click={toggleToolsMenu}
+						class="flex items-center gap-1 text-gray-600 hover:text-primary font-medium transition-colors"
+					>
+						Herramientas
+						<ChevronDown class="w-4 h-4" />
+					</button>
+
+					{#if isToolsMenuOpen}
+						<div class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2">
+							<a href="{base}/masterplan" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+								Masterplans
+							</a>
+							<a href="{base}/tablero" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+								Tablero de búsquedas
+							</a>
+							<a href="{base}/furnisher" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 m-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all">
+								<div class="flex items-center justify-between">
+									<div class="flex items-center gap-2">
+										<span class="text-lg">✨</span>
+										<span class="font-semibold">Furnisher</span>
+									</div>
+									<span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">Nuevo</span>
+								</div>
+							</a>
+							{#if $isAgent}
+								<div class="border-t border-gray-100 my-1"></div>
+								<a href="{base}/chepibe" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+									ChePibe CRM
+								</a>
+							{/if}
+						</div>
+					{/if}
+				</div>
 
 				{#if $isAgent}
 					<a href="{base}/publicar" class="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors">
@@ -100,11 +144,11 @@
 										<p class="text-xs text-accent mt-1">Matrícula: {$currentUser.matricula}</p>
 									{/if}
 								</div>
-								<a href="{base}/perfil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+								<a href="{base}/perfil" on:click={() => isUserMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
 									Mi perfil
 								</a>
 								{#if $isAgent}
-									<a href="{base}/mis-propiedades" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+									<a href="{base}/mis-propiedades" on:click={() => isUserMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
 										Mis propiedades
 									</a>
 								{/if}
@@ -166,8 +210,26 @@
 					Alquilar
 				</button>
 
+				<div class="border-t border-gray-100 my-2 pt-2">
+					<p class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Herramientas</p>
+					<a href="{base}/masterplan" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">
+						Masterplans
+					</a>
+					<a href="{base}/tablero" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">
+						Tablero de búsquedas
+					</a>
+					<a href="{base}/furnisher" on:click={() => isMenuOpen = false} class="block py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg px-3 -mx-3 font-semibold">
+						✨ Furnisher <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1">Nuevo</span>
+					</a>
+					{#if $isAgent}
+						<a href="{base}/chepibe" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">
+							ChePibe CRM
+						</a>
+					{/if}
+				</div>
+
 				{#if $isAgent}
-					<a href="{base}/publicar" class="block py-3 bg-accent text-white font-semibold text-center rounded-lg">
+					<a href="{base}/publicar" on:click={() => isMenuOpen = false} class="block py-3 bg-accent text-white font-semibold text-center rounded-lg">
 						Publicar propiedad
 					</a>
 				{/if}
@@ -187,9 +249,9 @@
 								<p class="text-sm text-gray-500">{$currentUser.email}</p>
 							</div>
 						</div>
-						<a href="#" class="block py-2 text-gray-700">Mi perfil</a>
+						<a href="{base}/perfil" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">Mi perfil</a>
 						{#if $isAgent}
-							<a href="{base}/mis-propiedades" class="block py-2 text-gray-700">Mis propiedades</a>
+							<a href="{base}/mis-propiedades" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">Mis propiedades</a>
 						{/if}
 						<button
 							on:click={handleLogout}

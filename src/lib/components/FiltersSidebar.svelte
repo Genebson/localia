@@ -12,6 +12,7 @@
 		operation: true,
 		estado: true,
 		rooms: true,
+		zone: true,
 		features: false,
 		equipamiento: false,
 		date: false
@@ -63,6 +64,11 @@
 
 	function setEquipamientoValue(val: string) {
 		filters.setEquipamiento($filters.equipamiento === val ? '' as Equipment : val as Equipment);
+		syncFiltersToUrl();
+	}
+
+	function setZoneValue(val: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro') {
+		filters.setZone($filters.zone === val ? '' : val);
 		syncFiltersToUrl();
 	}
 
@@ -154,6 +160,29 @@
 					{/if}
 				</div>
 
+				<div>
+					<button on:click={() => toggleSection('zone')} class="w-full flex items-center justify-between py-2 text-sm font-medium text-gray-900">
+						Zona
+						<ChevronDown class="w-4 h-4 text-gray-400 transition-transform {expandedSections.zone ? 'rotate-180' : ''}" />
+					</button>
+					{#if expandedSections.zone}
+						<div class="flex flex-wrap gap-2 pb-3">
+							{#each [['Cerca de la plaza', 'plaza'], ['Barrio Norte', 'barrio-norte'], ['Barrio Sur', 'barrio-sur'], ['Zona del Club', 'zona-club'], ['Centro', 'centro']] as [label, val]}
+								<button on:click={() => { setZoneValue(val); }}
+									class="px-3 py-1.5 rounded-full text-sm {$filters.zone === val ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
+									{label}
+								</button>
+							{/each}
+						</div>
+						<div class="flex items-center gap-3 pb-3">
+							<label class="flex items-center gap-2 cursor-pointer">
+								<input type="checkbox" checked={$filters.outdoor === true} on:change={() => { filters.setBoolean('outdoor', $filters.outdoor === true ? null : true); syncFiltersToUrl(); }} class="w-4 h-4 text-primary rounded" />
+								<span class="text-sm text-gray-600">Aire libre</span>
+							</label>
+						</div>
+					{/if}
+				</div>
+
 				<!-- Características -->
 				<div>
 					<button on:click={() => toggleSection('features')} class="w-full flex items-center justify-between py-2 text-sm font-medium text-gray-900">
@@ -229,6 +258,7 @@
 			{ key: 'operation', label: 'Operación' },
 			{ key: 'estado', label: 'Estado' },
 			{ key: 'rooms', label: 'Habitaciones y baños' },
+			{ key: 'zone', label: 'Zona' },
 			{ key: 'features', label: 'Características' },
 			{ key: 'equipamiento', label: 'Equipamiento' },
 			{ key: 'date', label: 'Fecha de publicación' }
@@ -259,7 +289,7 @@
 
 						{:else if section.key === 'estado'}
 							<div class="space-y-2">
-								{#each [['Obra nueva', 'nueva'], ['Buen estado', 'bueno'], ['A reformer', 'reformar']] as [label, val]}
+								{#each [['Obra nueva', 'nueva'], ['Buen estado', 'bueno'], ['A reformar', 'reformar']] as [label, val]}
 									<label class="flex items-center gap-3 cursor-pointer group">
 										<input type="radio" name="estado" checked={$filters.estado === val} on:change={() => { setEstadoValue(val); syncFiltersToUrl(); }} class="w-4 h-4 text-primary" />
 										<span class="text-sm text-gray-600 group-hover:text-gray-900">{label}</span>
@@ -291,6 +321,22 @@
 										{/each}
 									</div>
 								</div>
+							</div>
+
+						{:else if section.key === 'zone'}
+							<div class="space-y-3">
+								<div class="flex flex-wrap gap-2">
+									{#each [['Cerca de la plaza', 'plaza'], ['Barrio Norte', 'barrio-norte'], ['Barrio Sur', 'barrio-sur'], ['Zona del Club', 'zona-club'], ['Centro', 'centro']] as [label, val]}
+										<label class="flex items-center gap-2 cursor-pointer">
+											<input type="radio" name="zone" checked={$filters.zone === val} on:change={() => { setZoneValue(val); }} class="w-4 h-4 text-primary" />
+											<span class="text-sm text-gray-600 group-hover:text-gray-900">{label}</span>
+										</label>
+									{/each}
+								</div>
+								<label class="flex items-center gap-2 cursor-pointer">
+									<input type="checkbox" checked={$filters.outdoor === true} on:change={() => { filters.setBoolean('outdoor', $filters.outdoor === true ? null : true); syncFiltersToUrl(); }} class="w-4 h-4 text-primary rounded" />
+									<span class="text-sm text-gray-600">Aire libre</span>
+								</label>
 							</div>
 
 						{:else if section.key === 'features'}

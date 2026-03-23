@@ -1,14 +1,33 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { base } from '$app/paths';
-	import { onMount } from 'svelte';
-	import { Heart, Bed, Bath, Maximize, MapPin, Building2, Calendar, Share2, ArrowLeft, Check } from 'lucide-svelte';
+	import { Heart, Bed, Bath, Maximize, MapPin, Building2, Calendar, Share2, ArrowLeft, Trees, Warehouse, Waves, Home, ExternalLink } from 'lucide-svelte';
+	import { Splide, SplideSlide } from '@splidejs/svelte-splide';
+	import '@splidejs/svelte-splide/css';
+	import ImageLightbox from '$lib/components/ImageLightbox.svelte';
 	import { allProperties } from '$lib/stores/properties';
 	import { favorites } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
+	import { agencyStore } from '$lib/stores/agencies';
+	import { currentUser } from '$lib/stores/auth';
+	import { onMount } from 'svelte';
 
 	$: property = $allProperties.find(p => p.id === $page.params.id);
 	$: isFavorite = property ? $favorites.includes(property.id) : false;
+
+	$: agentAgency = $currentUser?.id ? $agencyStore.find(a => a.agentId === $currentUser.id) : undefined;
+
+	$: images = property?.images && property.images.length > 0
+		? property.images
+		: property?.image
+			? [property.image]
+			: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'];
+
+	let lightboxOpen = false;
+
+	function openLightbox(index: number) {
+		lightboxOpen = true;
+	}
 
 	onMount(() => {
 		if (property) {
@@ -34,27 +53,29 @@
 		phone: '+54 11 5555 1234',
 		email: 'maria.gonzalez@localia.com',
 		photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
-		matricula: 'COL-2020-45678'
+		matriculado: 'COL-2020-45678'
 	};
 
-	const mockFeatures = [
-		'Aire acondicionado',
-		'Calefacción central',
-		'Piso de madera',
-		'Balcón',
-		'Cochera cubierta',
-		'Pileta',
-		'Quincho',
-		'Seguridad 24hs'
-	];
+	const interiorTypeLabels: Record<string, string> = {
+		chacra: 'Chacra',
+		quinta: 'Quinta',
+		galpon: 'Galpón'
+	};
 
-	const mockDescription = `Exclusivo ${property?.title.toLowerCase()} en ubicación privilegiada.
+	const amenityIcons: Record<string, any> = {
+		pool: Waves,
+		garden: Trees,
+		garage: Warehouse,
+		outdoor: Home
+	};
+
+	$: mockDescription = property ? `Exclusiva ${property.title.toLowerCase()} en ubicación privilegiada.
 
 Esta propiedad ofrece una combinación perfecta de comodidad y estilo. Con una arquitectura moderna y materiales de primera calidad, cada espacio ha sido diseñado para maximizar el confort.
 
-La propiedad cuenta con ambientes luminosos y bien distribuidos, идеально para familias que buscan calidad de vida. La cocina está completamente equipada con appliances de última generación.
+La propiedad cuenta con ambientes luminosos y bien distribuidos. La cocina está completamente equipada con appliances de última generación.
 
-El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, gimnasio, y áreas comunes landscapadas. La ubicación cuenta con fácil acceso a transporte público y servicios.`;
+El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, gimnasio, y áreas comunes landscapadas. La ubicación cuenta con fácil acceso a transporte público y servicios.` : '';
 </script>
 
 <svelte:head>
@@ -73,18 +94,36 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 				<div class="lg:col-span-2 space-y-6">
 					<div class="bg-white rounded-2xl overflow-hidden shadow-sm">
 						<div class="relative aspect-[16/9]">
-							<img
-								src={property.image}
-								alt={property.title}
-								class="w-full h-full object-cover"
-							/>
+							<Splide
+								options={{
+									rewind: true,
+									gap: '0.5rem',
+									arrows: true,
+									dots: true,
+									autoplay: false,
+									perPage: 1,
+									cover: true,
+									heightRatio: 0.5625
+								}}
+								class="h-full"
+							>
+								{#each images as image}
+									<SplideSlide>
+										<img
+											src={image}
+											alt={property.title}
+											class="w-full h-full object-cover"
+										/>
+									</SplideSlide>
+								{/each}
+							</Splide>
 							<button
 								on:click={toggleFavorite}
-								class="absolute top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors"
+								class="absolute top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors z-10"
 							>
 								<Heart class="w-6 h-6 {isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'}" />
 							</button>
-							<div class="absolute bottom-4 left-4 flex gap-2">
+							<div class="absolute bottom-4 left-4 flex gap-2 z-10">
 								<span class="px-3 py-1 bg-primary text-white text-sm font-medium rounded">
 									{property.operation === 'buy' ? 'Venta' : 'Alquiler'}
 								</span>
@@ -95,6 +134,23 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								{/if}
 							</div>
 						</div>
+
+						{#if images.length > 1}
+							<div class="p-4 border-t border-gray-100">
+								<div class="flex gap-2 overflow-x-auto">
+									{#each images as image, i}
+										<button
+											type="button"
+											class="flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 border-transparent hover:border-primary transition-colors"
+											on:click={() => openLightbox(i)}
+										>
+											<img src={image} alt="Miniatura {i + 1}" class="w-full h-full object-cover" />
+										</button>
+									{/each}
+								</div>
+								<p class="text-xs text-gray-500 mt-2">Haz clic en una imagen para ver en tamaño completo</p>
+							</div>
+						{/if}
 
 						<div class="p-6">
 							<div class="flex items-start justify-between gap-4 mb-4">
@@ -148,15 +204,53 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 
 							<div class="mt-6">
 								<h2 class="text-lg font-semibold text-gray-900 mb-3">Características</h2>
-								<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-									{#each mockFeatures as feature}
-										<div class="flex items-center gap-2 text-gray-600">
-											<Check class="w-4 h-4 text-green-500" />
-											<span class="text-sm">{feature}</span>
-										</div>
+								<div class="flex flex-wrap gap-2">
+									{#each (property.features || ['Aire acondicionado', 'Calefacción central', 'Piso de madera', 'Balcón', 'Cochera', 'Seguridad']) as feature}
+										<span class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full">{feature}</span>
 									{/each}
 								</div>
 							</div>
+
+							{#if property.propertyType === 'chacra' || property.propertyType === 'quinta' || property.propertyType === 'galpon'}
+								<div class="mt-6">
+									<h2 class="text-lg font-semibold text-gray-900 mb-3">Amenities</h2>
+									<div class="flex flex-wrap gap-3">
+										{#if property.pool}
+											<div class="flex items-center gap-2 px-3 py-2 bg-primary/5 text-primary rounded-lg">
+												<Waves class="w-5 h-5" />
+												<span class="text-sm font-medium">Piscina</span>
+											</div>
+										{/if}
+										{#if property.garden}
+											<div class="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg">
+												<Trees class="w-5 h-5" />
+												<span class="text-sm font-medium">Jardín</span>
+											</div>
+										{/if}
+										{#if property.garage}
+											<div class="flex items-center gap-2 px-3 py-2 bg-orange-50 text-orange-700 rounded-lg">
+												<Warehouse class="w-5 h-5" />
+												<span class="text-sm font-medium">Garage</span>
+											</div>
+										{/if}
+										{#if property.outdoor}
+											<div class="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg">
+												<Home class="w-5 h-5" />
+												<span class="text-sm font-medium">Aire libre</span>
+											</div>
+										{/if}
+									</div>
+								</div>
+							{/if}
+
+							{#if interiorTypeLabels[property.propertyType]}
+								<div class="mt-6">
+									<span class="inline-flex items-center gap-1 px-3 py-1.5 bg-accent/10 text-accent text-sm font-semibold rounded-full">
+										<Building2 class="w-4 h-4" />
+										{interiorTypeLabels[property.propertyType]}
+									</span>
+								</div>
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -192,7 +286,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								<div>
 									<p class="font-medium text-gray-900">{mockAgent.name}</p>
 									<p class="text-sm text-gray-500">Agente matriculado</p>
-									<p class="text-xs text-gray-400">{mockAgent.matricula}</p>
+									<p class="text-xs text-gray-400">{mockAgent.matriculado}</p>
 								</div>
 							</div>
 							<div class="mt-4 space-y-2">
@@ -202,6 +296,11 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								<a href="mailto:{mockAgent.email}" class="flex items-center justify-center gap-2 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
 									{ mockAgent.email }
 								</a>
+								{#if agentAgency}
+									<a href="{base}/inmobiliaria/{agentAgency.slug}" class="flex items-center justify-center gap-2 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+										Ver inmobiliaria <ExternalLink class="w-4 h-4" />
+									</a>
+								{/if}
 							</div>
 						</div>
 					</div>
@@ -221,4 +320,6 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 			</a>
 		</div>
 	{/if}
+
+	<ImageLightbox images={images} bind:isOpen={lightboxOpen} />
 </main>

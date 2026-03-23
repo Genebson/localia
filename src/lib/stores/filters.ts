@@ -27,6 +27,7 @@ export interface Filters {
 	storageRoom: boolean | null;
 	accessible: boolean | null;
 	publishedDays: number | null;
+	zone: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro';
 }
 
 const DEFAULT_FILTERS: Filters = {
@@ -52,7 +53,8 @@ const DEFAULT_FILTERS: Filters = {
 	pool: null,
 	storageRoom: null,
 	accessible: null,
-	publishedDays: null
+	publishedDays: null,
+	zone: ''
 };
 
 function createFiltersStore() {
@@ -80,9 +82,10 @@ function createFiltersStore() {
 		setEquipamiento: (v: Equipment | '') => update(f => ({ ...f, equipamiento: v })),
 		setBoolean: (key: keyof Filters, v: boolean | null) => update(f => ({ ...f, [key]: v })),
 		setPublishedDays: (v: number | null) => update(f => ({ ...f, publishedDays: v })),
+		setZone: (v: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro') => update(f => ({ ...f, zone: v })),
 		reset: () => {
 			set({ ...DEFAULT_FILTERS });
-			goto('/', { replaceState: false, keepFocus: true, noScroll: true });
+			history.replaceState(null, '', window.location.pathname + '?');
 		},
 		initFromUrl: (url: URL) => {
 			set({
@@ -108,9 +111,10 @@ function createFiltersStore() {
 			pool: url.searchParams.get('pool') ? url.searchParams.get('pool') === 'true' : null,
 			storageRoom: url.searchParams.get('storageRoom') ? url.searchParams.get('storageRoom') === 'true' : null,
 			accessible: url.searchParams.get('accessible') ? url.searchParams.get('accessible') === 'true' : null,
-			publishedDays: url.searchParams.get('publishedDays') ? parseInt(url.searchParams.get('publishedDays')!) : null
-			});
-		}
+		publishedDays: url.searchParams.get('publishedDays') ? parseInt(url.searchParams.get('publishedDays')!) : null,
+		zone: (url.searchParams.get('zone') as '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro') || ''
+		});
+	}
 	};
 }
 
@@ -142,9 +146,10 @@ export function syncFiltersToUrl() {
 	if (f.storageRoom !== null) params.set('storageRoom', String(f.storageRoom));
 	if (f.accessible !== null) params.set('accessible', String(f.accessible));
 	if (f.publishedDays !== null) params.set('publishedDays', String(f.publishedDays));
+	if (f.zone) params.set('zone', f.zone);
 	const search = params.toString();
-	const newUrl = search ? `?${search}` : '/';
-	goto(newUrl, { replaceState: false, keepFocus: true, noScroll: true });
+	const newUrl = search ? `?${search}` : window.location.pathname + '?';
+	history.replaceState(null, '', newUrl);
 }
 
 export const filteredProperties = derived([filters, allProperties], ([$filters, $allProperties]) => {
@@ -182,22 +187,22 @@ export const filteredProperties = derived([filters, allProperties], ([$filters, 
 
 		if ($filters.rooms !== null) {
 			if ($filters.rooms === 4) {
-				if ((property.rooms || 0) < 4) return false;
-			} else if ((property.rooms || 0) !== $filters.rooms) return false;
+				if ((property.attributes.bedrooms || 0) < 4) return false;
+			} else if ((property.attributes.bedrooms || 0) !== $filters.rooms) return false;
 		}
 
 		if ($filters.bathrooms !== null) {
 			if ($filters.bathrooms === 3) {
-				if ((property.bathrooms || 0) < 3) return false;
-			} else if ((property.bathrooms || 0) !== $filters.bathrooms) return false;
+				if ((property.attributes.bathrooms || 0) < 3) return false;
+			} else if ((property.attributes.bathrooms || 0) !== $filters.bathrooms) return false;
 		}
 
 		if ($filters.estado && property.estado !== $filters.estado) return false;
 
 		if ($filters.features.length > 0) {
-			const propFeatures = property.features || [];
 			for (const feat of $filters.features) {
-				if (!propFeatures.includes(feat)) return false;
+				const prop = property as Record<string, unknown>;
+				if (prop[feat] !== true) return false;
 			}
 		}
 
@@ -220,6 +225,23 @@ export const filteredProperties = derived([filters, allProperties], ([$filters, 
 			const now = new Date();
 			const diff = (now.getTime() - published.getTime()) / (1000 * 60 * 60 * 24);
 			if (diff > $filters.publishedDays) return false;
+		}
+
+		if ($filters.zone) {
+			const zoneKeywords: Record<string, string[]> = {
+				'plaza': ['plaza', 'centro'],
+				'barrio-norte': ['barrio norte', 'norte', 'barrio san martín', 'san martín'],
+				'barrio-sur': ['barrio sur', 'sur', 'barrio progreso', 'progreso'],
+				'zona-club': ['club', 'estadio', 'jockey'],
+				'centro': ['centro', 'av. principal', 'peatonal']
+			};
+			const keywords = zoneKeywords[$filters.zone] || [];
+			if (keywords.length > 0) {
+				const locLower = property.location.toLowerCase();
+				const titleLower = property.title.toLowerCase();
+				const hasZone = keywords.some(kw => locLower.includes(kw) || titleLower.includes(kw));
+				if (!hasZone) return false;
+			}
 		}
 
 		return true;

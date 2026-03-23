@@ -36,7 +36,8 @@ function createPropertiesStore(): PropertiesStore {
 		add: (property: Omit<Property, 'id'>) => {
 			const newProperty: Property = {
 				...property,
-				id: crypto.randomUUID()
+				id: crypto.randomUUID(),
+				publishedAt: new Date().toISOString()
 			};
 			updateStore(props => {
 				const updated = [newProperty, ...props];

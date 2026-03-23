@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Heart, Bed, Bath, Maximize } from 'lucide-svelte';
 	import { base } from '$app/paths';
+	import { Splide, SplideSlide } from '@splidejs/svelte-splide';
+	import '@splidejs/svelte-splide/css';
 	import type { Property } from '$lib/data/properties';
 	import { favorites } from '$lib/stores/favorites';
 
@@ -13,19 +15,55 @@
 		e.stopPropagation();
 		favorites.toggle(property.id);
 	}
+
+	function formatDate(isoString: string): string {
+		const date = new Date(isoString);
+		const now = new Date();
+		const diff = now.getTime() - date.getTime();
+		const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+		if (days === 0) return 'Hoy';
+		if (days === 1) return 'Ayer';
+		if (days < 7) return `Hace ${days} días`;
+		if (days < 30) return `Hace ${Math.floor(days / 7)} sem`;
+		return date.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+	}
+
+	$: images = property.images && property.images.length > 0
+		? property.images
+		: property.image
+			? [property.image]
+			: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'];
 </script>
 
 <a href="{base}/property/{property.id}" class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
 	<div class="relative aspect-[16/10] overflow-hidden bg-gray-100">
-		<img
-			src={property.image}
-			alt={property.title}
-			class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-			loading="lazy"
-		/>
+		<Splide
+			options={{
+				rewind: true,
+				gap: '0.5rem',
+				arrows: false,
+				dots: true,
+				autoplay: false,
+				perPage: 1,
+				cover: true,
+				heightRatio: 0.625
+			}}
+			class="h-full"
+		>
+			{#each images as image}
+				<SplideSlide>
+					<img
+						src={image}
+						alt={property.title}
+						class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+						loading="lazy"
+					/>
+				</SplideSlide>
+			{/each}
+		</Splide>
 		<button
 			on:click={toggleFavorite}
-			class="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors"
+			class="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors z-10"
 			aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
 		>
 			<Heart
@@ -33,11 +71,11 @@
 			/>
 		</button>
 		{#if property.featured}
-			<div class="absolute top-3 left-3 px-2 py-1 bg-accent text-white text-xs font-semibold rounded">
+			<div class="absolute top-3 left-3 px-2 py-1 bg-accent text-white text-xs font-semibold rounded z-10">
 				Destacado
 			</div>
 		{/if}
-		<div class="absolute bottom-3 left-3 px-2 py-1 bg-primary text-white text-xs font-medium rounded">
+		<div class="absolute bottom-3 left-3 px-2 py-1 bg-primary text-white text-xs font-medium rounded z-10">
 			{property.operation === 'buy' ? 'Venta' : 'Alquiler'}
 		</div>
 	</div>
@@ -60,6 +98,9 @@
 			</svg>
 			{property.location}
 		</p>
+		{#if property.publishedAt}
+			<p class="text-gray-400 text-xs mb-3">{formatDate(property.publishedAt)}</p>
+		{/if}
 
 		<div class="flex items-center gap-4 pt-3 border-t border-gray-100">
 			{#if property.attributes.bedrooms > 0}

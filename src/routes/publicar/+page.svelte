@@ -30,6 +30,7 @@
 	let imagePreviews: string[] = [];
 	let error = '';
 	let success = false;
+	let createdPropertyId: string | null = null;
 
 	// File upload state
 	let fileDragOver = false;
@@ -205,6 +206,7 @@
 			location,
 			address,
 			image: imagePreviews[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
+			images: imagePreviews,
 			propertyType: propertyTypeMap[propertyType] || 'apartment',
 			attributes: {
 				bedrooms: parseInt(bedrooms) || 0,
@@ -214,16 +216,19 @@
 			operation,
 			featured: true,
 			agentEmail: $currentUser!.email,
+			agentId: $currentUser!.id,
 			isUserProperty: true
 		};
 
 		if (isEditing && editId) {
 			propertiesStore.update(editId, propertyData);
+			success = true;
 		} else {
-			propertiesStore.add(propertyData);
+			const newProp = propertiesStore.add(propertyData);
+			createdPropertyId = newProp.id;
+			success = true;
 		}
-
-		success = true;
+		window.scrollTo(0, 0);
 	}
 
 	function handleImageUpload(e: Event) {
@@ -276,17 +281,19 @@
 					{isEditing ? 'Los cambios fueron guardados exitosamente.' : 'Tu propiedad fue publicada exitosamente.'}
 				</p>
 				<div class="flex flex-col sm:flex-row gap-3 justify-center">
+					{#if !isEditing && createdPropertyId}
+						<a
+							href="{base}/property/{createdPropertyId}"
+							class="px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
+						>
+							Ver publicación
+						</a>
+					{/if}
 					<button
 						on:click={() => goto(base + '/mis-propiedades')}
-						class="px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
-					>
-						Mis propiedades
-					</button>
-					<button
-						on:click={() => goto(base + '/')}
 						class="px-6 py-3 border-2 border-gray-200 text-gray-700 font-semibold rounded-lg transition-colors hover:bg-gray-50"
 					>
-						Ver todas
+						Mis propiedades
 					</button>
 				</div>
 			</div>
@@ -299,7 +306,7 @@
 				</div>
 				<h1 class="text-2xl font-bold text-gray-900 mb-2">Iniciá sesión</h1>
 				<p class="text-gray-500 mb-6">
-					Tenés que iniciar sesión como agente para {isEditing ? 'editar' : 'publicar'} propiedades.
+					Tenés que iniciar sesión para {isEditing ? 'editar' : 'publicar'} propiedades.
 				</p>
 				<button
 					on:click={handleLoginRedirect}
@@ -307,18 +314,6 @@
 				>
 					Iniciar sesión
 				</button>
-			</div>
-		</div>
-	{:else if !$isAgent}
-		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
-			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-				<div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-					<Building2 class="w-8 h-8 text-accent" />
-				</div>
-				<h1 class="text-2xl font-bold text-gray-900 mb-2">Solo agentes</h1>
-				<p class="text-gray-500 mb-6">
-					Tu cuenta es de tipo buscador. Los agentes inmobiliarios pueden {isEditing ? 'editar' : 'publicar'} propiedades.
-				</p>
 			</div>
 		</div>
 	{:else}
