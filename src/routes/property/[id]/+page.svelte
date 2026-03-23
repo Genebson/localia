@@ -25,7 +25,8 @@
 	import { favorites } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
 	import { agencyStore } from '$lib/stores/agencies';
-	import { currentUser } from '$lib/stores/auth';
+	import { currentUser, auth } from '$lib/stores/auth';
+	import { authModalOpen } from '$lib/stores/authModal';
 	import { onMount } from 'svelte';
 
 	$: property = $allProperties.find((p) => p.id === $page.params.id);
@@ -55,6 +56,10 @@
 	});
 
 	function toggleFavorite() {
+		if (!$auth) {
+			authModalOpen.set(true);
+			return;
+		}
 		if (property) {
 			favorites.toggle(property.id);
 		}
@@ -143,6 +148,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 							</Splide>
 							<button
 								on:click={toggleFavorite}
+								aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
 								class="absolute top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors z-10"
 							>
 								<Heart

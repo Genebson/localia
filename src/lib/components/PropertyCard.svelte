@@ -5,6 +5,8 @@
 	import '@splidejs/svelte-splide/css';
 	import type { Property } from '$lib/data/properties';
 	import { favorites } from '$lib/stores/favorites';
+	import { auth } from '$lib/stores/auth';
+	import { authModalOpen } from '$lib/stores/authModal';
 
 	export let property: Property;
 
@@ -13,6 +15,10 @@
 	function toggleFavorite(e: MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
+		if (!$auth) {
+			authModalOpen.set(true);
+			return;
+		}
 		favorites.toggle(property.id);
 	}
 
