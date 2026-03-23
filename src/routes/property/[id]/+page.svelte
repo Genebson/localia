@@ -20,6 +20,7 @@
 	import { Splide, SplideSlide } from '@splidejs/svelte-splide';
 	import '@splidejs/svelte-splide/css';
 	import ImageLightbox from '$lib/components/ImageLightbox.svelte';
+	import PropertyMap from '$lib/components/PropertyMap.svelte';
 	import { allProperties } from '$lib/stores/properties';
 	import { favorites } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
@@ -243,6 +244,11 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								<p class="text-gray-600 leading-relaxed whitespace-pre-line">
 									{mockDescription}
 								</p>
+							</div>
+
+							<div class="mt-6">
+								<h2 class="text-lg font-semibold text-gray-900 mb-3">Ubicación</h2>
+								<PropertyMap location={property.location} />
 							</div>
 
 							<div class="mt-6">

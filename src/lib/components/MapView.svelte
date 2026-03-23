@@ -68,7 +68,12 @@
 			Olivos: [-34.5074, -58.4912],
 			Almagro: [-34.6081, -58.42],
 			Núñez: [-34.5453, -58.4475],
-			Flores: [-34.6282, -58.44]
+			Flores: [-34.6282, -58.44],
+			Centro: [-34.6504, -59.4307],
+			'Barrio Norte': [-34.6389, -59.4189],
+			'Barrio Sur': [-34.6667, -59.4422],
+			'Zona del Club': [-34.6556, -59.4489],
+			Mercedes: [-34.6504, -59.4307]
 		};
 
 		for (const [area, coords] of Object.entries(coordMap)) {
