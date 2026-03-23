@@ -94,42 +94,4 @@ export const loteos: Loteo[] = [
 			{ id: 'lp-10', manzana: 'B', lote: '5', price: 63000, status: 'reserved', size: 700 }
 		]
 	},
-	{
-		id: 'el-ombu',
-		name: 'El Ombú',
-		description: 'Loteo convencional en zona urbana, cerca de escuelas y comercio',
-		location: 'Exaltación de la Cruz, Buenos Aires',
-		image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-		parcels: [
-			{ id: 'eo-1', manzana: '1', lote: '1', price: 28000, status: 'available', size: 350 },
-			{ id: 'eo-2', manzana: '1', lote: '2', price: 30000, status: 'available', size: 380 },
-			{ id: 'eo-3', manzana: '1', lote: '3', price: 32000, status: 'sold', size: 400 },
-			{ id: 'eo-4', manzana: '1', lote: '4', price: 34000, status: 'available', size: 420 },
-			{ id: 'eo-5', manzana: '1', lote: '5', price: 36000, status: 'available', size: 450 },
-			{ id: 'eo-6', manzana: '2', lote: '1', price: 26000, status: 'reserved', size: 330 },
-			{ id: 'eo-7', manzana: '2', lote: '2', price: 29000, status: 'available', size: 360 },
-			{ id: 'eo-8', manzana: '2', lote: '3', price: 31000, status: 'available', size: 390 },
-			{ id: 'eo-9', manzana: '2', lote: '4', price: 33000, status: 'sold', size: 410 },
-			{ id: 'eo-10', manzana: '2', lote: '5', price: 35000, status: 'available', size: 440 }
-		]
-	},
-	{
-		id: 'villa-del-parque',
-		name: 'Villa del Parque',
-		description: 'Desarrollo residencial premium en Pilar',
-		location: 'Pilar, Buenos Aires',
-		image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
-		parcels: [
-			{ id: 'vp-1', manzana: 'A', lote: '1', price: 75000, status: 'available', size: 800 },
-			{ id: 'vp-2', manzana: 'A', lote: '2', price: 80000, status: 'reserved', size: 850 },
-			{ id: 'vp-3', manzana: 'A', lote: '3', price: 85000, status: 'available', size: 900 },
-			{ id: 'vp-4', manzana: 'A', lote: '4', price: 90000, status: 'sold', size: 950 },
-			{ id: 'vp-5', manzana: 'A', lote: '5', price: 95000, status: 'available', size: 1000 },
-			{ id: 'vp-6', manzana: 'B', lote: '1', price: 72000, status: 'available', size: 780 },
-			{ id: 'vp-7', manzana: 'B', lote: '2', price: 77000, status: 'available', size: 830 },
-			{ id: 'vp-8', manzana: 'B', lote: '3', price: 82000, status: 'sold', size: 880 },
-			{ id: 'vp-9', manzana: 'B', lote: '4', price: 87000, status: 'available', size: 930 },
-			{ id: 'vp-10', manzana: 'B', lote: '5', price: 92000, status: 'reserved', size: 980 }
-		]
-	}
 ];
