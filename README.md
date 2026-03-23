@@ -1,42 +1,113 @@
-# sv
+# Localia
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Real estate platform for Mercedes, Buenos Aires. Built with SvelteKit, TypeScript, Tailwind CSS, and Playwright.
 
-## Creating a project
+## Prerequisites
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Node.js** 20.15.0 or higher
+- **npm** 10.x or higher
 
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
+Check your versions:
 
 ```sh
-# recreate this project
-npx sv@0.12.8 create --template minimal --types ts --install npm localia
+node --version
+npm --version
 ```
 
-## Developing
+## Installation
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```sh
+npm install
+```
+
+## Development
 
 ```sh
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Opens at [http://localhost:5173/localia/](http://localhost:5173/localia/)
 
-To create a production version of your app:
+## Available Scripts
+
+| Command                 | Description                         |
+| ----------------------- | ----------------------------------- |
+| `npm run dev`           | Start development server            |
+| `npm run build`         | Build for production                |
+| `npm run preview`       | Preview production build locally    |
+| `npm run check`         | Type-check with svelte-check        |
+| `npm run check:watch`   | Type-check in watch mode            |
+| `npm run test`          | Run Playwright tests                |
+| `npm run test:ui`       | Run Playwright tests with UI        |
+| `npm run test:headed`   | Run Playwright tests in headed mode |
+| `npm run test:coverage` | Run tests with coverage report      |
+| `npm run lint`          | Run ESLint                          |
+| `npm run lint:fix`      | Fix ESLint auto-fixable issues      |
+| `npm run format`        | Format all files with Prettier      |
+
+## Tech Stack
+
+- **Framework**: SvelteKit with TypeScript
+- **Styling**: Tailwind CSS
+- **Testing**: Playwright
+- **Linting**: ESLint + Prettier
+- **Adapter**: @sveltejs/adapter-static
+
+## Project Structure
+
+```
+localia/
+├── src/
+│   ├── lib/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── data/           # Mock data (properties, agencies, masterplans)
+│   │   └── stores/         # Svelte stores (auth, filters, favorites)
+│   └── routes/             # SvelteKit pages
+├── tests/                  # Playwright E2E tests
+├── docs/                   # System documentation (SISTEMA.md)
+├── eslint.config.js        # ESLint flat config
+├── prettier.config.js      # Prettier config (tabs, 4 spaces)
+├── playwright.config.ts    # Playwright config
+└── svelte.config.js       # SvelteKit config
+```
+
+## Architecture Notes
+
+- **Frontend only**: No backend. All data is mocked in localStorage and Svelte stores.
+- **Location**: All mock properties are located in Mercedes, Buenos Aires, Argentina.
+- **URL base**: `/localia` (configured in svelte.config.js)
+- **Favorites & properties**: Stored in browser localStorage
+- **Filters**: Synchronized with URL query params
+
+## Code Quality
+
+ESLint and Prettier are configured with Svelte and TypeScript support.
 
 ```sh
-npm run build
+npm run lint
+npm run format
 ```
 
-You can preview the production build with `npm run preview`.
+ESLint runs as part of the CI pipeline on every push.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Documentation
+
+For domain knowledge, user flows, and feature details, see:
+
+- [`docs/SISTEMA.md`](docs/SISTEMA.md) — Complete system guide in Spanish
+
+## Routes
+
+| Route                  | Description                  | Access |
+| ---------------------- | ---------------------------- | ------ |
+| `/`                    | Homepage with search/filters | Public |
+| `/property/[id]`       | Property detail page         | Public |
+| `/masterplan`          | List of developments         | Public |
+| `/masterplan/[id]`     | Interactive development map  | Public |
+| `/tablero`             | Public search board          | Public |
+| `/furnisher`           | Virtual staging tool         | Public |
+| `/publicar`            | Publish property form        | Agents |
+| `/mis-propiedades`     | Agent's property list        | Agents |
+| `/perfil`              | Agent profile & agency       | Agents |
+| `/chepibe`             | WhatsApp CRM mock            | Agents |
+| `/inmobiliaria/[slug]` | Agency landing page          | Public |
