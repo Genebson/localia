@@ -28,7 +28,8 @@ export const inmobiliarias: Inmobiliaria[] = [
 		logo: 'https://ui-avatars.com/api/?name=Perez&background=1E3A5F&color=fff&size=128',
 		banner: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
 		tagline: 'Tu hogar ideal está acá',
-		description: 'Con más de 20 años en el mercado, somos la inmobiliaria de confianza en la zona.',
+		description:
+			'Con más de 20 años en el mercado, somos la inmobiliaria de confianza en la zona.',
 		phone: '5492345123456',
 		email: 'contacto@inmobiliariaperez.com',
 		whatsapp: '5492345123456',
@@ -44,13 +45,12 @@ export const inmobiliarias: Inmobiliaria[] = [
 		logo: 'https://ui-avatars.com/api/?name=BR&background=E8A838&color=fff&size=128',
 		banner: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80',
 		tagline: 'Expertos en el centro y alrededores',
-		description: 'Especialistas en propiedades comerciales y residenciales en el centro de la ciudad.',
+		description:
+			'Especialistas en propiedades comerciales y residenciales en el centro de la ciudad.',
 		phone: '5491123456789',
 		email: 'info@bienesraicesdelcentro.com',
 		whatsapp: '5491123456789',
-		team: [
-			{ name: 'Carlos García', role: 'Gerente', phone: '5491123456789' }
-		]
+		team: [{ name: 'Carlos García', role: 'Gerente', phone: '5491123456789' }]
 	},
 	{
 		id: '3',

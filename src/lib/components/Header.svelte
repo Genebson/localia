@@ -54,7 +54,11 @@
 
 <svelte:window on:click={handleWindowClick} />
 
-<header class="fixed top-0 left-0 right-0 z-40 transition-all duration-200 {isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'}">
+<header
+	class="fixed top-0 left-0 right-0 z-40 transition-all duration-200 {isScrolled
+		? 'bg-white/95 backdrop-blur-md shadow-sm'
+		: 'bg-transparent'}"
+>
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex items-center justify-between h-16 md:h-20">
 			<a href="{base}/" class="flex items-center gap-2">
@@ -86,25 +90,45 @@
 					</button>
 
 					{#if isToolsMenuOpen}
-						<div class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2">
-							<a href="{base}/masterplan" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+						<div
+							class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2"
+						>
+							<a
+								href="{base}/masterplan"
+								on:click={() => (isToolsMenuOpen = false)}
+								class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+							>
 								Masterplans
 							</a>
-							<a href="{base}/tablero" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+							<a
+								href="{base}/tablero"
+								on:click={() => (isToolsMenuOpen = false)}
+								class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+							>
 								Tablero de búsquedas
 							</a>
-							<a href="{base}/furnisher" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 m-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all">
+							<a
+								href="{base}/furnisher"
+								on:click={() => (isToolsMenuOpen = false)}
+								class="block px-4 py-2 m-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] transition-all"
+							>
 								<div class="flex items-center justify-between">
 									<div class="flex items-center gap-2">
 										<span class="text-lg">✨</span>
 										<span class="font-semibold">Furnisher</span>
 									</div>
-									<span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">Nuevo</span>
+									<span class="text-xs bg-white/20 px-2 py-0.5 rounded-full"
+										>Nuevo</span
+									>
 								</div>
 							</a>
 							{#if $isAgent}
 								<div class="border-t border-gray-100 my-1"></div>
-								<a href="{base}/chepibe" on:click={() => isToolsMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+								<a
+									href="{base}/chepibe"
+									on:click={() => (isToolsMenuOpen = false)}
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+								>
 									ChePibe CRM
 								</a>
 							{/if}
@@ -113,7 +137,10 @@
 				</div>
 
 				{#if $isAgent}
-					<a href="{base}/publicar" class="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors">
+					<a
+						href="{base}/publicar"
+						class="px-4 py-2 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors"
+					>
 						Publicar propiedad
 					</a>
 				{/if}
@@ -124,7 +151,9 @@
 							on:click={toggleUserMenu}
 							class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
 						>
-							<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+							<div
+								class="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+							>
 								{#if $currentUser.role === 'agent'}
 									<Building2 class="w-4 h-4 text-white" />
 								{:else}
@@ -136,19 +165,33 @@
 						</button>
 
 						{#if isUserMenuOpen}
-							<div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2">
+							<div
+								class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2"
+							>
 								<div class="px-4 py-2 border-b border-gray-100">
-									<p class="text-sm font-medium text-gray-900">{$currentUser.name}</p>
+									<p class="text-sm font-medium text-gray-900">
+										{$currentUser.name}
+									</p>
 									<p class="text-xs text-gray-500">{$currentUser.email}</p>
 									{#if $currentUser.matricula}
-										<p class="text-xs text-accent mt-1">Matrícula: {$currentUser.matricula}</p>
+										<p class="text-xs text-accent mt-1">
+											Matrícula: {$currentUser.matricula}
+										</p>
 									{/if}
 								</div>
-								<a href="{base}/perfil" on:click={() => isUserMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+								<a
+									href="{base}/perfil"
+									on:click={() => (isUserMenuOpen = false)}
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+								>
 									Mi perfil
 								</a>
 								{#if $isAgent}
-									<a href="{base}/mis-propiedades" on:click={() => isUserMenuOpen = false} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+									<a
+										href="{base}/mis-propiedades"
+										on:click={() => (isUserMenuOpen = false)}
+										class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+									>
 										Mis propiedades
 									</a>
 								{/if}
@@ -211,25 +254,49 @@
 				</button>
 
 				<div class="border-t border-gray-100 my-2 pt-2">
-					<p class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Herramientas</p>
-					<a href="{base}/masterplan" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">
+					<p class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">
+						Herramientas
+					</p>
+					<a
+						href="{base}/masterplan"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-2 text-gray-700"
+					>
 						Masterplans
 					</a>
-					<a href="{base}/tablero" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">
+					<a
+						href="{base}/tablero"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-2 text-gray-700"
+					>
 						Tablero de búsquedas
 					</a>
-					<a href="{base}/furnisher" on:click={() => isMenuOpen = false} class="block py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg px-3 -mx-3 font-semibold">
-						✨ Furnisher <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1">Nuevo</span>
+					<a
+						href="{base}/furnisher"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg px-3 -mx-3 font-semibold"
+					>
+						✨ Furnisher <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1"
+							>Nuevo</span
+						>
 					</a>
 					{#if $isAgent}
-						<a href="{base}/chepibe" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">
+						<a
+							href="{base}/chepibe"
+							on:click={() => (isMenuOpen = false)}
+							class="block py-2 text-gray-700"
+						>
 							ChePibe CRM
 						</a>
 					{/if}
 				</div>
 
 				{#if $isAgent}
-					<a href="{base}/publicar" on:click={() => isMenuOpen = false} class="block py-3 bg-accent text-white font-semibold text-center rounded-lg">
+					<a
+						href="{base}/publicar"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-3 bg-accent text-white font-semibold text-center rounded-lg"
+					>
 						Publicar propiedad
 					</a>
 				{/if}
@@ -237,7 +304,9 @@
 				{#if $currentUser}
 					<div class="pt-3 border-t border-gray-100">
 						<div class="flex items-center gap-3 mb-3">
-							<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+							<div
+								class="w-10 h-10 bg-primary rounded-full flex items-center justify-center"
+							>
 								{#if $currentUser.role === 'agent'}
 									<Building2 class="w-5 h-5 text-white" />
 								{:else}
@@ -249,9 +318,17 @@
 								<p class="text-sm text-gray-500">{$currentUser.email}</p>
 							</div>
 						</div>
-						<a href="{base}/perfil" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">Mi perfil</a>
+						<a
+							href="{base}/perfil"
+							on:click={() => (isMenuOpen = false)}
+							class="block py-2 text-gray-700">Mi perfil</a
+						>
 						{#if $isAgent}
-							<a href="{base}/mis-propiedades" on:click={() => isMenuOpen = false} class="block py-2 text-gray-700">Mis propiedades</a>
+							<a
+								href="{base}/mis-propiedades"
+								on:click={() => (isMenuOpen = false)}
+								class="block py-2 text-gray-700">Mis propiedades</a
+							>
 						{/if}
 						<button
 							on:click={handleLogout}
@@ -263,13 +340,19 @@
 				{:else}
 					<div class="pt-3 border-t border-gray-100 space-y-2">
 						<button
-							on:click={() => { openAuthModal('login'); isMenuOpen = false; }}
+							on:click={() => {
+								openAuthModal('login');
+								isMenuOpen = false;
+							}}
 							class="block w-full py-3 border-2 border-primary text-primary font-semibold text-center rounded-lg"
 						>
 							Iniciar sesión
 						</button>
 						<button
-							on:click={() => { openAuthModal('register'); isMenuOpen = false; }}
+							on:click={() => {
+								openAuthModal('register');
+								isMenuOpen = false;
+							}}
 							class="block w-full py-3 bg-primary text-white font-semibold text-center rounded-lg"
 						>
 							Registrarse

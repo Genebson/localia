@@ -37,7 +37,7 @@ function createAgencyStore() {
 				...agency,
 				id: crypto.randomUUID()
 			};
-			update(agencies => {
+			update((agencies) => {
 				const updated = [...agencies, newAgency];
 				saveToStorage(updated);
 				return updated;
@@ -45,15 +45,15 @@ function createAgencyStore() {
 			return newAgency;
 		},
 		update(id: string, changes: Partial<Inmobiliaria>) {
-			update(agencies => {
-				const updated = agencies.map(a => a.id === id ? { ...a, ...changes } : a);
+			update((agencies) => {
+				const updated = agencies.map((a) => (a.id === id ? { ...a, ...changes } : a));
 				saveToStorage(updated);
 				return updated;
 			});
 		},
 		remove(id: string) {
-			update(agencies => {
-				const updated = agencies.filter(a => a.id !== id);
+			update((agencies) => {
+				const updated = agencies.filter((a) => a.id !== id);
 				saveToStorage(updated);
 				return updated;
 			});

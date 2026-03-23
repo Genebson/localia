@@ -4,7 +4,7 @@
 	import { loteos, type Parcel } from '$lib/data/masterplans';
 
 	const lotoId = $page.params.id;
-	const loto = loteos.find(l => l.id === lotoId);
+	const loto = loteos.find((l) => l.id === lotoId);
 
 	let selectedParcel: Parcel | null = null;
 	let hoveredParcel: Parcel | null = null;
@@ -17,10 +17,14 @@
 		sold: { bg: '#EF4444', light: '#FEE2E2', text: 'Vendido' }
 	};
 
-	const manzanas = [...new Set(loto?.parcels.map(p => p.manzana) || [])].sort();
+	const manzanas = [...new Set(loto?.parcels.map((p) => p.manzana) || [])].sort();
 
 	function getParcelsByManzana(mz: string) {
-		return loto?.parcels.filter(p => p.manzana === mz).sort((a, b) => a.lote.localeCompare(b.lote)) || [];
+		return (
+			loto?.parcels
+				.filter((p) => p.manzana === mz)
+				.sort((a, b) => a.lote.localeCompare(b.lote)) || []
+		);
 	}
 
 	function handleParcelHover(event: MouseEvent, parcel: Parcel) {
@@ -72,22 +76,37 @@
 				<div class="lg:col-span-2">
 					<div class="bg-white rounded-xl shadow-sm p-6">
 						<div class="mb-4 flex items-center gap-4 text-sm">
-							<span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-500"></span> Disponible</span>
-							<span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-yellow-500"></span> Reservado</span>
-							<span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-500"></span> Vendido</span>
+							<span class="flex items-center gap-1"
+								><span class="w-3 h-3 rounded bg-green-500"></span> Disponible</span
+							>
+							<span class="flex items-center gap-1"
+								><span class="w-3 h-3 rounded bg-yellow-500"></span> Reservado</span
+							>
+							<span class="flex items-center gap-1"
+								><span class="w-3 h-3 rounded bg-red-500"></span> Vendido</span
+							>
 						</div>
 						<div class="flex flex-wrap gap-6 justify-center">
 							{#each manzanas as mz}
 								<div>
-									<p class="text-center text-sm font-medium text-gray-500 mb-2">Manzana {mz}</p>
-									<div class="flex flex-wrap gap-1 justify-center" style="max-width: 280px;">
+									<p class="text-center text-sm font-medium text-gray-500 mb-2">
+										Manzana {mz}
+									</p>
+									<div
+										class="flex flex-wrap gap-1 justify-center"
+										style="max-width: 280px;"
+									>
 										{#each getParcelsByManzana(mz) as parcel}
 											<button
 												on:mouseenter={(e) => handleParcelHover(e, parcel)}
 												on:mouseleave={handleParcelLeave}
 												on:click={() => handleParcelClick(parcel)}
-												style="background-color: {statusColors[parcel.status].bg}; width: 36px; height: 36px; border-radius: 4px; font-size: 10px; font-weight: 600; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: all 0.15s;"
-												on:mouseenter={(e) => e.currentTarget.style.borderColor = '#1E3A5F'}
+												style="background-color: {statusColors[
+													parcel.status
+												]
+													.bg}; width: 36px; height: 36px; border-radius: 4px; font-size: 10px; font-weight: 600; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: all 0.15s;"
+												on:mouseenter={(e) =>
+													(e.currentTarget.style.borderColor = '#1E3A5F')}
 											>
 												{parcel.lote}
 											</button>
@@ -103,23 +122,32 @@
 					<div class="bg-white rounded-xl shadow-sm p-6">
 						<h2 class="font-semibold text-lg text-gray-900 mb-4">Lotes disponibles</h2>
 						<div class="space-y-3 max-h-96 overflow-y-auto">
-							{#each loto.parcels.filter(p => p.status === 'available') as parcel}
+							{#each loto.parcels.filter((p) => p.status === 'available') as parcel}
 								<button
 									on:click={() => handleParcelClick(parcel)}
 									class="w-full text-left p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-primary/5 transition-colors"
 								>
 									<div class="flex items-center justify-between">
-										<span class="font-medium text-gray-900">Manzana {parcel.manzana} - Lote {parcel.lote}</span>
-										<span class="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">Disponible</span>
+										<span class="font-medium text-gray-900"
+											>Manzana {parcel.manzana} - Lote {parcel.lote}</span
+										>
+										<span
+											class="text-xs px-2 py-0.5 rounded bg-green-100 text-green-700"
+											>Disponible</span
+										>
 									</div>
 									<div class="mt-1 flex items-center justify-between">
 										<span class="text-sm text-gray-500">{parcel.size} m²</span>
-										<span class="font-semibold text-accent">USD {parcel.price.toLocaleString()}</span>
+										<span class="font-semibold text-accent"
+											>USD {parcel.price.toLocaleString()}</span
+										>
 									</div>
 								</button>
 							{/each}
-							{#if loto.parcels.filter(p => p.status === 'available').length === 0}
-								<p class="text-gray-500 text-sm text-center py-4">No hay lotes disponibles</p>
+							{#if loto.parcels.filter((p) => p.status === 'available').length === 0}
+								<p class="text-gray-500 text-sm text-center py-4">
+									No hay lotes disponibles
+								</p>
 							{/if}
 						</div>
 					</div>
@@ -129,13 +157,27 @@
 
 		{#if selectedParcel}
 			<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-				<div class="absolute inset-0 bg-black/50" on:click={closeModal} on:keydown={(e) => e.key === 'Escape' && closeModal()} role="button" tabindex="0" aria-label="Cerrar"></div>
+				<div
+					class="absolute inset-0 bg-black/50"
+					on:click={closeModal}
+					on:keydown={(e) => e.key === 'Escape' && closeModal()}
+					role="button"
+					tabindex="0"
+					aria-label="Cerrar"
+				></div>
 				<div class="relative bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
-					<button on:click={closeModal} class="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full">
+					<button
+						on:click={closeModal}
+						class="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full"
+					>
 						<X class="w-5 h-5 text-gray-500" />
 					</button>
 					<div class="mb-4">
-						<span class="inline-flex items-center gap-1 px-2 py-1 rounded text-sm font-medium" style="background-color: {statusColors[selectedParcel.status].light}; color: {statusColors[selectedParcel.status].bg};">
+						<span
+							class="inline-flex items-center gap-1 px-2 py-1 rounded text-sm font-medium"
+							style="background-color: {statusColors[selectedParcel.status]
+								.light}; color: {statusColors[selectedParcel.status].bg};"
+						>
 							{#if selectedParcel.status === 'available'}
 								<CheckCircle class="w-4 h-4" />
 							{:else if selectedParcel.status === 'reserved'}
@@ -146,7 +188,9 @@
 							{statusColors[selectedParcel.status].text}
 						</span>
 					</div>
-					<h3 class="text-xl font-bold text-gray-900 mb-2">Manzana {selectedParcel.manzana} - Lote {selectedParcel.lote}</h3>
+					<h3 class="text-xl font-bold text-gray-900 mb-2">
+						Manzana {selectedParcel.manzana} - Lote {selectedParcel.lote}
+					</h3>
 					<div class="space-y-2 mb-6">
 						<div class="flex justify-between text-gray-600">
 							<span>Superficie</span>
@@ -154,7 +198,9 @@
 						</div>
 						<div class="flex justify-between text-gray-600">
 							<span>Precio</span>
-							<span class="font-bold text-xl text-accent">USD {selectedParcel.price.toLocaleString()}</span>
+							<span class="font-bold text-xl text-accent"
+								>USD {selectedParcel.price.toLocaleString()}</span
+							>
 						</div>
 					</div>
 					{#if selectedParcel.status === 'available'}
@@ -168,7 +214,9 @@
 							Consultar por WhatsApp
 						</a>
 					{:else}
-						<div class="flex items-center justify-center gap-2 w-full py-3 bg-gray-200 text-gray-500 font-semibold rounded-lg cursor-not-allowed">
+						<div
+							class="flex items-center justify-center gap-2 w-full py-3 bg-gray-200 text-gray-500 font-semibold rounded-lg cursor-not-allowed"
+						>
 							<X class="w-5 h-5" />
 							{selectedParcel.status === 'reserved' ? 'Reservado' : 'Vendido'}
 						</div>
@@ -180,11 +228,15 @@
 		{#if hoveredParcel}
 			<div
 				class="fixed z-50 px-3 py-2 rounded-lg shadow-lg text-sm font-medium"
-				style="left: {tooltipX}px; top: {tooltipY}px; background-color: {statusColors[hoveredParcel.status].bg}; color: white; pointer-events: none;"
+				style="left: {tooltipX}px; top: {tooltipY}px; background-color: {statusColors[
+					hoveredParcel.status
+				].bg}; color: white; pointer-events: none;"
 			>
 				Manzana {hoveredParcel.manzana} - Lote {hoveredParcel.lote}
 				<br />
-				<span style="opacity: 0.9;">USD {hoveredParcel.price.toLocaleString()} · {hoveredParcel.size} m²</span>
+				<span style="opacity: 0.9;"
+					>USD {hoveredParcel.price.toLocaleString()} · {hoveredParcel.size} m²</span
+				>
 			</div>
 		{/if}
 	{/if}

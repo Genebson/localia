@@ -3,14 +3,14 @@
 	import { loteos } from '$lib/data/masterplans';
 	import { base } from '$app/paths';
 
-	function getAvailableCount(loteo: typeof loteos[0]) {
-		return loteo.parcels.filter(p => p.status === 'available').length;
+	function getAvailableCount(loteo: (typeof loteos)[0]) {
+		return loteo.parcels.filter((p) => p.status === 'available').length;
 	}
 
-	function getPriceRange(loteo: typeof loteos[0]) {
-		const available = loteo.parcels.filter(p => p.status === 'available');
+	function getPriceRange(loteo: (typeof loteos)[0]) {
+		const available = loteo.parcels.filter((p) => p.status === 'available');
 		if (available.length === 0) return 'Sin disponibilidad';
-		const prices = available.map(p => p.price);
+		const prices = available.map((p) => p.price);
 		const min = Math.min(...prices);
 		const max = Math.max(...prices);
 		if (min === max) return `USD ${min.toLocaleString()}`;
@@ -27,7 +27,8 @@
 		<div class="text-center mb-12">
 			<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Loteos y Desarrollos</h1>
 			<p class="text-gray-500 text-lg max-w-2xl mx-auto">
-				Encontrá el lote perfecto para tu próximo hogar. Consultá disponibilidad en tiempo real.
+				Encontrá el lote perfecto para tu próximo hogar. Consultá disponibilidad en tiempo
+				real.
 			</p>
 		</div>
 
@@ -51,14 +52,20 @@
 							<span>{loteo.location}</span>
 						</div>
 						<p class="text-gray-600 text-sm mb-4 line-clamp-2">{loteo.description}</p>
-						<div class="flex items-center justify-between pt-4 border-t border-gray-100">
+						<div
+							class="flex items-center justify-between pt-4 border-t border-gray-100"
+						>
 							<div class="flex items-center gap-4 text-sm">
 								<div class="flex items-center gap-1">
 									<Grid3X3 class="w-4 h-4 text-gray-400" />
-									<span class="font-medium text-green-600">{getAvailableCount(loteo)} disponibles</span>
+									<span class="font-medium text-green-600"
+										>{getAvailableCount(loteo)} disponibles</span
+									>
 								</div>
 							</div>
-							<span class="text-sm font-semibold text-accent">{getPriceRange(loteo)}</span>
+							<span class="text-sm font-semibold text-accent"
+								>{getPriceRange(loteo)}</span
+							>
 						</div>
 					</div>
 				</a>
@@ -67,7 +74,9 @@
 
 		{#if loteos.length === 0}
 			<div class="text-center py-16">
-				<div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+				<div
+					class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+				>
 					<Grid3X3 class="w-8 h-8 text-gray-400" />
 				</div>
 				<h3 class="text-lg font-semibold text-gray-900 mb-2">No hay loteos disponibles</h3>

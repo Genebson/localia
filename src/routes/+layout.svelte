@@ -15,14 +15,14 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231E3A5F' rx='15' width='100' height='100'/><path d='M50 25L20 45V75L50 65L80 75V45L50 25Z' fill='white'/></svg>" />
+	<link
+		rel="icon"
+		href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231E3A5F' rx='15' width='100' height='100'/><path d='M50 25L20 45V75L50 65L80 75V45L50 25Z' fill='white'/></svg>"
+	/>
 </svelte:head>
 
 {#if $authModalOpen}
-	<AuthModal 
-		isOpen={true} 
-		onClose={closeAuthModal}
-	/>
+	<AuthModal isOpen={true} onClose={closeAuthModal} />
 {/if}
 
 <div class="min-h-screen flex flex-col">

@@ -17,7 +17,8 @@
 		map = L.map(mapContainer).setView([-34.6, -58.45], 12);
 
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			attribution:
+				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			maxZoom: 19
 		}).addTo(map);
 
@@ -25,12 +26,12 @@
 	}
 
 	function addMarkers(L: typeof import('leaflet'), props: Property[]) {
-		markers.forEach(m => m.remove());
+		markers.forEach((m) => m.remove());
 		markers = [];
 
 		const bounds: L.LatLngTuple[] = [];
 
-		props.forEach(p => {
+		props.forEach((p) => {
 			const coords = getCoords(p.location);
 			if (coords) {
 				const marker = L.marker(coords as L.LatLngTuple).addTo(map!);
@@ -53,21 +54,21 @@
 
 	function getCoords(location: string): [number, number] | null {
 		const coordMap: Record<string, [number, number]> = {
-			'Palermo': [-34.5715, -58.4233],
-			'Martinez': [-34.5151, -58.5109],
-			'Recoleta': [-34.5895, -58.3974],
-			'Belgrano': [-34.5624, -58.4588],
+			Palermo: [-34.5715, -58.4233],
+			Martinez: [-34.5151, -58.5109],
+			Recoleta: [-34.5895, -58.3974],
+			Belgrano: [-34.5624, -58.4588],
 			'Villa Crespo': [-34.5985, -58.4433],
-			'Catalinas': [-34.6166, -58.3682],
+			Catalinas: [-34.6166, -58.3682],
 			'San Telmo': [-34.6214, -58.3731],
 			'Carmen de Areco': [-34.4636, -58.9514],
 			'Las Cañitas': [-34.5783, -58.4333],
-			'Nordelta': [-34.4275, -58.5758],
+			Nordelta: [-34.4275, -58.5758],
 			'Puerto Madero': [-34.6167, -58.3622],
-			'Olivos': [-34.5074, -58.4912],
-			'Almagro': [-34.6081, -58.4200],
-			'Núñez': [-34.5453, -58.4475],
-			'Flores': [-34.6282, -58.4400]
+			Olivos: [-34.5074, -58.4912],
+			Almagro: [-34.6081, -58.42],
+			Núñez: [-34.5453, -58.4475],
+			Flores: [-34.6282, -58.44]
 		};
 
 		for (const [area, coords] of Object.entries(coordMap)) {
@@ -79,7 +80,7 @@
 	}
 
 	$: if (map && typeof window !== 'undefined') {
-		import('leaflet').then(L => addMarkers(L, properties));
+		import('leaflet').then((L) => addMarkers(L, properties));
 	}
 
 	onMount(() => {

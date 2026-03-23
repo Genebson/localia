@@ -3,7 +3,7 @@ import { allProperties } from './properties';
 
 function createViewedStore() {
 	const stored: string[] = [];
-	
+
 	if (typeof localStorage !== 'undefined') {
 		const data = localStorage.getItem('localia_viewed');
 		if (data) {
@@ -26,8 +26,8 @@ function createViewedStore() {
 	return {
 		subscribe,
 		add: (id: string) => {
-			update(ids => {
-				const filtered = ids.filter(i => i !== id);
+			update((ids) => {
+				const filtered = ids.filter((i) => i !== id);
 				const newIds = [id, ...filtered].slice(0, 50);
 				persist(newIds);
 				return newIds;
@@ -47,5 +47,5 @@ export const viewed = createViewedStore();
 
 export const viewedProperties = derived(viewed, ($viewed) => {
 	const all = get(allProperties);
-	return $viewed.map(id => all.find(p => p.id === id)).filter(Boolean);
+	return $viewed.map((id) => all.find((p) => p.id === id)).filter(Boolean);
 });

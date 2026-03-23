@@ -39,7 +39,7 @@ function createPropertiesStore(): PropertiesStore {
 				id: crypto.randomUUID(),
 				publishedAt: new Date().toISOString()
 			};
-			updateStore(props => {
+			updateStore((props) => {
 				const updated = [newProperty, ...props];
 				persist(updated);
 				return updated;
@@ -47,22 +47,24 @@ function createPropertiesStore(): PropertiesStore {
 			return newProperty;
 		},
 		update: (id: string, updates: Partial<Property>) => {
-			updateStore(props => {
-				const updated = props.map(p => p.id === id ? { ...p, ...updates } : p);
+			updateStore((props) => {
+				const updated = props.map((p) => (p.id === id ? { ...p, ...updates } : p));
 				persist(updated);
 				return updated;
 			});
 		},
 		delete: (id: string) => {
-			updateStore(props => {
-				const updated = props.filter(p => p.id !== id);
+			updateStore((props) => {
+				const updated = props.filter((p) => p.id !== id);
 				persist(updated);
 				return updated;
 			});
 		},
 		toggleFeatured: (id: string) => {
-			updateStore(props => {
-				const updated = props.map(p => p.id === id ? { ...p, featured: !p.featured } : p);
+			updateStore((props) => {
+				const updated = props.map((p) =>
+					p.id === id ? { ...p, featured: !p.featured } : p
+				);
 				persist(updated);
 				return updated;
 			});
@@ -83,27 +85,27 @@ export const propertiesStore: PropertiesStore = createPropertiesStore();
 export const allProperties = derived(propertiesStore, ($propertiesStore) => {
 	const seen = new Set<string>();
 	const result: Property[] = [];
-	
+
 	for (const p of initialProperties) {
 		seen.add(p.id);
 		result.push(p);
 	}
-	
+
 	for (const p of $propertiesStore) {
 		if (!seen.has(p.id)) {
 			seen.add(p.id);
 			result.push(p);
 		}
 	}
-	
+
 	return result;
 });
 
 export function getPropertyById(id: string): Property | undefined {
 	const all = get(allProperties);
-	return all.find(p => p.id === id);
+	return all.find((p) => p.id === id);
 }
 
 export function getAgentProperties(agentEmail: string): Property[] {
-	return get(propertiesStore).filter(p => p.agentEmail === agentEmail);
+	return get(propertiesStore).filter((p) => p.agentEmail === agentEmail);
 }

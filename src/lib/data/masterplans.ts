@@ -93,5 +93,5 @@ export const loteos: Loteo[] = [
 			{ id: 'lp-9', manzana: 'B', lote: '4', price: 60000, status: 'available', size: 670 },
 			{ id: 'lp-10', manzana: 'B', lote: '5', price: 63000, status: 'reserved', size: 700 }
 		]
-	},
+	}
 ];

@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-const mockAgentLogin = async ({ page }: { page: any }) => {
+const mockAgentLogin = async ({ page }: { page: Page }) => {
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
 	await page.getByRole('button', { name: 'Iniciar sesión' }).click();

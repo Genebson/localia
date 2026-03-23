@@ -1,5 +1,19 @@
 <script lang="ts">
-	import { Heart, Eye, Building2, User, Calendar, MapPin, Bed, Bath, Maximize, ExternalLink, Plus, X, Check } from 'lucide-svelte';
+	import {
+		Heart,
+		Eye,
+		Building2,
+		User,
+		Calendar,
+		MapPin,
+		Bed,
+		Bath,
+		Maximize,
+		ExternalLink,
+		Plus,
+		X,
+		Check
+	} from 'lucide-svelte';
 	import { base } from '$app/paths';
 	import { currentUser, isAgent } from '$lib/stores/auth';
 	import { favoriteProperties } from '$lib/stores/favorites';
@@ -8,9 +22,13 @@
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { agencyStore } from '$lib/stores/agencies';
 
-	$: viewedList = $viewed.map(id => $allProperties.find(p => p.id === id)).filter((p): p is NonNullable<typeof p> => p !== undefined);
+	$: viewedList = $viewed
+		.map((id) => $allProperties.find((p) => p.id === id))
+		.filter((p): p is NonNullable<typeof p> => p !== undefined);
 
-	$: userAgency = $currentUser?.id ? $agencyStore.find(a => a.agentId === $currentUser.id) : undefined;
+	$: userAgency = $currentUser?.id
+		? $agencyStore.find((a) => a.agentId === $currentUser.id)
+		: undefined;
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
@@ -39,7 +57,14 @@
 				whatsapp: userAgency.whatsapp || ''
 			};
 		} else {
-			agencyForm = { name: '', tagline: '', description: '', phone: '', email: '', whatsapp: '' };
+			agencyForm = {
+				name: '',
+				tagline: '',
+				description: '',
+				phone: '',
+				email: '',
+				whatsapp: ''
+			};
 		}
 		showAgencyModal = true;
 		agencySuccess = false;
@@ -65,7 +90,10 @@
 			return;
 		}
 
-		const slug = agencyForm.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+		const slug = agencyForm.name
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/(^-|-$)/g, '');
 
 		if (userAgency) {
 			agencyStore.update(userAgency.id, {
@@ -87,7 +115,9 @@
 				whatsapp: agencyForm.whatsapp.trim() || agencyForm.phone.trim(),
 				logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(agencyForm.name)}&background=1E3A5F&color=fff&size=128`,
 				banner: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
-				team: [{ name: $currentUser!.name, role: 'Agente', phone: agencyForm.phone.trim() }],
+				team: [
+					{ name: $currentUser!.name, role: 'Agente', phone: agencyForm.phone.trim() }
+				],
 				agentId: $currentUser!.id
 			});
 		}
@@ -107,13 +137,13 @@
 	{#if !$currentUser}
 		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
 			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-				<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+				<div
+					class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4"
+				>
 					<User class="w-8 h-8 text-primary" />
 				</div>
 				<h1 class="text-2xl font-bold text-gray-900 mb-2">Iniciá sesión</h1>
-				<p class="text-gray-500 mb-6">
-					Tenés que iniciar sesión para ver tu perfil.
-				</p>
+				<p class="text-gray-500 mb-6">Tenés que iniciar sesión para ver tu perfil.</p>
 				<button
 					on:click={handleLoginRedirect}
 					class="w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
@@ -137,22 +167,30 @@
 						<h1 class="text-2xl font-bold text-gray-900 mb-1">{$currentUser.name}</h1>
 						<p class="text-gray-500 mb-2">{$currentUser.email}</p>
 						<div class="flex flex-wrap justify-center md:justify-start gap-3">
-							<span class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full">
+							<span
+								class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full"
+							>
 								<Calendar class="w-4 h-4" />
 								Miembro desde 2024
 							</span>
 							{#if $currentUser.role === 'agent'}
-								<span class="inline-flex items-center gap-1 px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+								<span
+									class="inline-flex items-center gap-1 px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full"
+								>
 									<Building2 class="w-4 h-4" />
 									Agente Inmobiliario
 								</span>
 								{#if $currentUser.matricula}
-									<span class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+									<span
+										class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full"
+									>
 										Matrícula: {$currentUser.matricula}
 									</span>
 								{/if}
 							{:else}
-								<span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+								<span
+									class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full"
+								>
 									<User class="w-4 h-4" />
 									Buscador
 								</span>
@@ -166,7 +204,9 @@
 				<div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
 					<div class="flex items-center justify-between mb-4">
 						<div class="flex items-center gap-3">
-							<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+							<div
+								class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+							>
 								<Building2 class="w-5 h-5 text-purple-600" />
 							</div>
 							<div>
@@ -178,17 +218,27 @@
 					{#if userAgency}
 						<div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
 							<div class="flex items-center gap-3">
-								<img src={userAgency.logo} alt={userAgency.name} class="w-12 h-12 rounded-lg" />
+								<img
+									src={userAgency.logo}
+									alt={userAgency.name}
+									class="w-12 h-12 rounded-lg"
+								/>
 								<div>
 									<p class="font-semibold text-gray-900">{userAgency.name}</p>
 									<p class="text-sm text-gray-500">{userAgency.tagline}</p>
 								</div>
 							</div>
 							<div class="flex items-center gap-2">
-								<button on:click={openAgencyModal} class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+								<button
+									on:click={openAgencyModal}
+									class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+								>
 									Editar
 								</button>
-								<a href="{base}/inmobiliaria/{userAgency.slug}" class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-light transition-colors">
+								<a
+									href="{base}/inmobiliaria/{userAgency.slug}"
+									class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-light transition-colors"
+								>
 									Ver página <ExternalLink class="w-4 h-4" />
 								</a>
 							</div>
@@ -196,7 +246,10 @@
 					{:else}
 						<div class="text-center py-6">
 							<p class="text-gray-500 mb-4">Aún no tenés tu inmobiliaria creada</p>
-							<button on:click={openAgencyModal} class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors mx-auto">
+							<button
+								on:click={openAgencyModal}
+								class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors mx-auto"
+							>
 								<Plus class="w-4 h-4" /> Crear mi inmobiliaria
 							</button>
 						</div>
@@ -213,12 +266,21 @@
 					</div>
 					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 						{#each $favoriteProperties as favProperty (favProperty.id)}
-							<a href="{base}/property/{favProperty.id}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+							<a
+								href="{base}/property/{favProperty.id}"
+								class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
+							>
 								<div class="aspect-[16/10] overflow-hidden">
-									<img src={favProperty.image} alt={favProperty.title} class="w-full h-full object-cover" />
+									<img
+										src={favProperty.image}
+										alt={favProperty.title}
+										class="w-full h-full object-cover"
+									/>
 								</div>
 								<div class="p-4">
-									<p class="font-bold text-lg text-gray-900 truncate">{favProperty.title}</p>
+									<p class="font-bold text-lg text-gray-900 truncate">
+										{favProperty.title}
+									</p>
 									<p class="text-accent font-bold">{favProperty.priceLabel}</p>
 									<p class="text-gray-500 text-sm flex items-center gap-1 mt-1">
 										<MapPin class="w-4 h-4" />
@@ -240,12 +302,21 @@
 					</div>
 					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 						{#each viewedList as prop (prop.id)}
-							<a href="{base}/property/{prop.id}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+							<a
+								href="{base}/property/{prop.id}"
+								class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
+							>
 								<div class="aspect-[16/10] overflow-hidden">
-									<img src={prop.image} alt={prop.title} class="w-full h-full object-cover" />
+									<img
+										src={prop.image}
+										alt={prop.title}
+										class="w-full h-full object-cover"
+									/>
 								</div>
 								<div class="p-4">
-									<p class="font-bold text-lg text-gray-900 truncate">{prop.title}</p>
+									<p class="font-bold text-lg text-gray-900 truncate">
+										{prop.title}
+									</p>
 									<p class="text-accent font-bold">{prop.priceLabel}</p>
 									<p class="text-gray-500 text-sm flex items-center gap-1 mt-1">
 										<MapPin class="w-4 h-4" />
@@ -274,11 +345,15 @@
 
 			{#if $favoriteProperties.length === 0 && viewedList.length === 0}
 				<div class="bg-white rounded-2xl shadow-sm p-12 text-center">
-					<div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+					<div
+						class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+					>
 						<Heart class="w-8 h-8 text-gray-400" />
 					</div>
 					<h2 class="text-xl font-semibold text-gray-900 mb-2">Tu perfil está vacío</h2>
-					<p class="text-gray-500 mb-6">Explorá propiedades y guardá las que te gusten para verlas después.</p>
+					<p class="text-gray-500 mb-6">
+						Explorá propiedades y guardá las que te gusten para verlas después.
+					</p>
 					<a
 						href="{base}/"
 						class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
@@ -293,58 +368,112 @@
 
 {#if showAgencyModal}
 	<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-		<div class="absolute inset-0 bg-black/50" on:click={closeAgencyModal} on:keydown={(e) => e.key === 'Escape' && closeAgencyModal()} role="button" tabindex="0" aria-label="Cerrar"></div>
-		<div class="relative bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
-			<button on:click={closeAgencyModal} class="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full">
+		<div
+			class="absolute inset-0 bg-black/50"
+			on:click={closeAgencyModal}
+			on:keydown={(e) => e.key === 'Escape' && closeAgencyModal()}
+			role="button"
+			tabindex="0"
+			aria-label="Cerrar"
+		></div>
+		<div
+			class="relative bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+		>
+			<button
+				on:click={closeAgencyModal}
+				class="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full"
+			>
 				<X class="w-5 h-5 text-gray-500" />
 			</button>
-			<h2 class="text-xl font-bold text-gray-900 mb-6">{userAgency ? 'Editar mi inmobiliaria' : 'Crear mi inmobiliaria'}</h2>
+			<h2 class="text-xl font-bold text-gray-900 mb-6">
+				{userAgency ? 'Editar mi inmobiliaria' : 'Crear mi inmobiliaria'}
+			</h2>
 
 			{#if agencySuccess}
 				<div class="text-center py-8">
-					<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+					<div
+						class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+					>
 						<Check class="w-8 h-8 text-green-600" />
 					</div>
 					<p class="text-lg font-semibold text-gray-900">¡Guardado!</p>
 				</div>
 			{:else}
 				{#if agencyError}
-					<div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+					<div
+						class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"
+					>
 						{agencyError}
 					</div>
 				{/if}
 				<form on:submit|preventDefault={handleAgencySubmit} class="space-y-4">
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la inmobiliaria *</label>
-						<input type="text" bind:value={agencyForm.name} required placeholder="Ej: Inmobiliaria López"
-							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+						<label class="block text-sm font-medium text-gray-700 mb-1"
+							>Nombre de la inmobiliaria *</label
+						>
+						<input
+							type="text"
+							bind:value={agencyForm.name}
+							required
+							placeholder="Ej: Inmobiliaria López"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+						/>
 					</div>
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
-						<input type="tel" bind:value={agencyForm.phone} required placeholder="Ej: 5491123456789"
-							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+						<label class="block text-sm font-medium text-gray-700 mb-1"
+							>Teléfono *</label
+						>
+						<input
+							type="tel"
+							bind:value={agencyForm.phone}
+							required
+							placeholder="Ej: 5491123456789"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+						/>
 					</div>
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-						<input type="email" bind:value={agencyForm.email} required placeholder="Ej: contacto@inmobiliaria.com"
-							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+						<input
+							type="email"
+							bind:value={agencyForm.email}
+							required
+							placeholder="Ej: contacto@inmobiliaria.com"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+						/>
 					</div>
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-						<input type="tel" bind:value={agencyForm.whatsapp} placeholder="Ej: 5491123456789"
-							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+						<input
+							type="tel"
+							bind:value={agencyForm.whatsapp}
+							placeholder="Ej: 5491123456789"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+						/>
 					</div>
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
-						<input type="text" bind:value={agencyForm.tagline} placeholder="Ej: Tu hogar ideal está acá"
-							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+						<input
+							type="text"
+							bind:value={agencyForm.tagline}
+							placeholder="Ej: Tu hogar ideal está acá"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+						/>
 					</div>
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-						<textarea bind:value={agencyForm.description} rows="3" placeholder="Contanos sobre tu inmobiliaria..."
-							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"></textarea>
+						<label class="block text-sm font-medium text-gray-700 mb-1"
+							>Descripción</label
+						>
+						<textarea
+							bind:value={agencyForm.description}
+							rows="3"
+							placeholder="Contanos sobre tu inmobiliaria..."
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
+						></textarea>
 					</div>
-					<button type="submit" class="w-full py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors">
+					<button
+						type="submit"
+						class="w-full py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors"
+					>
 						{userAgency ? 'Guardar cambios' : 'Crear inmobiliaria'}
 					</button>
 				</form>

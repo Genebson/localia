@@ -7,7 +7,7 @@
 
 	let currentIndex = 0;
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{ close: void }>();
 
 	$: if (isOpen) {
 		currentIndex = 0;

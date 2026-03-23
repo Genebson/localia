@@ -2,7 +2,20 @@
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
-	import { Building2, Upload, X, MapPin, Home, User, Check, FileText, Link, Loader2, AlertCircle, ExternalLink } from 'lucide-svelte';
+	import {
+		Building2,
+		Upload,
+		X,
+		MapPin,
+		Home,
+		User,
+		Check,
+		FileText,
+		Link,
+		Loader2,
+		AlertCircle,
+		ExternalLink
+	} from 'lucide-svelte';
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { propertiesStore, getPropertyById } from '$lib/stores/properties';
@@ -47,26 +60,49 @@
 
 	// Extracted data (from file or URL)
 	let extractedData: {
-		title: string; description: string; price: string;
-		currency: 'USD' | 'ARS'; operation: 'buy' | 'rent';
-		location: string; address: string; bedrooms: string;
-		bathrooms: string; area: string; propertyType: string;
+		title: string;
+		description: string;
+		price: string;
+		currency: 'USD' | 'ARS';
+		operation: 'buy' | 'rent';
+		location: string;
+		address: string;
+		bedrooms: string;
+		bathrooms: string;
+		area: string;
+		propertyType: string;
 	} | null = null;
 
 	const propertyTypes = [
-		'Departamento', 'Casa', 'PH', 'Local comercial',
-		'Oficina', 'Terreno', 'Quincho', 'Dúplex', 'Penthouse'
+		'Departamento',
+		'Casa',
+		'PH',
+		'Local comercial',
+		'Oficina',
+		'Terreno',
+		'Quincho',
+		'Dúplex',
+		'Penthouse'
 	];
 
 	const propertyTypeMap: Record<string, PropertyType> = {
-		'Departamento': 'apartment', 'Casa': 'house', 'PH': 'apartment',
-		'Local comercial': 'commercial', 'Oficina': 'commercial',
-		'Terreno': 'terrain', 'Quincho': 'house', 'Dúplex': 'apartment', 'Penthouse': 'penthouse'
+		Departamento: 'apartment',
+		Casa: 'house',
+		PH: 'apartment',
+		'Local comercial': 'commercial',
+		Oficina: 'commercial',
+		Terreno: 'terrain',
+		Quincho: 'house',
+		Dúplex: 'apartment',
+		Penthouse: 'penthouse'
 	};
 
 	const propertyTypeLabels: Record<string, string> = {
-		'apartment': 'Departamento', 'house': 'Casa', 'penthouse': 'Penthouse',
-		'terrain': 'Terreno', 'commercial': 'Local comercial'
+		apartment: 'Departamento',
+		house: 'Casa',
+		penthouse: 'Penthouse',
+		terrain: 'Terreno',
+		commercial: 'Local comercial'
 	};
 
 	if (isEditing) {
@@ -130,24 +166,48 @@
 					urlExtractionDone = true;
 				}
 
-				const hints = (source === 'file' ? (selectedFile?.name || '') : urlInput).toLowerCase();
+				const hints = (
+					source === 'file' ? selectedFile?.name || '' : urlInput
+				).toLowerCase();
 				const isRent = hints.includes('alquiler') || hints.includes('rent');
-				const isHouse = hints.includes('casa') || hints.includes('house') || hints.includes('chalet');
+				const isHouse =
+					hints.includes('casa') || hints.includes('house') || hints.includes('chalet');
 				const isTerrain = hints.includes('terreno') || hints.includes('land');
 
 				extractedData = {
 					title: (selectedFile
-						? selectedFile.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-						: `Propiedad en ${new URL(urlInput).hostname.replace('www.', '').split('.')[0]}`).slice(0, 80),
-					description: 'Excelente propiedad en ubicación privilegiada. Ambientes luminosos, buena distribución, cercanía a medios de transporte y comercios. Ideal para vivir o invertir.',
+						? selectedFile.name
+								.replace(/\.[^/.]+$/, '')
+								.replace(/[-_]/g, ' ')
+								.replace(/\b\w/g, (l) => l.toUpperCase())
+						: `Propiedad en ${new URL(urlInput).hostname.replace('www.', '').split('.')[0]}`
+					).slice(0, 80),
+					description:
+						'Excelente propiedad en ubicación privilegiada. Ambientes luminosos, buena distribución, cercanía a medios de transporte y comercios. Ideal para vivir o invertir.',
 					price: String(Math.floor(Math.random() * 500000) + 100000),
 					currency: isRent ? 'ARS' : 'USD',
 					operation: isRent ? 'rent' : 'buy',
-					location: isTerrain ? 'Nordelta, Tigre' : isHouse ? 'Olivos, Vicente López' : 'Palermo, Buenos Aires',
+					location: isTerrain
+						? 'Nordelta, Tigre'
+						: isHouse
+							? 'Olivos, Vicente López'
+							: 'Palermo, Buenos Aires',
 					address: isTerrain ? 'Manzana 12 Lote 45' : 'Av. Santa Fe 2456',
-					bedrooms: isHouse ? '4' : isTerrain ? '0' : String(Math.floor(Math.random() * 3) + 1),
-					bathrooms: isHouse ? '3' : isTerrain ? '0' : String(Math.floor(Math.random() * 2) + 1),
-					area: isTerrain ? String(Math.floor(Math.random() * 2000) + 500) : isHouse ? String(Math.floor(Math.random() * 200) + 120) : String(Math.floor(Math.random() * 80) + 40),
+					bedrooms: isHouse
+						? '4'
+						: isTerrain
+							? '0'
+							: String(Math.floor(Math.random() * 3) + 1),
+					bathrooms: isHouse
+						? '3'
+						: isTerrain
+							? '0'
+							: String(Math.floor(Math.random() * 2) + 1),
+					area: isTerrain
+						? String(Math.floor(Math.random() * 2000) + 500)
+						: isHouse
+							? String(Math.floor(Math.random() * 200) + 120)
+							: String(Math.floor(Math.random() * 80) + 40),
 					propertyType: isTerrain ? 'Terreno' : isHouse ? 'Casa' : 'Departamento'
 				};
 			}
@@ -205,7 +265,9 @@
 			currency,
 			location,
 			address,
-			image: imagePreviews[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
+			image:
+				imagePreviews[0] ||
+				'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
 			images: imagePreviews,
 			propertyType: propertyTypeMap[propertyType] || 'apartment',
 			attributes: {
@@ -271,14 +333,18 @@
 	{#if success}
 		<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-				<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+				<div
+					class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+				>
 					<Check class="w-8 h-8 text-green-600" />
 				</div>
 				<h1 class="text-2xl font-bold text-gray-900 mb-2">
 					{isEditing ? '¡Propiedad actualizada!' : '¡Propiedad publicada!'}
 				</h1>
 				<p class="text-gray-500 mb-6">
-					{isEditing ? 'Los cambios fueron guardados exitosamente.' : 'Tu propiedad fue publicada exitosamente.'}
+					{isEditing
+						? 'Los cambios fueron guardados exitosamente.'
+						: 'Tu propiedad fue publicada exitosamente.'}
 				</p>
 				<div class="flex flex-col sm:flex-row gap-3 justify-center">
 					{#if !isEditing && createdPropertyId}
@@ -301,7 +367,9 @@
 	{:else if !$currentUser}
 		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
 			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-				<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+				<div
+					class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4"
+				>
 					<User class="w-8 h-8 text-primary" />
 				</div>
 				<h1 class="text-2xl font-bold text-gray-900 mb-2">Iniciá sesión</h1>
@@ -323,29 +391,40 @@
 					{isEditing ? 'Editar propiedad' : 'Publicar propiedad'}
 				</h1>
 				<p class="text-gray-500">
-					{isEditing ? 'Modificá los datos de tu propiedad' : 'Elegí cómo querés publicar: completá el formulario, subí un archivo o usá un enlace.'}
+					{isEditing
+						? 'Modificá los datos de tu propiedad'
+						: 'Elegí cómo querés publicar: completá el formulario, subí un archivo o usá un enlace.'}
 				</p>
 			</div>
 
 			{#if !isEditing}
 				<div class="flex gap-2 p-1 bg-gray-100 rounded-xl mb-8 w-fit">
 					<button
-						on:click={() => publishMode = 'form'}
-						class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all {publishMode === 'form' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}"
+						on:click={() => (publishMode = 'form')}
+						class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all {publishMode ===
+						'form'
+							? 'bg-white shadow-sm text-gray-900'
+							: 'text-gray-500 hover:text-gray-700'}"
 					>
 						<Home class="w-4 h-4" />
 						Formulario
 					</button>
 					<button
-						on:click={() => publishMode = 'file'}
-						class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all {publishMode === 'file' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}"
+						on:click={() => (publishMode = 'file')}
+						class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all {publishMode ===
+						'file'
+							? 'bg-white shadow-sm text-gray-900'
+							: 'text-gray-500 hover:text-gray-700'}"
 					>
 						<FileText class="w-4 h-4" />
 						Subir archivo
 					</button>
 					<button
-						on:click={() => publishMode = 'url'}
-						class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all {publishMode === 'url' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}"
+						on:click={() => (publishMode = 'url')}
+						class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all {publishMode ===
+						'url'
+							? 'bg-white shadow-sm text-gray-900'
+							: 'text-gray-500 hover:text-gray-700'}"
 					>
 						<Link class="w-4 h-4" />
 						Desde URL
@@ -354,7 +433,9 @@
 			{/if}
 
 			{#if error}
-				<div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2">
+				<div
+					class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2"
+				>
 					<AlertCircle class="w-4 h-4 flex-shrink-0" />
 					{error}
 				</div>
@@ -364,16 +445,26 @@
 				<div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
 					{#if !fileExtractionDone}
 						<div
-							on:dragover|preventDefault={() => fileDragOver = true}
-							on:dragleave={() => fileDragOver = false}
+							on:dragover|preventDefault={() => (fileDragOver = true)}
+							on:dragleave={() => (fileDragOver = false)}
 							on:drop|preventDefault={handleDrop}
-							class="border-2 border-dashed rounded-xl p-12 text-center transition-colors {fileDragOver ? 'border-primary bg-primary/5' : 'border-gray-200'}"
+							class="border-2 border-dashed rounded-xl p-12 text-center transition-colors {fileDragOver
+								? 'border-primary bg-primary/5'
+								: 'border-gray-200'}"
 						>
 							<FileText class="w-12 h-12 text-gray-300 mx-auto mb-4" />
 							<p class="text-gray-600 mb-2">Arrastrá tu archivo acá o</p>
 							<label class="cursor-pointer">
-								<span class="text-primary font-medium hover:text-primary-light transition-colors">buscalo en tu computadora</span>
-								<input type="file" accept=".pdf,.doc,.docx,.txt" on:change={handleFileSelect} class="hidden" />
+								<span
+									class="text-primary font-medium hover:text-primary-light transition-colors"
+									>buscalo en tu computadora</span
+								>
+								<input
+									type="file"
+									accept=".pdf,.doc,.docx,.txt"
+									on:change={handleFileSelect}
+									class="hidden"
+								/>
 							</label>
 							<p class="text-xs text-gray-400 mt-3">PDF, Word o texto plano</p>
 						</div>
@@ -382,23 +473,36 @@
 							<div class="mt-6">
 								<div class="flex items-center gap-3 mb-2">
 									<Loader2 class="w-5 h-5 text-primary animate-spin" />
-									<span class="text-sm font-medium text-gray-600">Extrayendo datos con IA...</span>
+									<span class="text-sm font-medium text-gray-600"
+										>Extrayendo datos con IA...</span
+									>
 								</div>
 								<div class="w-full bg-gray-100 rounded-full h-2">
-									<div class="bg-primary h-2 rounded-full transition-all" style="width: {fileExtractionProgress}%"></div>
+									<div
+										class="bg-primary h-2 rounded-full transition-all"
+										style="width: {fileExtractionProgress}%"
+									></div>
 								</div>
 							</div>
 						{/if}
 					{:else}
 						<div class="text-center py-4">
-							<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+							<div
+								class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3"
+							>
 								<Check class="w-6 h-6 text-green-600" />
 							</div>
 							<p class="font-medium text-gray-900 mb-1">¡Datos extraídos!</p>
-							<p class="text-sm text-gray-500 mb-4">Revisá la información y completá lo que falte en el formulario.</p>
+							<p class="text-sm text-gray-500 mb-4">
+								Revisá la información y completá lo que falte en el formulario.
+							</p>
 							<div class="flex gap-3 justify-center">
 								<button
-									on:click={() => { fileExtractionDone = false; selectedFile = null; extractedData = null; }}
+									on:click={() => {
+										fileExtractionDone = false;
+										selectedFile = null;
+										extractedData = null;
+									}}
 									class="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm"
 								>
 									Volver a subir
@@ -438,23 +542,36 @@
 							<div class="mt-6">
 								<div class="flex items-center gap-3 mb-2">
 									<Loader2 class="w-5 h-5 text-primary animate-spin" />
-									<span class="text-sm font-medium text-gray-600">Extrayendo datos con IA...</span>
+									<span class="text-sm font-medium text-gray-600"
+										>Extrayendo datos con IA...</span
+									>
 								</div>
 								<div class="w-full bg-gray-100 rounded-full h-2">
-									<div class="bg-primary h-2 rounded-full transition-all" style="width: {urlExtractionProgress}%"></div>
+									<div
+										class="bg-primary h-2 rounded-full transition-all"
+										style="width: {urlExtractionProgress}%"
+									></div>
 								</div>
 							</div>
 						{/if}
 					{:else}
 						<div class="text-center py-4">
-							<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+							<div
+								class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3"
+							>
 								<Check class="w-6 h-6 text-green-600" />
 							</div>
 							<p class="font-medium text-gray-900 mb-1">¡Datos extraídos!</p>
-							<p class="text-sm text-gray-500 mb-4">Revisá la información y completá lo que falte en el formulario.</p>
+							<p class="text-sm text-gray-500 mb-4">
+								Revisá la información y completá lo que falte en el formulario.
+							</p>
 							<div class="flex gap-3 justify-center">
 								<button
-									on:click={() => { urlExtractionDone = false; urlInput = ''; extractedData = null; }}
+									on:click={() => {
+										urlExtractionDone = false;
+										urlInput = '';
+										extractedData = null;
+									}}
 									class="px-4 py-2 text-gray-600 hover:text-gray-900 text-sm"
 								>
 									Volver a intentar
@@ -480,59 +597,102 @@
 						</h2>
 
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-1">Título de la propiedad *</label>
-							<input type="text" bind:value={title} maxlength={70} placeholder="ej: Departamento de 2 ambientes en Palermo"
-								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+							<label class="block text-sm font-medium text-gray-700 mb-1"
+								>Título de la propiedad *</label
+							>
+							<input
+								type="text"
+								bind:value={title}
+								maxlength={70}
+								placeholder="ej: Departamento de 2 ambientes en Palermo"
+								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+							/>
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-							<textarea bind:value={description} rows="4" placeholder="Descripción de la propiedad..."
-								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"></textarea>
+							<label class="block text-sm font-medium text-gray-700 mb-1"
+								>Descripción</label
+							>
+							<textarea
+								bind:value={description}
+								rows="4"
+								placeholder="Descripción de la propiedad..."
+								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
+							></textarea>
 						</div>
 
 						<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Operación *</label>
-								<select bind:value={operation}
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Operación *</label
+								>
+								<select
+									bind:value={operation}
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								>
 									<option value="buy">Venta</option>
 									<option value="rent">Alquiler</option>
 								</select>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Moneda</label>
-								<select bind:value={currency}
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Moneda</label
+								>
+								<select
+									bind:value={currency}
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								>
 									<option value="USD">USD</option>
 									<option value="ARS">ARS</option>
 								</select>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
-								<input type="number" bind:value={price} placeholder="Ej: 185000"
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Precio *</label
+								>
+								<input
+									type="number"
+									bind:value={price}
+									placeholder="Ej: 185000"
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
 							</div>
 						</div>
 
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Ubicación *</label>
-								<input type="text" bind:value={location} placeholder="Ej: Palermo, Buenos Aires"
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Ubicación *</label
+								>
+								<input
+									type="text"
+									bind:value={location}
+									placeholder="Ej: Palermo, Buenos Aires"
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
-								<input type="text" bind:value={address} placeholder="Ej: Av. Santa Fe 2456"
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Dirección</label
+								>
+								<input
+									type="text"
+									bind:value={address}
+									placeholder="Ej: Av. Santa Fe 2456"
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
 							</div>
 						</div>
 
 						<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
-								<select bind:value={propertyType}
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Tipo *</label
+								>
+								<select
+									bind:value={propertyType}
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								>
 									<option value="">Seleccionar...</option>
 									{#each propertyTypes as type}
 										<option value={type}>{type}</option>
@@ -540,19 +700,40 @@
 								</select>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Dormitorios</label>
-								<input type="number" bind:value={bedrooms} min="0" placeholder="Ej: 2"
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Dormitorios</label
+								>
+								<input
+									type="number"
+									bind:value={bedrooms}
+									min="0"
+									placeholder="Ej: 2"
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Baños</label>
-								<input type="number" bind:value={bathrooms} min="0" placeholder="Ej: 1"
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Baños</label
+								>
+								<input
+									type="number"
+									bind:value={bathrooms}
+									min="0"
+									placeholder="Ej: 1"
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-1">Superficie (m²)</label>
-								<input type="number" bind:value={area} min="0" placeholder="Ej: 80"
-									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Superficie (m²)</label
+								>
+								<input
+									type="number"
+									bind:value={area}
+									min="0"
+									placeholder="Ej: 80"
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
 							</div>
 						</div>
 					</div>
@@ -563,19 +744,34 @@
 							Fotos de la propiedad
 						</h2>
 
-						<label class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-primary transition-colors {images.length >= 5 ? 'opacity-50 pointer-events-none' : ''}">
+						<label
+							class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-primary transition-colors {images.length >=
+							5
+								? 'opacity-50 pointer-events-none'
+								: ''}"
+						>
 							<Upload class="w-5 h-5 text-gray-400" />
 							<span class="text-sm text-gray-500">
 								{images.length >= 5 ? 'Máximo 5 fotos' : 'Agregar fotos (máx. 5)'}
 							</span>
-							<input type="file" accept="image/*" multiple on:change={handleImageUpload} class="hidden" />
+							<input
+								type="file"
+								accept="image/*"
+								multiple
+								on:change={handleImageUpload}
+								class="hidden"
+							/>
 						</label>
 
 						{#if imagePreviews.length > 0}
 							<div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
 								{#each imagePreviews as preview, index}
 									<div class="relative aspect-square rounded-lg overflow-hidden">
-										<img src={preview} alt="Preview {index + 1}" class="w-full h-full object-cover" />
+										<img
+											src={preview}
+											alt="Preview {index + 1}"
+											class="w-full h-full object-cover"
+										/>
 										<button
 											type="button"
 											on:click={() => removeImage(index)}
@@ -591,22 +787,37 @@
 
 					{#if !isEditing}
 						<div class="bg-white rounded-2xl shadow-sm p-6">
-							<h2 class="text-lg font-semibold text-gray-900 mb-4">Distribuir en otros portales</h2>
-							<p class="text-sm text-gray-500 mb-4">Publicá la misma propiedad en otros portales con un solo clic.</p>
+							<h2 class="text-lg font-semibold text-gray-900 mb-4">
+								Distribuir en otros portales
+							</h2>
+							<p class="text-sm text-gray-500 mb-4">
+								Publicá la misma propiedad en otros portales con un solo clic.
+							</p>
 							<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-								<button type="button" on:click={() => distributeToPortal('zonaprop')}
-									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors">
+								<button
+									type="button"
+									on:click={() => distributeToPortal('zonaprop')}
+									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors"
+								>
 									<span class="font-medium text-sm text-gray-700">ZonaProp</span>
 									<ExternalLink class="w-4 h-4 text-gray-400" />
 								</button>
-								<button type="button" on:click={() => distributeToPortal('argenprop')}
-									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors">
+								<button
+									type="button"
+									on:click={() => distributeToPortal('argenprop')}
+									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors"
+								>
 									<span class="font-medium text-sm text-gray-700">ArgenProp</span>
 									<ExternalLink class="w-4 h-4 text-gray-400" />
 								</button>
-								<button type="button" on:click={() => distributeToPortal('mercadolibre')}
-									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors">
-									<span class="font-medium text-sm text-gray-700">MercadoLibre</span>
+								<button
+									type="button"
+									on:click={() => distributeToPortal('mercadolibre')}
+									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors"
+								>
+									<span class="font-medium text-sm text-gray-700"
+										>MercadoLibre</span
+									>
 									<ExternalLink class="w-4 h-4 text-gray-400" />
 								</button>
 							</div>
@@ -614,8 +825,10 @@
 					{/if}
 
 					<div class="flex justify-end">
-						<button type="submit"
-							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors">
+						<button
+							type="submit"
+							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors"
+						>
 							{isEditing ? 'Guardar cambios' : 'Publicar en Localia'}
 						</button>
 					</div>

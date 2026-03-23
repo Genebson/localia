@@ -21,15 +21,21 @@
 		<div class="flex gap-2 p-1 bg-gray-100 rounded-lg">
 			<button
 				type="button"
-				on:click={() => operation = 'buy'}
-				class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-150 {operation === 'buy' ? 'bg-primary text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'}"
+				on:click={() => (operation = 'buy')}
+				class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-150 {operation ===
+				'buy'
+					? 'bg-primary text-white shadow-sm'
+					: 'text-gray-600 hover:text-gray-900'}"
 			>
 				Comprar
 			</button>
 			<button
 				type="button"
-				on:click={() => operation = 'rent'}
-				class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-150 {operation === 'rent' ? 'bg-primary text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'}"
+				on:click={() => (operation = 'rent')}
+				class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-150 {operation ===
+				'rent'
+					? 'bg-primary text-white shadow-sm'
+					: 'text-gray-600 hover:text-gray-900'}"
 			>
 				Alquilar
 			</button>

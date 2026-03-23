@@ -1,4 +1,12 @@
-export type PropertyType = 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial' | 'chacra' | 'quinta' | 'galpon';
+export type PropertyType =
+	| 'apartment'
+	| 'house'
+	| 'penthouse'
+	| 'terrain'
+	| 'commercial'
+	| 'chacra'
+	| 'quinta'
+	| 'galpon';
 export type PropertyState = 'nueva' | 'bueno' | 'reformar';
 export type Equipment = 'amueblado' | 'cocina-equipada';
 

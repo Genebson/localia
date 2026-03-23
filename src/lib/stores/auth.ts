@@ -11,9 +11,15 @@ export interface User {
 }
 
 function createAuthStore() {
-	const { subscribe, set, update } = writable<User | null>(null);
+	const { subscribe, set } = writable<User | null>(null);
 
-	function login(email: string, password: string, role: UserRole, name?: string, matricula?: string): User {
+	function login(
+		email: string,
+		password: string,
+		role: UserRole,
+		name?: string,
+		matricula?: string
+	): User {
 		const user: User = {
 			id: crypto.randomUUID(),
 			email,

@@ -23,7 +23,9 @@ test.describe('Authentication Modal', () => {
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 		await page.waitForTimeout(500);
 		await page.getByRole('button', { name: 'Crear una' }).click();
-		await expect(page.locator('h2, h3').filter({ hasText: 'Crear cuenta' })).toBeVisible({ timeout: 5000 });
+		await expect(page.locator('h2, h3').filter({ hasText: 'Crear cuenta' })).toBeVisible({
+			timeout: 5000
+		});
 	});
 
 	test('should show role selection (Buscador/Agente) in register form', async ({ page }) => {
@@ -50,7 +52,9 @@ test.describe('Authentication Modal', () => {
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 		await expect(page.locator('text=Bienvenido')).toBeVisible({ timeout: 5000 });
-		await expect(page.locator('button[aria-label="Cerrar"]').or(page.getByRole('button', { name: '×' }))).toBeVisible();
+		await expect(
+			page.locator('button[aria-label="Cerrar"]').or(page.getByRole('button', { name: '×' }))
+		).toBeVisible();
 	});
 });
 
@@ -64,6 +68,8 @@ test.describe('Auth - Mock Login', () => {
 		await page.locator('input[type="password"]').fill('password123');
 		await page.locator('[role="dialog"] button:has-text("Iniciar sesión")').click();
 		await page.waitForTimeout(2000);
-		await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 5000 }).catch(() => {});
+		await page
+			.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 5000 })
+			.catch(() => {});
 	});
 });

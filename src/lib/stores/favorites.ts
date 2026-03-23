@@ -1,9 +1,9 @@
 import { writable, derived, get } from 'svelte/store';
-import { allProperties, type Property } from './properties';
+import { allProperties } from './properties';
 
 function createFavoritesStore() {
 	const stored: string[] = [];
-	
+
 	if (typeof localStorage !== 'undefined') {
 		const data = localStorage.getItem('localia_favorites');
 		if (data) {
@@ -26,10 +26,8 @@ function createFavoritesStore() {
 	return {
 		subscribe,
 		toggle: (id: string) => {
-			update(ids => {
-				const newIds = ids.includes(id) 
-					? ids.filter(i => i !== id)
-					: [...ids, id];
+			update((ids) => {
+				const newIds = ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id];
 				persist(newIds);
 				return newIds;
 			});
@@ -38,7 +36,7 @@ function createFavoritesStore() {
 			return get({ subscribe }).includes(id);
 		},
 		add: (id: string) => {
-			update(ids => {
+			update((ids) => {
 				if (!ids.includes(id)) {
 					const newIds = [...ids, id];
 					persist(newIds);
@@ -48,8 +46,8 @@ function createFavoritesStore() {
 			});
 		},
 		remove: (id: string) => {
-			update(ids => {
-				const newIds = ids.filter(i => i !== id);
+			update((ids) => {
+				const newIds = ids.filter((i) => i !== id);
 				persist(newIds);
 				return newIds;
 			});
@@ -63,6 +61,9 @@ function createFavoritesStore() {
 
 export const favorites = createFavoritesStore();
 
-export const favoriteProperties = derived([favorites, allProperties], ([$favorites, $allProperties]) => {
-	return $allProperties.filter(p => $favorites.includes(p.id));
-});
+export const favoriteProperties = derived(
+	[favorites, allProperties],
+	([$favorites, $allProperties]) => {
+		return $allProperties.filter((p) => $favorites.includes(p.id));
+	}
+);

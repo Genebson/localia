@@ -79,9 +79,17 @@
 		role="dialog"
 		aria-modal="true"
 	>
-		<div class="absolute inset-0 bg-black/60 backdrop-blur-sm" on:click={onClose} role="button" tabindex="0" on:keydown={(e) => e.key === 'Escape' && onClose()}></div>
+		<div
+			class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+			on:click={onClose}
+			role="button"
+			tabindex="0"
+			on:keydown={(e) => e.key === 'Escape' && onClose()}
+		></div>
 
-		<div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+		<div
+			class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+		>
 			<button
 				on:click={onClose}
 				class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -105,7 +113,10 @@
 						<button
 							type="button"
 							on:click={() => selectRole('user')}
-							class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 {selectedRole === 'user' ? 'bg-primary text-white' : 'text-gray-600 hover:text-gray-900'}"
+							class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 {selectedRole ===
+							'user'
+								? 'bg-primary text-white'
+								: 'text-gray-600 hover:text-gray-900'}"
 						>
 							<Home class="w-4 h-4" />
 							Buscador
@@ -113,7 +124,10 @@
 						<button
 							type="button"
 							on:click={() => selectRole('agent')}
-							class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 {selectedRole === 'agent' ? 'bg-primary text-white' : 'text-gray-600 hover:text-gray-900'}"
+							class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 {selectedRole ===
+							'agent'
+								? 'bg-primary text-white'
+								: 'text-gray-600 hover:text-gray-900'}"
 						>
 							<Building2 class="w-4 h-4" />
 							Agente
@@ -124,9 +138,13 @@
 				<form on:submit|preventDefault={handleSubmit} class="space-y-4">
 					{#if mode === 'register'}
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+							<label class="block text-sm font-medium text-gray-700 mb-1"
+								>Nombre completo</label
+							>
 							<div class="relative">
-								<User class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+								<User
+									class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+								/>
 								<input
 									type="text"
 									bind:value={name}
@@ -140,7 +158,9 @@
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
 						<div class="relative">
-							<Mail class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+							<Mail
+								class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+							/>
 							<input
 								type="email"
 								bind:value={email}
@@ -151,9 +171,13 @@
 					</div>
 
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+						<label class="block text-sm font-medium text-gray-700 mb-1"
+							>Contraseña</label
+						>
 						<div class="relative">
-							<Lock class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+							<Lock
+								class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+							/>
 							{#if showPassword}
 								<input
 									type="text"
@@ -171,7 +195,7 @@
 							{/if}
 							<button
 								type="button"
-								on:click={() => showPassword = !showPassword}
+								on:click={() => (showPassword = !showPassword)}
 								class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
 							>
 								{#if showPassword}
@@ -190,7 +214,9 @@
 								<span class="text-xs text-gray-400">(validación manual)</span>
 							</label>
 							<div class="relative">
-								<Building2 class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+								<Building2
+									class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+								/>
 								<input
 									type="text"
 									bind:value={matricula}
