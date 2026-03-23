@@ -23,9 +23,8 @@ Para registrarse como agente se requiere una matrícula profesional válida.
 
 El menú superior (Header) siempre está visible e incluye:
 
-- **Comprar / Alquilar** — Filtra por tipo de operación
-- **Herramientas** (dropdown) — Acceso a Masterplans, Tablero, Furnisher y ChePibe
 - **Iniciar sesión / Registrarse** — Autenticación
+- **Mi Perfil** (dropdown) — Acceso a Masterplan, Tablero de Búsquedas, Furnisher, ChePibe y Cerrar sesión (herramientas para buscadores); Mis Propiedades, Masterplan, Tablero de Búsquedas, Furnisher, ChePibe y Cerrar sesión (para agentes)
 - **Publicar propiedad** — Solo visible para agentes
 
 ---
