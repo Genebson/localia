@@ -97,14 +97,7 @@ export async function getSession(): Promise<{
 }
 
 export async function getMe(): Promise<AuthResponse> {
-	const response = await apiFetch('/profile');
-	return {
-		data: {
-			type: 'user',
-			id: (response as { data: { id: string } }).data.id,
-			attributes: (response as { data: { attributes: AuthResponse['data']['attributes'] } }).data.attributes
-		}
-	};
+	return apiFetch<AuthResponse>('/profile');
 }
 
 export async function getUser(): Promise<AuthResponse> {
