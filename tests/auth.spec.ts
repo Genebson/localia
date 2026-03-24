@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { mockAuthApi } from './helpers/auth-mock';
 
 test.describe('Authentication Modal', () => {
 	test('should open auth modal when clicking "Iniciar sesión"', async ({ page }) => {
+		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -9,6 +11,7 @@ test.describe('Authentication Modal', () => {
 	});
 
 	test('should show email and password fields in login form', async ({ page }) => {
+		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -18,6 +21,7 @@ test.describe('Authentication Modal', () => {
 	});
 
 	test('should switch to register form when clicking "Crear una"', async ({ page }) => {
+		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -29,6 +33,7 @@ test.describe('Authentication Modal', () => {
 	});
 
 	test('should show role selection (Buscador/Agente) in register form', async ({ page }) => {
+		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -38,6 +43,7 @@ test.describe('Authentication Modal', () => {
 	});
 
 	test('should show name field in register form', async ({ page }) => {
+		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -48,6 +54,7 @@ test.describe('Authentication Modal', () => {
 	});
 
 	test('should close auth modal', async ({ page }) => {
+		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
@@ -60,6 +67,7 @@ test.describe('Authentication Modal', () => {
 
 test.describe('Auth - Mock Login', () => {
 	test('should login with mock credentials', async ({ page }) => {
+		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
