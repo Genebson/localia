@@ -75,7 +75,7 @@ export async function signInWithGoogle(callbackUrl?: string): Promise<void> {
 		credentials: 'include',
 		body: JSON.stringify({ provider: 'google', callbackURL: callbackUrl || 'http://localhost:5173/localia/' })
 	});
-	const { url } = await response.json() as { url: string };
+	const { url } = (await response.json()) as { url: string };
 	window.location.href = url;
 }
 
@@ -97,7 +97,14 @@ export async function getSession(): Promise<{
 }
 
 export async function getMe(): Promise<AuthResponse> {
-	return apiFetch<AuthResponse>('/profile');
+	const response = await apiFetch('/profile');
+	return {
+		data: {
+			type: 'user',
+			id: (response as { data: { id: string } }).data.id,
+			attributes: (response as { data: { attributes: AuthResponse['data']['attributes'] } }).data.attributes
+		}
+	};
 }
 
 export async function getUser(): Promise<AuthResponse> {
