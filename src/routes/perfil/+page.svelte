@@ -15,12 +15,17 @@
 		Check
 	} from 'lucide-svelte';
 	import { base } from '$app/paths';
-	import { currentUser, isAgent } from '$lib/stores/auth';
+	import { currentUser, isAgent, auth } from '$lib/stores/auth';
 	import { favoriteProperties } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
 	import { allProperties } from '$lib/stores/properties';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { agencyStore } from '$lib/stores/agencies';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		auth.init();
+	});
 
 	$: viewedList = $viewed
 		.map((id) => $allProperties.find((p) => p.id === id))
@@ -180,11 +185,11 @@
 									<Building2 class="w-4 h-4" />
 									Agente Inmobiliario
 								</span>
-								{#if $currentUser.matricula}
+								{#if $currentUser.licenseNumber}
 									<span
 										class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full"
 									>
-										Matrícula: {$currentUser.matricula}
+										Matrícula: {$currentUser.licenseNumber}
 									</span>
 								{/if}
 							{:else}

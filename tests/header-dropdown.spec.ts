@@ -1,38 +1,13 @@
 import { test, expect, type Page } from '@playwright/test';
+import { loginAs, logout, mockAuthApi } from './helpers/auth-mock';
 
-async function logout(page: Page) {
-	await page.goto('/');
-	await page.waitForLoadState('networkidle');
-	try {
-		const userMenuButton = page.locator('.user-menu > button');
-		if (await userMenuButton.isVisible({ timeout: 1000 })) {
-			await userMenuButton.click();
-			await page.waitForTimeout(300);
-			const logoutBtn = page.getByRole('button', { name: 'Cerrar sesión' });
-			if (await logoutBtn.isVisible({ timeout: 1000 })) {
-				await logoutBtn.click();
-				await page.waitForTimeout(500);
-			}
-		}
-	} catch {
-		// User not logged in, continue
-	}
-}
-
-async function loginAs(page: Page, email: string) {
-	await logout(page);
-	await page.getByRole('button', { name: 'Iniciar sesión' }).click();
-	await page.waitForTimeout(500);
-	await page.locator('input[type="email"]').fill(email);
-	await page.locator('input[type="password"]').fill('password123');
-	await page.locator('[role="dialog"] button:has-text("Iniciar sesión")').click();
-	await page.waitForTimeout(2000);
-}
+const agenteEmail = 'agente@test.com';
+const buscadorEmail = 'buscador@test.com';
 
 test.describe('Header Dropdown', () => {
 	test.describe('Searcher (Buscador)', () => {
 		test('should show only profile options in dropdown', async ({ page }) => {
-			await loginAs(page, 'buscador@test.com');
+			await loginAs(page, buscadorEmail);
 
 			await page.locator('.user-menu > button').click();
 			await page.waitForTimeout(500);
@@ -44,7 +19,7 @@ test.describe('Header Dropdown', () => {
 		});
 
 		test('should NOT show agent-only options for buscador', async ({ page }) => {
-			await loginAs(page, 'buscador@test.com');
+			await loginAs(page, buscadorEmail);
 
 			await page.locator('.user-menu > button').click();
 			await page.waitForTimeout(500);
@@ -55,7 +30,7 @@ test.describe('Header Dropdown', () => {
 		});
 
 		test('should NOT show Publicar propiedad link for buscador', async ({ page }) => {
-			await loginAs(page, 'buscador@test.com');
+			await loginAs(page, buscadorEmail);
 
 			await expect(
 				page.locator('header').getByRole('link', { name: 'Publicar propiedad' })
@@ -65,7 +40,7 @@ test.describe('Header Dropdown', () => {
 
 	test.describe('Agent (Agente)', () => {
 		test('should show all options in dropdown', async ({ page }) => {
-			await loginAs(page, 'agente@test.com');
+			await loginAs(page, agenteEmail);
 
 			await page.locator('.user-menu > button').click();
 			await page.waitForTimeout(500);
@@ -80,7 +55,7 @@ test.describe('Header Dropdown', () => {
 		});
 
 		test('should show Publicar propiedad link for agent', async ({ page }) => {
-			await loginAs(page, 'agente@test.com');
+			await loginAs(page, agenteEmail);
 
 			await expect(
 				page.locator('header').getByRole('link', { name: 'Publicar propiedad' })
@@ -88,7 +63,7 @@ test.describe('Header Dropdown', () => {
 		});
 
 		test('should show furnisher and chepibe with gradient styling', async ({ page }) => {
-			await loginAs(page, 'agente@test.com');
+			await loginAs(page, agenteEmail);
 
 			await page.locator('.user-menu > button').click();
 			await page.waitForTimeout(500);
@@ -106,12 +81,11 @@ test.describe('Header Dropdown', () => {
 		});
 
 		test('should show Nuevo badge on furnisher and chepibe', async ({ page }) => {
-			await loginAs(page, 'agente@test.com');
+			await loginAs(page, agenteEmail);
 
 			await page.locator('.user-menu > button').click();
 			await page.waitForTimeout(500);
 
-			// Nuevo badge appears inside the furnisher and chepibe gradient cards
 			const nuevoBadges = page.locator('.user-menu >> text=Nuevo');
 			await expect(nuevoBadges).toHaveCount(2);
 		});

@@ -1,6 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
+import { mockAuthApi } from './helpers/auth-mock';
 
 const mockAgentLogin = async ({ page }: { page: Page }) => {
+	await mockAuthApi(page);
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
 	await page.getByRole('button', { name: 'Iniciar sesión' }).click();

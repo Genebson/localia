@@ -9,8 +9,8 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		auth.init();
 		propertiesStore.load();
+		auth.init();
 	});
 </script>
 

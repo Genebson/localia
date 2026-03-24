@@ -148,7 +148,9 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 							</Splide>
 							<button
 								on:click={toggleFavorite}
-								aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+								aria-label={isFavorite
+									? 'Quitar de favoritos'
+									: 'Agregar a favoritos'}
 								class="absolute top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors z-10"
 							>
 								<Heart
