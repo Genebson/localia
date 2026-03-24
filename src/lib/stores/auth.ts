@@ -9,7 +9,7 @@ import {
 } from '$lib/api/auth';
 import { authModalMode } from './authModal';
 
-export type FrontendRole = 'guest' | 'user' | 'agent';
+export type FrontendRole = 'guest' | 'seeker' | 'agent';
 
 export interface FrontendUser {
 	id: string;
@@ -31,7 +31,7 @@ function createAuthStore() {
 				id: backendUser.id,
 				email: backendUser.email,
 				name: backendUser.name,
-				role: backendUser.role === 'agent' ? 'agent' : 'user',
+				role: backendUser.role === 'agent' ? 'agent' : 'seeker',
 				licenseNumber: backendUser.licenseNumber || undefined
 			};
 			set(frontendUser);
@@ -94,5 +94,5 @@ function createAuthStore() {
 export const auth = createAuthStore();
 
 export const isAgent = derived(auth, ($auth) => $auth?.role === 'agent');
-export const isUser = derived(auth, ($auth) => $auth?.role === 'user');
+export const isSeeker = derived(auth, ($auth) => $auth?.role === 'seeker');
 export const currentUser = auth;

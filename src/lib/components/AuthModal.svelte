@@ -8,7 +8,7 @@
 	export let isOpen = false;
 	export let onClose: () => void = () => {};
 
-	let selectedRole: 'user' | 'agent' = 'user';
+	let selectedRole: 'seeker' | 'agent' = 'seeker';
 	let showPassword = false;
 
 	let email = '';
@@ -25,7 +25,7 @@
 		error = '';
 	}
 
-	function selectRole(role: 'user' | 'agent') {
+	function selectRole(role: 'seeker' | 'agent') {
 		selectedRole = role;
 	}
 
@@ -74,7 +74,7 @@
 		name = '';
 		licenseNumber = '';
 		error = '';
-		selectedRole = 'user';
+		selectedRole = 'seeker';
 		authModalMode.set('login');
 		isLoading = false;
 	}
