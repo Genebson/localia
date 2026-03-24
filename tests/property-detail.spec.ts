@@ -24,6 +24,7 @@ test.describe('Property Detail Page', () => {
 
 	test('should open auth modal when clicking favorite while logged out', async ({ page }) => {
 		await ensureLogout(page);
+		// Wait for auth.init() in layout onMount to complete
 		await page.waitForTimeout(1000);
 		const favoriteBtn = page.locator('[aria-label="Agregar a favoritos"]').first();
 		await favoriteBtn.waitFor({ state: 'visible', timeout: 10000 });
