@@ -1,57 +1,86 @@
-import { writable, derived } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
+import {
+	getMe,
+	getUser,
+	signInWithEmail,
+	signUpWithEmail,
+	updateRole,
+	signOut as apiSignOut
+} from '$lib/api/auth';
+import { authModalMode } from './authModal';
 
-export type UserRole = 'guest' | 'user' | 'agent';
+export type FrontendRole = 'guest' | 'user' | 'agent';
 
-export interface User {
+export interface FrontendUser {
 	id: string;
 	email: string;
 	name: string;
-	role: UserRole;
-	matricula?: string;
+	role: FrontendRole;
+	licenseNumber?: string;
 }
 
 function createAuthStore() {
-	const { subscribe, set } = writable<User | null>(null);
+	const { subscribe, set } = writable<FrontendUser | null>(null);
 
-	function login(
+	async function init() {
+		try {
+			await getMe();
+			const userData = await getUser();
+			const backendUser = userData.data.attributes;
+			const frontendUser: FrontendUser = {
+				id: backendUser.id,
+				email: backendUser.email,
+				name: backendUser.name,
+				role: backendUser.role === 'agent' ? 'agent' : 'user',
+				licenseNumber: backendUser.licenseNumber || undefined
+			};
+			set(frontendUser);
+		} catch {
+			set(null);
+		}
+	}
+
+	async function login(
 		email: string,
-		password: string,
-		role: UserRole,
+		_password: string,
+		role?: FrontendRole,
 		name?: string,
-		matricula?: string
-	): User {
-		const user: User = {
-			id: crypto.randomUUID(),
-			email,
-			name: name || email.split('@')[0],
-			role,
-			matricula
-		};
-		set(user);
-		if (typeof localStorage !== 'undefined') {
-			localStorage.setItem('localia_user', JSON.stringify(user));
-		}
-		return user;
-	}
-
-	function logout() {
-		set(null);
-		if (typeof localStorage !== 'undefined') {
-			localStorage.removeItem('localia_user');
-		}
-	}
-
-	function init() {
-		if (typeof localStorage !== 'undefined') {
-			const stored = localStorage.getItem('localia_user');
-			if (stored) {
-				try {
-					set(JSON.parse(stored));
-				} catch {
-					localStorage.removeItem('localia_user');
-				}
+		licenseNumber?: string
+	): Promise<void> {
+		try {
+			const modalMode = get(authModalMode);
+			if (modalMode === 'register') {
+				await signUpWithEmail(
+					email,
+					_password,
+					name || email.split('@')[0],
+					role === 'agent' ? 'agent' : 'seeker',
+					licenseNumber
+				);
+				await fetch(`${import.meta.env.VITE_API_URL}/notifications/welcome-email`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						email,
+						name: name || email.split('@')[0]
+					})
+				}).catch(() => {});
+			} else {
+				await signInWithEmail(email, _password);
 			}
+			await init();
+		} catch (e) {
+			throw e;
 		}
+	}
+
+	async function logout() {
+		try {
+			await apiSignOut();
+		} catch {
+			// Ignore errors
+		}
+		set(null);
 	}
 
 	return {

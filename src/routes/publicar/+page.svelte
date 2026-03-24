@@ -19,7 +19,12 @@
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { propertiesStore, getPropertyById } from '$lib/stores/properties';
+	import { onMount } from 'svelte';
 	import type { PropertyType } from '$lib/data/properties';
+
+	onMount(() => {
+		auth.init();
+	});
 
 	let editId = $page.url.searchParams.get('edit');
 	let isEditing = !!editId;

@@ -16,6 +16,11 @@
 	import { auth, currentUser, isAgent } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { propertiesStore, allProperties } from '$lib/stores/properties';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		auth.init();
+	});
 
 	let showDeleteConfirm: string | null = null;
 

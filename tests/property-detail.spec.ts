@@ -56,6 +56,8 @@ test.describe('Property Detail Page', () => {
 		await page.locator('a[href*="/property/"]').first().click();
 		await expect(page).toHaveURL(/\/property\/.+/);
 		await page.locator('button[aria-label="Agregar a favoritos"]').click();
-		await expect(page.locator('button[aria-label="Quitar de favoritos"]')).toBeVisible({ timeout: 5000 });
+		await expect(page.locator('button[aria-label="Quitar de favoritos"]')).toBeVisible({
+			timeout: 5000
+		});
 	});
 });

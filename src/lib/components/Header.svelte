@@ -96,9 +96,9 @@
 										{$currentUser.name}
 									</p>
 									<p class="text-xs text-gray-500">{$currentUser.email}</p>
-									{#if $currentUser.matricula}
+									{#if $currentUser.licenseNumber}
 										<p class="text-xs text-accent mt-1">
-											Matrícula: {$currentUser.matricula}
+											Matrícula: {$currentUser.licenseNumber}
 										</p>
 									{/if}
 								</div>

@@ -10,9 +10,14 @@
 		User
 	} from 'lucide-svelte';
 	import { searches as initialSearches, type Search } from '$lib/data/searches';
-	import { currentUser } from '$lib/stores/auth';
+	import { currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { writable, get } from 'svelte/store';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		auth.init();
+	});
 
 	const STORAGE_KEY = 'localia_tablero_searches';
 
