@@ -9,7 +9,8 @@
 		MapPin,
 		Bed,
 		Bath,
-		Maximize
+		Maximize,
+		Globe
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
@@ -224,6 +225,32 @@
 														{property.attributes.area} m²
 													</span>
 												</div>
+												{#if property.distributedTo && property.distributedTo.length > 0}
+													<div class="flex items-center gap-1 mt-2">
+														<Globe class="w-3 h-3 text-gray-400" />
+														<span class="text-xs text-gray-500"
+															>Distribuido:</span
+														>
+														{#if property.distributedTo.includes('zonaprop')}
+															<span
+																class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded"
+																>ZonaProp</span
+															>
+														{/if}
+														{#if property.distributedTo.includes('argenprop')}
+															<span
+																class="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs rounded"
+																>ArgenProp</span
+															>
+														{/if}
+														{#if property.distributedTo.includes('mercadolibre')}
+															<span
+																class="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded"
+																>MercadoLibre</span
+															>
+														{/if}
+													</div>
+												{/if}
 											</div>
 										</div>
 										<div class="flex items-center gap-2 flex-shrink-0">

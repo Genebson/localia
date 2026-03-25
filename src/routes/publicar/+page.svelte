@@ -131,6 +131,7 @@
 			bathrooms = existing.attributes.bathrooms.toString();
 			area = existing.attributes.area.toString();
 			if (existing.images?.length) imagePreviews = existing.images;
+			distributedTo = existing.distributedTo ?? [];
 			publishMode = 'form';
 		}
 	}
@@ -315,7 +316,8 @@
 					area: parseInt(area) || 0
 				},
 				images: allImages,
-				featured: true
+				featured: true,
+				distributedTo
 			};
 
 			if (isEditing && editId) {

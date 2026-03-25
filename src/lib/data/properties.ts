@@ -48,6 +48,7 @@ export interface Property {
 	storageRoom?: boolean;
 	accessible?: boolean;
 	publishedAt?: string;
+	distributedTo?: string[];
 }
 
 export const properties: Property[] = [

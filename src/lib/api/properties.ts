@@ -23,6 +23,7 @@ export interface CreatePropertyRequest {
 	};
 	images: string[];
 	featured?: boolean;
+	distributedTo?: string[];
 }
 
 export interface UpdatePropertyRequest extends Partial<CreatePropertyRequest> {}
@@ -115,7 +116,8 @@ export async function createProperty(data: CreatePropertyRequest): Promise<Prope
 		operation: data.operation,
 		featured: data.featured ?? true,
 		agentId: user?.id || 'anonymous',
-		agentEmail: user?.email
+		agentEmail: user?.email,
+		distributedTo: data.distributedTo ?? []
 	});
 
 	return newProperty;
