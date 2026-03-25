@@ -37,7 +37,7 @@ La página principal muestra las propiedades destacadas con un sistema de filtro
 
 En la parte superior hay un buscador con:
 
-- Ciudad, barrio o dirección
+- Zona o barrio
 - Cantidad de habitaciones
 - Botón "Buscar"
 
