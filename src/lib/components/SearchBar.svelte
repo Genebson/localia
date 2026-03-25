@@ -4,6 +4,9 @@
 
 	let operation: 'buy' | 'rent' = 'buy';
 	let location = '';
+	let minPrice = '';
+	let maxPrice = '';
+	let currency: 'USD' | 'ARS' = 'USD';
 
 	const zones = [
 		{ label: 'Todas', value: '' },
@@ -17,6 +20,9 @@
 	function handleSubmit() {
 		filters.setOperation(operation);
 		filters.setLocation(location);
+		filters.setCurrency(currency);
+		filters.setMinPrice(minPrice);
+		filters.setMaxPrice(maxPrice);
 		syncFiltersToUrl();
 		const propertiesSection = document.getElementById('properties');
 		if (propertiesSection) {
@@ -61,7 +67,7 @@
 			</button>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+		<div class="grid grid-cols-1 md:grid-cols-5 gap-3">
 			<div class="md:col-span-2 relative">
 				<Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
 				<input
@@ -72,14 +78,24 @@
 				/>
 			</div>
 
+			<select
+				bind:value={currency}
+				class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all bg-white"
+			>
+				<option value="USD">USD</option>
+				<option value="ARS">ARS</option>
+			</select>
+
 			<input
 				type="number"
+				bind:value={minPrice}
 				placeholder="Precio mínimo"
 				class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
 			/>
 
 			<input
 				type="number"
+				bind:value={maxPrice}
 				placeholder="Precio máximo"
 				class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
 			/>
