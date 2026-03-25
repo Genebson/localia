@@ -200,11 +200,11 @@
 					currency: isRent ? 'ARS' : 'USD',
 					operation: isRent ? 'rent' : 'buy',
 					location: isTerrain
-						? 'Nordelta, Tigre'
+						? 'Zona Rural, Mercedes'
 						: isHouse
-							? 'Olivos, Vicente López'
-							: 'Palermo, Buenos Aires',
-					address: isTerrain ? 'Manzana 12 Lote 45' : 'Av. Santa Fe 2456',
+							? 'Barrio Norte, Mercedes'
+							: 'Centro, Mercedes',
+					address: isTerrain ? 'Manzana 12 Lote 45' : 'Calle 123 entre 14 y 16',
 					bedrooms: isHouse
 						? '4'
 						: isTerrain
@@ -667,7 +667,7 @@
 								type="text"
 								bind:value={title}
 								maxlength={70}
-								placeholder="ej: Departamento de 2 ambientes en Palermo"
+								placeholder="ej: Departamento de 2 ambientes en el Centro"
 								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 							/>
 						</div>
@@ -730,7 +730,7 @@
 								<input
 									type="text"
 									bind:value={location}
-									placeholder="Ej: Palermo, Buenos Aires"
+									placeholder="Ej: Centro, Mercedes"
 									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 								/>
 							</div>
