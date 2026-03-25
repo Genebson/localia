@@ -1,14 +1,5 @@
 <script lang="ts">
-	import {
-		Filter,
-		Building2,
-		TrendingUp,
-		Shield,
-		ChevronDown,
-		MapPin,
-		LayoutGrid,
-		Map
-	} from 'lucide-svelte';
+	import { Filter, Building2, TrendingUp, Shield, ChevronDown, MapPin } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import SearchBar from '$lib/components/SearchBar.svelte';
@@ -26,7 +17,6 @@
 	import { onMount } from 'svelte';
 
 	let filtersOpen = false;
-	let viewMode: 'grid' | 'map' = 'grid';
 	let lastUrl = '';
 
 	$: if (typeof window !== 'undefined' && $page.url.href !== lastUrl) {
@@ -151,24 +141,6 @@
 				<Filter class="w-4 h-4" />
 				<span class="text-sm font-medium">Filtros</span>
 			</button>
-			<button
-				on:click={() => (viewMode = 'grid')}
-				class="p-2 transition-colors {viewMode === 'grid'
-					? 'bg-primary text-white'
-					: 'text-gray-500 hover:bg-gray-50'}"
-				title="Grid view"
-			>
-				<LayoutGrid class="w-4 h-4" />
-			</button>
-			<button
-				on:click={() => (viewMode = 'map')}
-				class="p-2 transition-colors {viewMode === 'map'
-					? 'bg-primary text-white'
-					: 'text-gray-500 hover:bg-gray-50'}"
-				title="Map view"
-			>
-				<Map class="w-4 h-4" />
-			</button>
 		</div>
 	</div>
 
@@ -176,6 +148,12 @@
 		<FiltersSidebar isOpen={filtersOpen} onClose={() => (filtersOpen = false)} />
 
 		<div class="flex-1">
+			<div class="mb-8">
+				<div class="h-[500px] rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+					<MapView properties={$filteredProperties} />
+				</div>
+			</div>
+
 			{#if $filteredProperties.length === 0}
 				<div class="text-center py-16">
 					<div
@@ -191,10 +169,6 @@
 					>
 						Limpiar filtros
 					</button>
-				</div>
-			{:else if viewMode === 'map'}
-				<div class="h-[600px] rounded-xl overflow-hidden border border-gray-200">
-					<MapView properties={$filteredProperties} />
 				</div>
 			{:else}
 				<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

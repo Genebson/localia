@@ -43,6 +43,7 @@
 		"vite": "^5.0.0"
 	},
 	"dependencies": {
+		"@googlemaps/js-api-loader": "^2.0.2",
 		"@splidejs/svelte-splide": "^0.2.9",
 		"@types/leaflet": "^1.9.21",
 		"leaflet": "^1.9.4",
