@@ -278,8 +278,9 @@
 								>
 									{label}
 								</button>
-					{/each}
-					</div>
+							{/each}
+						</div>
+					{/if}
 				</div>
 
 				<!-- Características -->
@@ -553,6 +554,7 @@
 										</label>
 									{/each}
 								</div>
+							</div>
 						{:else if section.key === 'features'}
 							<div class="space-y-2">
 								{#each featureList as feat}
