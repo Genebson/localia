@@ -17,7 +17,7 @@ test.describe('Homepage', () => {
 	});
 
 	test('should show search bar with location input', async ({ page }) => {
-		const searchInput = page.locator('input[placeholder="Ciudad, barrio o dirección"]');
+		const searchInput = page.locator('input[placeholder="Zona o barrio"]');
 		await expect(searchInput).toBeVisible();
 	});
 
@@ -91,7 +91,7 @@ test.describe('Homepage - Search', () => {
 	});
 
 	test('should accept text in search input', async ({ page }) => {
-		const searchInput = page.locator('input[placeholder*="Ciudad"]');
+		const searchInput = page.locator('input[placeholder*="Zona"]');
 		await searchInput.waitFor({ state: 'visible' });
 		await searchInput.fill('Mercedes');
 		await expect(searchInput).toHaveValue('Mercedes');
