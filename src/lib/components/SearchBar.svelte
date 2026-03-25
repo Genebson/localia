@@ -40,6 +40,15 @@
 			propertiesSection.scrollIntoView({ behavior: 'smooth' });
 		}
 	}
+
+	function clearFilters() {
+		operation = 'buy';
+		location = '';
+		minPrice = '';
+		maxPrice = '';
+		currency = 'USD';
+		filters.reset();
+	}
 </script>
 
 <div class="bg-white rounded-2xl shadow-xl p-4 md:p-6">
@@ -124,9 +133,16 @@
 
 		<button
 			type="submit"
-			class="w-full md:w-auto md:px-12 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors active:scale-[0.98]"
+			class="px-8 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors active:scale-[0.98]"
 		>
 			Buscar
+		</button>
+		<button
+			type="button"
+			on:click={clearFilters}
+			class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+		>
+			Limpiar
 		</button>
 	</form>
 </div>
