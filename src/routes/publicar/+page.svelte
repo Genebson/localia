@@ -741,7 +741,7 @@
 								<input
 									type="text"
 									bind:value={address}
-									placeholder="Ej: Av. Santa Fe 2456"
+									placeholder="Ej: Calle 123 entre 14 y 16"
 									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 								/>
 							</div>
