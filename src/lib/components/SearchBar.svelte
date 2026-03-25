@@ -24,6 +24,9 @@
 		filters.setMinPrice(minPrice);
 		filters.setMaxPrice(maxPrice);
 		syncFiltersToUrl();
+		location = '';
+		minPrice = '';
+		maxPrice = '';
 		const propertiesSection = document.getElementById('properties');
 		if (propertiesSection) {
 			propertiesSection.scrollIntoView({ behavior: 'smooth' });
@@ -39,15 +42,6 @@
 		if (propertiesSection) {
 			propertiesSection.scrollIntoView({ behavior: 'smooth' });
 		}
-	}
-
-	function clearFilters() {
-		operation = 'buy';
-		location = '';
-		minPrice = '';
-		maxPrice = '';
-		currency = 'USD';
-		filters.reset();
 	}
 </script>
 
@@ -136,13 +130,6 @@
 			class="px-8 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors active:scale-[0.98]"
 		>
 			Buscar
-		</button>
-		<button
-			type="button"
-			on:click={clearFilters}
-			class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-		>
-			Limpiar
 		</button>
 	</form>
 </div>
