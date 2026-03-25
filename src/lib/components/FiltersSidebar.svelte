@@ -278,26 +278,8 @@
 								>
 									{label}
 								</button>
-							{/each}
-						</div>
-						<div class="flex items-center gap-3 pb-3">
-							<label class="flex items-center gap-2 cursor-pointer">
-								<input
-									type="checkbox"
-									checked={$filters.outdoor === true}
-									on:change={() => {
-										filters.setBoolean(
-											'outdoor',
-											$filters.outdoor === true ? null : true
-										);
-										syncFiltersToUrl();
-									}}
-									class="w-4 h-4 text-primary rounded"
-								/>
-								<span class="text-sm text-gray-600">Aire libre</span>
-							</label>
-						</div>
-					{/if}
+					{/each}
+					</div>
 				</div>
 
 				<!-- Características -->
@@ -571,22 +553,6 @@
 										</label>
 									{/each}
 								</div>
-								<label class="flex items-center gap-2 cursor-pointer">
-									<input
-										type="checkbox"
-										checked={$filters.outdoor === true}
-										on:change={() => {
-											filters.setBoolean(
-												'outdoor',
-												$filters.outdoor === true ? null : true
-											);
-											syncFiltersToUrl();
-										}}
-										class="w-4 h-4 text-primary rounded"
-									/>
-									<span class="text-sm text-gray-600">Aire libre</span>
-								</label>
-							</div>
 						{:else if section.key === 'features'}
 							<div class="space-y-2">
 								{#each featureList as feat}

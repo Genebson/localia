@@ -303,14 +303,6 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 												<span class="text-sm font-medium">Garage</span>
 											</div>
 										{/if}
-										{#if property.outdoor}
-											<div
-												class="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg"
-											>
-												<Home class="w-5 h-5" />
-												<span class="text-sm font-medium">Aire libre</span>
-											</div>
-										{/if}
 									</div>
 								</div>
 							{/if}
