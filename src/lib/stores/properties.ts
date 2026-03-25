@@ -28,7 +28,13 @@ function createPropertiesStore(): PropertiesStore {
 
 	function persist(properties: Property[]) {
 		if (typeof localStorage === 'undefined') return;
-		localStorage.setItem('localia_properties', JSON.stringify(properties));
+		try {
+			localStorage.setItem('localia_properties', JSON.stringify(properties));
+		} catch {
+			throw new Error(
+				'No se pudo guardar la propiedad. El almacenamiento está lleno. Probá borrando propiedades anteriores.'
+			);
+		}
 	}
 
 	return {
