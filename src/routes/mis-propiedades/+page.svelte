@@ -15,27 +15,49 @@
 	import { base } from '$app/paths';
 	import { auth, currentUser, isAgent } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
-	import { propertiesStore, allProperties } from '$lib/stores/properties';
 	import { onMount } from 'svelte';
+	import type { Property } from '$lib/data/properties';
+	import { listMyProperties, updateProperty, deleteProperty } from '$lib/api/properties';
 
 	onMount(() => {
 		auth.init();
 	});
 
+	let userProperties: Property[] = [];
 	let showDeleteConfirm: string | null = null;
 
-	$: userProperties = $allProperties.filter((p) => p.agentEmail === $currentUser?.email);
+	onMount(async () => {
+		try {
+			userProperties = await listMyProperties();
+		} catch {
+			userProperties = [];
+		}
+	});
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
 	}
 
-	function toggleVisibility(id: string) {
-		propertiesStore.toggleFeatured(id);
+	async function toggleVisibility(id: string) {
+		const prop = userProperties.find((p) => p.id === id);
+		if (!prop) return;
+		try {
+			await updateProperty(id, { featured: !prop.featured });
+			userProperties = userProperties.map((p) =>
+				p.id === id ? { ...p, featured: !p.featured } : p
+			);
+		} catch {
+			// Silently fail visibility toggle
+		}
 	}
 
-	function deleteProperty(id: string) {
-		propertiesStore.delete(id);
+	async function handleDeleteProperty(id: string) {
+		try {
+			await deleteProperty(id);
+			userProperties = userProperties.filter((p) => p.id !== id);
+		} catch {
+			// Silently fail delete
+		}
 		showDeleteConfirm = null;
 	}
 
@@ -264,7 +286,7 @@
 											Cancelar
 										</button>
 										<button
-											on:click={() => deleteProperty(property.id)}
+											on:click={() => handleDeleteProperty(property.id)}
 											class="flex-1 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
 										>
 											Eliminar

@@ -18,9 +18,10 @@
 	} from 'lucide-svelte';
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
-	import { propertiesStore, getPropertyById } from '$lib/stores/properties';
+	import { getPropertyById } from '$lib/stores/properties';
 	import { onMount } from 'svelte';
 	import type { PropertyType } from '$lib/data/properties';
+	import { createProperty, updateProperty, uploadImage } from '$lib/api/properties';
 
 	onMount(() => {
 		auth.init();
@@ -49,6 +50,7 @@
 	let error = '';
 	let success = false;
 	let createdPropertyId: string | null = null;
+	let submitting = false;
 
 	// File upload state
 	let fileDragOver = false;
@@ -249,7 +251,7 @@
 		simulateExtraction('url');
 	}
 
-	function handleSubmit() {
+	async function handleSubmit() {
 		if (extractedData) applyExtractedData();
 		error = '';
 		if (!title.trim() || !price || !location) {
@@ -261,41 +263,71 @@
 			return;
 		}
 
-		const priceNum = parseInt(price);
-		const propertyData = {
-			title: title.trim(),
-			description,
-			price: priceNum,
-			priceLabel: `${currency === 'USD' ? 'USD' : '$'} ${priceNum.toLocaleString('es-AR')}${operation === 'rent' ? '/mes' : ''}`,
-			currency,
-			location,
-			address,
-			image:
-				imagePreviews[0] ||
-				'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
-			images: imagePreviews,
-			propertyType: propertyTypeMap[propertyType] || 'apartment',
-			attributes: {
-				bedrooms: parseInt(bedrooms) || 0,
-				bathrooms: parseInt(bathrooms) || 0,
-				area: parseInt(area) || 0
-			},
-			operation,
-			featured: true,
-			agentEmail: $currentUser!.email,
-			agentId: $currentUser!.id,
-			isUserProperty: true
-		};
+		submitting = true;
+		try {
+			// Upload new images first
+			const uploadedImages: string[] = [];
+			for (const file of images) {
+				try {
+					const url = await uploadImage(file);
+					uploadedImages.push(url);
+				} catch {
+					// Fall back to preview URL if upload fails
+					const reader = new FileReader();
+					const result = await new Promise<string>((resolve) => {
+						reader.onload = (e) => resolve(e.target?.result as string);
+						reader.readAsDataURL(file);
+					});
+					uploadedImages.push(result);
+				}
+			}
 
-		if (isEditing && editId) {
-			propertiesStore.update(editId, propertyData);
-			success = true;
-		} else {
-			const newProp = propertiesStore.add(propertyData);
-			createdPropertyId = newProp.id;
-			success = true;
+			// If editing with existing images that weren't changed, keep them
+			const existingImages = isEditing
+				? (getPropertyById(editId)?.images ?? []).filter((url) =>
+						imagePreviews.includes(url)
+					)
+				: [];
+			const allImages = [...existingImages, ...uploadedImages];
+
+			const priceNum = parseInt(price);
+			const apiData = {
+				title: title.trim(),
+				description: description || undefined,
+				operation: operation as 'buy' | 'rent',
+				propertyType: (propertyTypeMap[propertyType] || 'apartment') as
+					| 'apartment'
+					| 'house'
+					| 'penthouse'
+					| 'terrain'
+					| 'commercial',
+				price: priceNum,
+				currency: currency as 'USD' | 'ARS',
+				location,
+				address: address || undefined,
+				attributes: {
+					bedrooms: parseInt(bedrooms) || 0,
+					bathrooms: parseInt(bathrooms) || 0,
+					area: parseInt(area) || 0,
+				},
+				images: allImages,
+				featured: true,
+			};
+
+			if (isEditing && editId) {
+				await updateProperty(editId, apiData);
+				success = true;
+			} else {
+				const result = await createProperty(apiData);
+				createdPropertyId = result.id;
+				success = true;
+			}
+			window.scrollTo(0, 0);
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Error al guardar la propiedad';
+		} finally {
+			submitting = false;
 		}
-		window.scrollTo(0, 0);
 	}
 
 	function handleImageUpload(e: Event) {
@@ -855,9 +887,10 @@
 					<div class="flex justify-end">
 						<button
 							type="submit"
-							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors"
+							disabled={submitting}
+							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							{isEditing ? 'Guardar cambios' : 'Publicar en Localia'}
+							{submitting ? 'Publicando...' : isEditing ? 'Guardar cambios' : 'Publicar en Localia'}
 						</button>
 					</div>
 				</form>

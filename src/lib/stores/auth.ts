@@ -57,14 +57,6 @@ function createAuthStore() {
 					role === 'agent' ? 'agent' : 'seeker',
 					licenseNumber
 				);
-				await fetch(`${import.meta.env.VITE_API_URL}/notifications/welcome-email`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						email,
-						name: name || email.split('@')[0]
-					})
-				}).catch(() => {});
 			} else {
 				await signInWithEmail(email, _password);
 			}
