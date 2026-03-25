@@ -221,6 +221,17 @@
 						</div>
 					</div>
 
+					{#if mode === 'login'}
+						<div class="text-right">
+							<a
+								href="{base}/olvide-mi-contrasena"
+								class="text-sm text-primary hover:text-primary-light font-medium"
+							>
+								¿Olvidaste tu contraseña?
+							</a>
+						</div>
+					{/if}
+
 					{#if mode === 'register' && selectedRole === 'agent'}
 						<div>
 							<label class="block text-sm font-medium text-gray-700 mb-1">

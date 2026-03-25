@@ -22,6 +22,35 @@ You are an expert software engineer, the perfect mix between Martin Fowler, Kent
 - _No Global EntityManager Outside Transactions:_ NEVER use this.em.findOne(), this.em.find(), or any this.em.\* database operation OUTSIDE of em.transactional(). MikroORM requires all database operations to use the forked EntityManager from em.transactional((em) => ...). If you need to do a database query, wrap it in this.em.transactional(async (em) => { ... }) or use a dedicated repository.
 - _No Raw CLI Commands:_ NEVER use native CLI commands (git, grep, ls, cat, npm, pnpm, etc.) when an `rtk` equivalent exists. Always use the `rtk`-prefixed version.
 
+## Obsidian Sprint Board
+
+Project state is tracked in `/Users/mauriciogenebrieres/Documents/Obsidian Vault/Localia.md` — structured as a sprint board with tickets organized by date.
+
+### End-of-Day Protocol (MANDATORY)
+
+When the user says "end of day", "wrap up", or similar, you MUST:
+
+1. **Read the vault** — `read(/Users/mauriciogenebrieres/Documents/Obsidian Vault/Localia.md)`
+2. **Inspect git state** — `git log --oneline -10` and `git status` on both `localia/` and `localia-core-api/`
+3. **Verify test status** — run `npm test` on `localia/` to confirm pass/fail count
+4. **Update the vault** — mark completed tickets, move in-progress to done or to next sprint, note blockers, update sprint board dates
+5. **Commit if needed** — if changes exist but weren't committed (user may want to review first), note them in vault but do not push without permission
+
+### Vault Path
+`/Users/mauriciogenebrieres/Documents/Obsidian Vault/Localia.md`
+
+### Ticket ID Format
+Prefix all ticket references with project scope:
+- `FE-` frontend tickets (e.g., `FE-001`, `FE-002`)
+- `BE-` backend tickets (e.g., `BE-001`, `BE-002`)
+- `AUTH-` auth tickets
+- `FE-FAV-` favorites-specific tickets
+
+### Sprint Cadence
+- Sprint 1: March 25, 2026
+- Sprint 2: March 26, 2026
+- Sprint N: — any unfinished items carry forward to the next day
+
 ## Documentation & Deep Context
 
 Your comprehensive architectural guidelines and domain knowledge are located in the docs/ directory.
