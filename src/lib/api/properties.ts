@@ -99,6 +99,10 @@ export async function createProperty(data: CreatePropertyRequest): Promise<Prope
 	const operation = data.operation;
 	const priceLabel = `${currency === 'USD' ? 'USD' : '$'} ${priceNum.toLocaleString('es-AR')}${operation === 'rent' ? '/mes' : ''}`;
 
+	const listingCounter = parseInt(localStorage.getItem('localia_listing_counter') || '0') + 1;
+	localStorage.setItem('localia_listing_counter', listingCounter.toString());
+	const listingCode = `LCL-${new Date().getFullYear()}-${listingCounter.toString().padStart(4, '0')}`;
+
 	const newProperty = propertiesStore.add({
 		title: data.title,
 		description: data.description,
@@ -117,7 +121,12 @@ export async function createProperty(data: CreatePropertyRequest): Promise<Prope
 		featured: data.featured ?? true,
 		agentId: user?.id || 'anonymous',
 		agentEmail: user?.email,
-		distributedTo: data.distributedTo ?? []
+		distributedTo: data.distributedTo ?? [],
+		listingCode,
+		published: true,
+		views: 0,
+		publishedAt: new Date().toISOString(),
+		lastUpdatedAt: new Date().toISOString()
 	});
 
 	return newProperty;
@@ -139,7 +148,8 @@ export async function updateProperty(id: string, data: UpdatePropertyRequest): P
 
 	propertiesStore.update(id, {
 		...data,
-		priceLabel
+		priceLabel,
+		lastUpdatedAt: new Date().toISOString()
 	});
 
 	const updated = get(propertiesStore).find((p) => p.id === id);
@@ -151,6 +161,15 @@ export async function updateProperty(id: string, data: UpdatePropertyRequest): P
 
 export async function deleteProperty(id: string): Promise<void> {
 	propertiesStore.delete(id);
+}
+
+export async function incrementViews(id: string): Promise<void> {
+	const prop = get(propertiesStore).find((p) => p.id === id);
+	if (prop) {
+		propertiesStore.update(id, {
+			views: (prop.views || 0) + 1
+		});
+	}
 }
 
 export async function uploadImage(file: File): Promise<string> {

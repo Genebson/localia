@@ -15,18 +15,24 @@
 		Warehouse,
 		Waves,
 		Home,
-		ExternalLink
+		ExternalLink,
+		Eye,
+		Clock,
+		Tag
 	} from 'lucide-svelte';
 	import { Splide, SplideSlide } from '@splidejs/svelte-splide';
 	import '@splidejs/svelte-splide/css';
 	import ImageLightbox from '$lib/components/ImageLightbox.svelte';
 	import PropertyMap from '$lib/components/PropertyMap.svelte';
+	import PropertyCard from '$lib/components/PropertyCard.svelte';
+	import ContactForm from '$lib/components/ContactForm.svelte';
 	import { allProperties } from '$lib/stores/properties';
 	import { favorites } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
 	import { agencyStore } from '$lib/stores/agencies';
 	import { currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
+	import { incrementViews } from '$lib/api/properties';
 	import { onMount } from 'svelte';
 
 	$: property = $allProperties.find((p) => p.id === $page.params.id);
@@ -43,6 +49,26 @@
 				? [property.image]
 				: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'];
 
+	$: similarProperties = property
+		? $allProperties
+				.filter(
+					(p) =>
+						p.id !== property.id &&
+						p.published !== false &&
+						(p.location === property.location ||
+							p.propertyType === property.propertyType)
+				)
+				.slice(0, 4)
+		: [];
+
+	$: daysOnMarket = property?.publishedAt
+		? Math.floor(
+				(Date.now() - new Date(property.publishedAt).getTime()) / (1000 * 60 * 60 * 24)
+			)
+		: 0;
+
+	$: isUnpublished = property?.published === false;
+
 	let lightboxOpen = false;
 
 	function openLightbox(index: number) {
@@ -50,8 +76,9 @@
 	}
 
 	onMount(() => {
-		if (property) {
+		if (property && property.published !== false) {
 			viewed.add(property.id);
+			incrementViews(property.id);
 		}
 	});
 
@@ -109,7 +136,28 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 </svelte:head>
 
 <main class="pt-16 md:pt-20 min-h-screen bg-background">
-	{#if property}
+	{#if property && isUnpublished}
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+			<div
+				class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6"
+			>
+				<Building2 class="w-10 h-10 text-gray-400" />
+			</div>
+			<h1 class="text-2xl font-bold text-gray-900 mb-2">
+				Esta propiedad ya no está disponible
+			</h1>
+			<p class="text-gray-500 mb-6">
+				La propiedad que buscas fue dada de baja o ya no está en publicación.
+			</p>
+			<a
+				href="{base}/"
+				class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
+			>
+				<ArrowLeft class="w-4 h-4" />
+				Volver al inicio
+			</a>
+		</div>
+	{:else if property}
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 			<a
 				href="{base}/"
@@ -317,6 +365,44 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 									</span>
 								</div>
 							{/if}
+
+							{#if property.listingCode}
+								<div class="mt-6 pt-6 border-t border-gray-100">
+									<div class="flex items-center justify-center gap-3">
+										<span
+											class="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-xl"
+										>
+											<span class="flex items-center gap-2">
+												<Tag class="w-4 h-4 text-primary" />
+												<span class="text-sm font-semibold text-gray-700"
+													>Cod. del aviso:</span
+												>
+												<span class="font-mono font-bold text-primary"
+													>{property.listingCode}</span
+												>
+											</span>
+										</span>
+									</div>
+									<div
+										class="flex flex-wrap items-center justify-center gap-3 mt-4"
+									>
+										<div
+											class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 text-primary text-sm font-medium rounded-lg"
+										>
+											<Eye class="w-4 h-4" />
+											{property.views || 0} vistas
+										</div>
+										<div
+											class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 text-accent text-sm font-medium rounded-lg"
+										>
+											<Clock class="w-4 h-4" />
+											{daysOnMarket === 0
+												? 'Publicado hoy'
+												: `Publicado hace ${daysOnMarket} ${daysOnMarket === 1 ? 'día' : 'días'}`}
+										</div>
+									</div>
+								</div>
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -332,18 +418,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 							{/if}
 						</div>
 
-						<div class="space-y-3">
-							<button
-								class="w-full py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors"
-							>
-								Contactar agente
-							</button>
-							<button
-								class="w-full py-3 border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold rounded-lg transition-colors"
-							>
-								Agendar visita
-							</button>
-						</div>
+						<ContactForm propertyId={property.id} propertyTitle={property.title} />
 
 						<div class="mt-6 pt-6 border-t border-gray-100">
 							<h3 class="font-semibold text-gray-900 mb-4">Tu agente</h3>
@@ -385,6 +460,17 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 					</div>
 				</div>
 			</div>
+
+			{#if similarProperties.length > 0}
+				<div class="mt-12">
+					<h2 class="text-xl font-bold text-gray-900 mb-6">Propiedades similares</h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+						{#each similarProperties as similarProperty (similarProperty.id)}
+							<PropertyCard property={similarProperty} />
+						{/each}
+					</div>
+				</div>
+			{/if}
 		</div>
 	{:else}
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">

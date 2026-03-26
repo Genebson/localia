@@ -49,6 +49,10 @@ export interface Property {
 	accessible?: boolean;
 	publishedAt?: string;
 	distributedTo?: string[];
+	listingCode?: string;
+	published?: boolean;
+	views?: number;
+	lastUpdatedAt?: string;
 }
 
 export const properties: Property[] = [

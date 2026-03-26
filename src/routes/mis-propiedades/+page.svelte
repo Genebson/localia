@@ -10,45 +10,59 @@
 		Bed,
 		Bath,
 		Maximize,
-		Globe
+		Globe,
+		EyeOff as UnpublishIcon,
+		Clock,
+		AlertTriangle
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
-	import { auth, currentUser, isAgent } from '$lib/stores/auth';
+	import { auth, currentUser, isAgent, authLoading } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { onMount } from 'svelte';
 	import type { Property } from '$lib/data/properties';
 	import { listMyProperties, updateProperty, deleteProperty } from '$lib/api/properties';
 
-	onMount(() => {
-		auth.init();
-	});
-
-	let userProperties: Property[] = [];
-	let showDeleteConfirm: string | null = null;
-
 	onMount(async () => {
+		isLoading = true;
+		try {
+			await auth.init();
+		} catch {
+			// ignore auth errors
+		}
+		await new Promise((resolve) => setTimeout(resolve, 100));
 		try {
 			userProperties = await listMyProperties();
 		} catch {
 			userProperties = [];
 		}
+		isLoading = false;
 	});
+
+	let userProperties: Property[] = [];
+	let isLoading = true;
+	let showDeleteConfirm: string | null = null;
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
 	}
 
-	async function toggleVisibility(id: string) {
+	function getDaysOnMarket(publishedAt?: string): number {
+		if (!publishedAt) return 0;
+		return Math.floor((Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24));
+	}
+
+	async function togglePublished(id: string) {
 		const prop = userProperties.find((p) => p.id === id);
 		if (!prop) return;
 		try {
-			await updateProperty(id, { featured: !prop.featured });
+			const newPublished = !prop.published;
+			await updateProperty(id, { published: newPublished });
 			userProperties = userProperties.map((p) =>
-				p.id === id ? { ...p, featured: !p.featured } : p
+				p.id === id ? { ...p, published: newPublished } : p
 			);
 		} catch {
-			// Silently fail visibility toggle
+			// Silently fail
 		}
 	}
 
@@ -57,7 +71,7 @@
 			await deleteProperty(id);
 			userProperties = userProperties.filter((p) => p.id !== id);
 		} catch {
-			// Silently fail delete
+			// Silently fail
 		}
 		showDeleteConfirm = null;
 	}
@@ -75,7 +89,7 @@
 </svelte:head>
 
 <main class="pt-16 md:pt-20 min-h-screen bg-background">
-	{#if !$currentUser}
+	{#if !$authLoading && !$currentUser}
 		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
 			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
 				<div
@@ -93,7 +107,7 @@
 				</button>
 			</div>
 		</div>
-	{:else if !$isAgent}
+	{:else if !$authLoading && !$isAgent}
 		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
 			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
 				<div
@@ -129,7 +143,7 @@
 				</a>
 			</div>
 
-			{#if userProperties.length === 0}
+			{#if !isLoading && userProperties.length === 0}
 				<div class="bg-white rounded-2xl shadow-sm p-12 text-center">
 					<div
 						class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -186,17 +200,11 @@
 															{property.title}
 														</h3>
 													</a>
-													{#if property.featured}
+													{#if property.published === false}
 														<span
-															class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
+															class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded"
 														>
-															Visible
-														</span>
-													{:else}
-														<span
-															class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded"
-														>
-															Oculta
+															No publicada
 														</span>
 													{/if}
 												</div>
@@ -204,7 +212,7 @@
 													{property.priceLabel}
 												</p>
 												<div
-													class="flex items-center gap-4 text-sm text-gray-500"
+													class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500"
 												>
 													<span class="flex items-center gap-1">
 														<MapPin class="w-4 h-4" />
@@ -224,6 +232,28 @@
 														<Maximize class="w-4 h-4" />
 														{property.attributes.area} m²
 													</span>
+													<span class="flex items-center gap-1">
+														<Eye class="w-4 h-4" />
+														{property.views || 0} vistas
+													</span>
+													<span class="flex items-center gap-1">
+														<Clock class="w-4 h-4" />
+														{property.publishedAt
+															? getDaysOnMarket(
+																	property.publishedAt
+																) === 0
+																? 'Publicado hoy'
+																: `Publicado hace ${getDaysOnMarket(property.publishedAt)} ${getDaysOnMarket(property.publishedAt) === 1 ? 'día' : 'días'}`
+															: 'Sin publicar'}
+													</span>
+													{#if getDaysOnMarket(property.publishedAt) > 30}
+														<span
+															class="flex items-center gap-1 text-orange-600"
+														>
+															<AlertTriangle class="w-4 h-4" />
+															+30 días
+														</span>
+													{/if}
 												</div>
 												{#if property.distributedTo && property.distributedTo.length > 0}
 													<div class="flex items-center gap-1 mt-2">
@@ -254,6 +284,19 @@
 											</div>
 										</div>
 										<div class="flex items-center gap-2 flex-shrink-0">
+											<button
+												on:click={() => togglePublished(property.id)}
+												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+												title={property.published === false
+													? 'Publicar'
+													: 'Despublicar'}
+											>
+												{#if property.published === false}
+													<Eye class="w-5 h-5" />
+												{:else}
+													<UnpublishIcon class="w-5 h-5" />
+												{/if}
+											</button>
 											<a
 												href="{base}/publicar?edit={property.id}"
 												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
@@ -261,17 +304,6 @@
 											>
 												<Edit class="w-5 h-5" />
 											</a>
-											<button
-												on:click={() => toggleVisibility(property.id)}
-												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-												title={property.featured ? 'Ocultar' : 'Mostrar'}
-											>
-												{#if property.featured}
-													<EyeOff class="w-5 h-5" />
-												{:else}
-													<Eye class="w-5 h-5" />
-												{/if}
-											</button>
 											<button
 												on:click={() => (showDeleteConfirm = property.id)}
 												class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"

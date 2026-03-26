@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { Menu, X, User, LogOut, Building2, ChevronDown } from 'lucide-svelte';
-	import { auth, isAgent, currentUser } from '$lib/stores/auth';
+	import { auth, isAgent, currentUser, authLoading } from '$lib/stores/auth';
 	import { filters } from '$lib/stores/filters';
 	import { base } from '$app/paths';
 	import { openAuthModal } from '$lib/stores/authModal';
@@ -178,7 +178,7 @@
 							</div>
 						{/if}
 					</div>
-				{:else}
+				{:else if !$authLoading}
 					<div class="flex items-center gap-2">
 						<button
 							on:click={() => openAuthModal('login')}
@@ -293,7 +293,7 @@
 							Cerrar sesión
 						</button>
 					</div>
-				{:else}
+				{:else if !$authLoading}
 					<div class="pt-3 border-t border-gray-100 space-y-2">
 						<button
 							on:click={() => {

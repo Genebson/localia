@@ -359,7 +359,9 @@
 	}
 
 	function distributeToPortal(portal: 'zonaprop' | 'argenprop' | 'mercadolibre') {
-		if (!distributedTo.includes(portal)) {
+		if (distributedTo.includes(portal)) {
+			distributedTo = distributedTo.filter((p) => p !== portal);
+		} else {
 			distributedTo = [...distributedTo, portal];
 		}
 	}
@@ -848,84 +850,78 @@
 						{/if}
 					</div>
 
-					{#if !isEditing}
-						<div class="bg-white rounded-2xl shadow-sm p-6">
-							<h2 class="text-lg font-semibold text-gray-900 mb-4">
-								Distribuir en otros portales
-							</h2>
-							<p class="text-sm text-gray-500 mb-4">
-								Publicá la misma propiedad en otros portales con un solo clic.
-							</p>
-							<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-								<button
-									type="button"
-									on:click={() => distributeToPortal('zonaprop')}
-									class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
-										'zonaprop'
-									)
-										? 'border-green-500 bg-green-50'
-										: 'border-gray-200 hover:border-primary'}"
+					<div class="bg-white rounded-2xl shadow-sm p-6">
+						<h2 class="text-lg font-semibold text-gray-900 mb-4">
+							Distribuir en otros portales
+						</h2>
+						<p class="text-sm text-gray-500 mb-4">
+							Publicá la misma propiedad en otros portales con un solo clic.
+						</p>
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+							<button
+								type="button"
+								on:click={() => distributeToPortal('zonaprop')}
+								class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
+									'zonaprop'
+								)
+									? 'border-green-500 bg-green-50'
+									: 'border-gray-200 hover:border-primary'}"
+							>
+								<span
+									class="font-medium text-sm {distributedTo.includes('zonaprop')
+										? 'text-green-700'
+										: 'text-gray-700'}">ZonaProp</span
 								>
-									<span
-										class="font-medium text-sm {distributedTo.includes(
-											'zonaprop'
-										)
-											? 'text-green-700'
-											: 'text-gray-700'}">ZonaProp</span
-									>
-									{#if distributedTo.includes('zonaprop')}
-										<CheckCircle2 class="w-4 h-4 text-green-600" />
-									{:else}
-										<ExternalLink class="w-4 h-4 text-gray-400" />
-									{/if}
-								</button>
-								<button
-									type="button"
-									on:click={() => distributeToPortal('argenprop')}
-									class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
-										'argenprop'
-									)
-										? 'border-green-500 bg-green-50'
-										: 'border-gray-200 hover:border-primary'}"
+								{#if distributedTo.includes('zonaprop')}
+									<CheckCircle2 class="w-4 h-4 text-green-600" />
+								{:else}
+									<ExternalLink class="w-4 h-4 text-gray-400" />
+								{/if}
+							</button>
+							<button
+								type="button"
+								on:click={() => distributeToPortal('argenprop')}
+								class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
+									'argenprop'
+								)
+									? 'border-green-500 bg-green-50'
+									: 'border-gray-200 hover:border-primary'}"
+							>
+								<span
+									class="font-medium text-sm {distributedTo.includes('argenprop')
+										? 'text-green-700'
+										: 'text-gray-700'}">ArgenProp</span
 								>
-									<span
-										class="font-medium text-sm {distributedTo.includes(
-											'argenprop'
-										)
-											? 'text-green-700'
-											: 'text-gray-700'}">ArgenProp</span
-									>
-									{#if distributedTo.includes('argenprop')}
-										<CheckCircle2 class="w-4 h-4 text-green-600" />
-									{:else}
-										<ExternalLink class="w-4 h-4 text-gray-400" />
-									{/if}
-								</button>
-								<button
-									type="button"
-									on:click={() => distributeToPortal('mercadolibre')}
-									class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
+								{#if distributedTo.includes('argenprop')}
+									<CheckCircle2 class="w-4 h-4 text-green-600" />
+								{:else}
+									<ExternalLink class="w-4 h-4 text-gray-400" />
+								{/if}
+							</button>
+							<button
+								type="button"
+								on:click={() => distributeToPortal('mercadolibre')}
+								class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
+									'mercadolibre'
+								)
+									? 'border-green-500 bg-green-50'
+									: 'border-gray-200 hover:border-primary'}"
+							>
+								<span
+									class="font-medium text-sm {distributedTo.includes(
 										'mercadolibre'
 									)
-										? 'border-green-500 bg-green-50'
-										: 'border-gray-200 hover:border-primary'}"
+										? 'text-green-700'
+										: 'text-gray-700'}">MercadoLibre</span
 								>
-									<span
-										class="font-medium text-sm {distributedTo.includes(
-											'mercadolibre'
-										)
-											? 'text-green-700'
-											: 'text-gray-700'}">MercadoLibre</span
-									>
-									{#if distributedTo.includes('mercadolibre')}
-										<CheckCircle2 class="w-4 h-4 text-green-600" />
-									{:else}
-										<ExternalLink class="w-4 h-4 text-gray-400" />
-									{/if}
-								</button>
-							</div>
+								{#if distributedTo.includes('mercadolibre')}
+									<CheckCircle2 class="w-4 h-4 text-green-600" />
+								{:else}
+									<ExternalLink class="w-4 h-4 text-gray-400" />
+								{/if}
+							</button>
 						</div>
-					{/if}
+					</div>
 
 					<div class="flex justify-end">
 						<button

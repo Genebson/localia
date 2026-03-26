@@ -19,10 +19,13 @@ export interface FrontendUser {
 	licenseNumber?: string;
 }
 
+export const authLoading = writable(true);
+
 function createAuthStore() {
 	const { subscribe, set } = writable<FrontendUser | null>(null);
 
 	async function init() {
+		authLoading.set(true);
 		try {
 			await getMe();
 			const userData = await getUser();
@@ -38,6 +41,7 @@ function createAuthStore() {
 		} catch {
 			set(null);
 		}
+		authLoading.set(false);
 	}
 
 	async function login(
