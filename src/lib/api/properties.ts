@@ -92,6 +92,12 @@ function mapApiToProperty(data: ApiPropertyAttributes, id: string): Property {
 	};
 }
 
+function generateRandomCoords() {
+	const lat = -34.63 + Math.random() * 0.06;
+	const lng = -59.41 + Math.random() * 0.04;
+	return { lat, lng };
+}
+
 export async function createProperty(data: CreatePropertyRequest): Promise<Property> {
 	const user = get(auth);
 	const priceNum = data.price;
@@ -103,6 +109,8 @@ export async function createProperty(data: CreatePropertyRequest): Promise<Prope
 	localStorage.setItem('localia_listing_counter', listingCounter.toString());
 	const listingCode = `LCL-${new Date().getFullYear()}-${listingCounter.toString().padStart(4, '0')}`;
 
+	const coords = generateRandomCoords();
+
 	const newProperty = propertiesStore.add({
 		title: data.title,
 		description: data.description,
@@ -111,6 +119,8 @@ export async function createProperty(data: CreatePropertyRequest): Promise<Prope
 		currency: data.currency,
 		location: data.location,
 		address: data.address || '',
+		lat: coords.lat,
+		lng: coords.lng,
 		image:
 			data.images[0] ||
 			'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',

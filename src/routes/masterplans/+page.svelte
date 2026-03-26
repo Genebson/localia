@@ -35,7 +35,7 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{#each loteos as loteo}
 				<a
-					href="{base}/masterplan/{loteo.id}"
+					href="{base}/masterplans/{loteo.id}"
 					class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow group"
 				>
 					<div class="aspect-[16/9] overflow-hidden">

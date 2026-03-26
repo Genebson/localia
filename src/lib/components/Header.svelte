@@ -1,10 +1,16 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { Menu, X, User, LogOut, Building2, ChevronDown } from 'lucide-svelte';
+	import { Menu, X, User, LogOut, Building2, ChevronDown, MessageSquare } from 'lucide-svelte';
 	import { auth, isAgent, currentUser, authLoading } from '$lib/stores/auth';
 	import { filters } from '$lib/stores/filters';
 	import { base } from '$app/paths';
 	import { openAuthModal } from '$lib/stores/authModal';
+	import {
+		notifications,
+		unreadCount,
+		mostRecentUnread,
+		badgeVisible
+	} from '$lib/stores/notifications';
 
 	let isMenuOpen = false;
 	let isScrolled = false;
@@ -29,6 +35,14 @@
 
 	function setOperation(operation: 'buy' | 'rent' | 'all') {
 		filters.setOperation(operation);
+		isMenuOpen = false;
+	}
+
+	function handleMisChatsClick() {
+		// Clear avatar badge when user goes to review notifications
+		// Dropdown badge stays visible (based on unread count from messages store)
+		notifications.clearAvatarBadge();
+		isUserMenuOpen = false;
 		isMenuOpen = false;
 	}
 
@@ -59,6 +73,18 @@
 			</a>
 
 			<nav class="hidden md:flex items-center gap-4">
+				<a
+					href="{base}/inmobiliarias"
+					class="px-4 py-2 text-primary hover:text-primary-light font-medium transition-colors"
+				>
+					Inmobiliarias
+				</a>
+				<a
+					href="{base}/mercado"
+					class="px-4 py-2 text-primary hover:text-primary-light font-medium transition-colors"
+				>
+					Mercado
+				</a>
 				{#if $isAgent}
 					<a
 						href="{base}/publicar"
@@ -74,13 +100,20 @@
 							on:click={toggleUserMenu}
 							class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
 						>
-							<div
-								class="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
-							>
-								{#if $currentUser.role === 'agent'}
-									<Building2 class="w-4 h-4 text-white" />
-								{:else}
-									<User class="w-4 h-4 text-white" />
+							<div class="relative">
+								<div
+									class="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+								>
+									{#if $currentUser.role === 'agent'}
+										<Building2 class="w-4 h-4 text-white" />
+									{:else}
+										<User class="w-4 h-4 text-white" />
+									{/if}
+								</div>
+								{#if $badgeVisible}
+									<span
+										class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 border-2 border-white rounded-full"
+									></span>
 								{/if}
 							</div>
 							<span class="text-gray-700 font-medium">{$currentUser.name}</span>
@@ -111,6 +144,22 @@
 								</a>
 								{#if $isAgent}
 									<a
+										href="{base}/chepibe{$mostRecentUnread
+											? `?convId=${$mostRecentUnread.conversationId}`
+											: ''}"
+										on:click={handleMisChatsClick}
+										class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center justify-between"
+									>
+										<span class="font-medium">Mis Chats</span>
+										{#if $unreadCount > 0}
+											<span
+												class="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+											>
+												{$unreadCount}
+											</span>
+										{/if}
+									</a>
+									<a
 										href="{base}/mis-propiedades"
 										on:click={() => (isUserMenuOpen = false)}
 										class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -120,11 +169,11 @@
 								{/if}
 								<div class="border-t border-gray-100 my-1"></div>
 								<a
-									href="{base}/masterplan"
+									href="{base}/masterplans"
 									on:click={() => (isUserMenuOpen = false)}
 									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
 								>
-									Masterplan
+									Masterplans
 								</a>
 								<a
 									href="{base}/tablero"
@@ -143,22 +192,6 @@
 											<div class="flex items-center gap-2">
 												<span class="text-lg">✨</span>
 												<span class="font-semibold">Furnisher</span>
-											</div>
-											<span
-												class="text-xs bg-white/20 px-2 py-0.5 rounded-full"
-												>Nuevo</span
-											>
-										</div>
-									</a>
-									<a
-										href="{base}/chepibe"
-										on:click={() => (isUserMenuOpen = false)}
-										class="block px-4 py-2 m-1 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg shadow-sm hover:shadow-md transition-all"
-									>
-										<div class="flex items-center justify-between">
-											<div class="flex items-center gap-2">
-												<span>💬</span>
-												<span class="font-semibold">ChePibe</span>
 											</div>
 											<span
 												class="text-xs bg-white/20 px-2 py-0.5 rounded-full"
@@ -215,11 +248,20 @@
 			<nav class="px-4 py-4 space-y-3">
 				{#if $isAgent}
 					<a
-						href="{base}/publicar"
+						href="{base}/chepibe{$mostRecentUnread
+							? `?convId=${$mostRecentUnread.conversationId}`
+							: ''}"
 						on:click={() => (isMenuOpen = false)}
-						class="block py-3 bg-accent text-white font-semibold text-center rounded-lg"
+						class="block py-2 text-gray-700 flex items-center justify-between"
 					>
-						Publicar propiedad
+						<span class="font-medium">Mis Chats</span>
+						{#if $unreadCount > 0}
+							<span
+								class="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+							>
+								{$unreadCount}
+							</span>
+						{/if}
 					</a>
 				{/if}
 
@@ -247,6 +289,22 @@
 						>
 						{#if $isAgent}
 							<a
+								href="{base}/chepibe{$mostRecentUnread
+									? `?convId=${$mostRecentUnread.conversationId}`
+									: ''}"
+								on:click={handleMisChatsClick}
+								class="block py-2 text-gray-700 flex items-center justify-between"
+							>
+								<span class="font-medium">Mis Chats</span>
+								{#if $unreadCount > 0}
+									<span
+										class="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+									>
+										{$unreadCount}
+									</span>
+								{/if}
+							</a>
+							<a
 								href="{base}/mis-propiedades"
 								on:click={() => (isMenuOpen = false)}
 								class="block py-2 text-gray-700">Mis Propiedades</a
@@ -254,9 +312,9 @@
 						{/if}
 						<div class="border-t border-gray-100 my-2"></div>
 						<a
-							href="{base}/masterplan"
+							href="{base}/masterplans"
 							on:click={() => (isMenuOpen = false)}
-							class="block py-2 text-gray-700">Masterplan</a
+							class="block py-2 text-gray-700">Masterplans</a
 						>
 						<a
 							href="{base}/tablero"
@@ -270,16 +328,6 @@
 								class="block py-2 px-3 mx-0 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg font-semibold text-center"
 							>
 								✨ Furnisher <span
-									class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1"
-									>Nuevo</span
-								>
-							</a>
-							<a
-								href="{base}/chepibe"
-								on:click={() => (isMenuOpen = false)}
-								class="block py-2 px-3 mx-0 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg font-semibold text-center"
-							>
-								💬 ChePibe <span
 									class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1"
 									>Nuevo</span
 								>

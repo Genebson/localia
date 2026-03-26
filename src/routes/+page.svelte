@@ -1,20 +1,12 @@
 <script lang="ts">
-	import {
-		Filter,
-		Building2,
-		TrendingUp,
-		Shield,
-		ChevronDown,
-		MapPin,
-		LayoutGrid,
-		Map
-	} from 'lucide-svelte';
+	import { Filter, Building2, TrendingUp, Shield, ChevronDown, MapPin } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import FiltersSidebar from '$lib/components/FiltersSidebar.svelte';
 	import PropertyCard from '$lib/components/PropertyCard.svelte';
-	import MapView from '$lib/components/MapView.svelte';
+	import PropertyMap from '$lib/components/PropertyMap.svelte';
+	import { allProperties } from '$lib/stores/properties';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { auth, isAgent } from '$lib/stores/auth';
 	import {
@@ -26,7 +18,6 @@
 	import { onMount } from 'svelte';
 
 	let filtersOpen = false;
-	let viewMode: 'grid' | 'map' = 'grid';
 	let lastUrl = '';
 
 	$: if (typeof window !== 'undefined' && $page.url.href !== lastUrl) {
@@ -97,7 +88,105 @@
 				<Shield class="w-4 h-4" />
 				Terrenos
 			</button>
+			<button
+				on:click={() => {
+					filters.setPropertyType($filters.propertyType === 'lote' ? '' : 'lote');
+					syncFiltersToUrl();
+					document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+				}}
+				class="px-6 py-2.5 {$filters.propertyType === 'lote'
+					? 'bg-white text-primary'
+					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+			>
+				<Shield class="w-4 h-4" />
+				Lotes
+			</button>
+			<button
+				on:click={() => {
+					filters.setPropertyType($filters.propertyType === 'chacra' ? '' : 'chacra');
+					syncFiltersToUrl();
+					document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+				}}
+				class="px-6 py-2.5 {$filters.propertyType === 'chacra'
+					? 'bg-white text-primary'
+					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+			>
+				<TrendingUp class="w-4 h-4" />
+				Chacras
+			</button>
+			<button
+				on:click={() => {
+					filters.setPropertyType($filters.propertyType === 'quinta' ? '' : 'quinta');
+					syncFiltersToUrl();
+					document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+				}}
+				class="px-6 py-2.5 {$filters.propertyType === 'quinta'
+					? 'bg-white text-primary'
+					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+			>
+				<Building2 class="w-4 h-4" />
+				Quintas
+			</button>
+			<button
+				on:click={() => {
+					filters.setPropertyType($filters.propertyType === 'campo' ? '' : 'campo');
+					syncFiltersToUrl();
+					document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+				}}
+				class="px-6 py-2.5 {$filters.propertyType === 'campo'
+					? 'bg-white text-primary'
+					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+			>
+				<Shield class="w-4 h-4" />
+				Campos
+			</button>
+			<button
+				on:click={() => {
+					filters.setPropertyType($filters.propertyType === 'estancia' ? '' : 'estancia');
+					syncFiltersToUrl();
+					document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+				}}
+				class="px-6 py-2.5 {$filters.propertyType === 'estancia'
+					? 'bg-white text-primary'
+					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+			>
+				<TrendingUp class="w-4 h-4" />
+				Estancias
+			</button>
+			<button
+				on:click={() => {
+					filters.setPropertyType($filters.propertyType === 'galpon' ? '' : 'galpon');
+					syncFiltersToUrl();
+					document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+				}}
+				class="px-6 py-2.5 {$filters.propertyType === 'galpon'
+					? 'bg-white text-primary'
+					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+			>
+				<Building2 class="w-4 h-4" />
+				Galpones
+			</button>
+			<button
+				on:click={() => {
+					filters.setPropertyType($filters.propertyType === 'local' ? '' : 'local');
+					syncFiltersToUrl();
+					document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+				}}
+				class="px-6 py-2.5 {$filters.propertyType === 'local'
+					? 'bg-white text-primary'
+					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+			>
+				<Building2 class="w-4 h-4" />
+				Locales
+			</button>
 		</div>
+	</div>
+</section>
+
+<!-- Map Section -->
+<section class="bg-gray-50 py-12">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<PropertyMap properties={$allProperties} height="500px" />
 	</div>
 </section>
 
@@ -151,24 +240,6 @@
 				<Filter class="w-4 h-4" />
 				<span class="text-sm font-medium">Filtros</span>
 			</button>
-			<button
-				on:click={() => (viewMode = 'grid')}
-				class="p-2 transition-colors {viewMode === 'grid'
-					? 'bg-primary text-white'
-					: 'text-gray-500 hover:bg-gray-50'}"
-				title="Grid view"
-			>
-				<LayoutGrid class="w-4 h-4" />
-			</button>
-			<button
-				on:click={() => (viewMode = 'map')}
-				class="p-2 transition-colors {viewMode === 'map'
-					? 'bg-primary text-white'
-					: 'text-gray-500 hover:bg-gray-50'}"
-				title="Map view"
-			>
-				<Map class="w-4 h-4" />
-			</button>
 		</div>
 	</div>
 
@@ -191,10 +262,6 @@
 					>
 						Limpiar filtros
 					</button>
-				</div>
-			{:else if viewMode === 'map'}
-				<div class="h-[600px] rounded-xl overflow-hidden border border-gray-200">
-					<MapView properties={$filteredProperties} />
 				</div>
 			{:else}
 				<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -253,3 +320,7 @@
 		</div>
 	</div>
 </section>
+
+<svelte:head>
+	<title>Localia — Encontrá tu próximo hogar</title>
+</svelte:head>

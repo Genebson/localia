@@ -200,6 +200,13 @@
 															{property.title}
 														</h3>
 													</a>
+													{#if property.aptoCredito}
+														<span
+															class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
+														>
+															Apto Crédito
+														</span>
+													{/if}
 													{#if property.published === false}
 														<span
 															class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded"

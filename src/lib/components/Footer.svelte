@@ -15,7 +15,7 @@
 				</a>
 				<p class="text-blue-200 text-sm leading-relaxed">
 					Tu próximo hogar está en Localia. Encontrá casas, departamentos y más en las
-					mejores zonas.
+					mejores zonas de Mercedes.
 				</p>
 			</div>
 

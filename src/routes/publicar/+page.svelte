@@ -15,7 +15,8 @@
 		Loader2,
 		AlertCircle,
 		ExternalLink,
-		CheckCircle2
+		CheckCircle2,
+		Sparkles
 	} from 'lucide-svelte';
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
@@ -46,6 +47,7 @@
 	let bedrooms = '';
 	let bathrooms = '';
 	let area = '';
+	let aptoCredito = false;
 	let images: File[] = [];
 	let imagePreviews: string[] = [];
 	let error = '';
@@ -68,6 +70,14 @@
 
 	// Distribution state (mocked)
 	let distributedTo: string[] = [];
+
+	// Title/description generator state (mocked)
+	let titleSuggestions: string[] = [];
+	let descriptionSuggestions: string[] = [];
+	let showTitleSuggestions = false;
+	let showDescriptionSuggestions = false;
+	let generatingTitles = false;
+	let generatingDescriptions = false;
 
 	// Extracted data (from file or URL)
 	let extractedData: {
@@ -115,6 +125,113 @@
 		terrain: 'Terreno',
 		commercial: 'Local comercial'
 	};
+
+	// Mock title generator based on property attributes
+	function generateTitleSuggestions(): string[] {
+		const typeLabel = propertyType || 'Propiedad';
+		const locationLabel = location || 'ubicación a definir';
+		const bedroomsNum = parseInt(bedrooms) || 0;
+		const isRent = operation === 'rent';
+
+		const ambientLabel =
+			bedroomsNum === 1 ? '1 ambiente' : bedroomsNum > 1 ? `${bedroomsNum} ambientes` : '';
+		const typeFormatted = typeLabel === 'Propiedad' ? typeLabel : typeLabel.toLowerCase();
+
+		const suggestions: string[] = [];
+
+		// Suggestion 1: Standard format
+		const parts1 = [typeFormatted];
+		if (ambientLabel) parts1.unshift(ambientLabel + ' en');
+		parts1.push('en', locationLabel);
+		suggestions.push(parts1.join(' '));
+
+		// Suggestion 2: Action-oriented
+		const action = isRent ? 'Alquiler de' : 'Venta de';
+		const parts2 = [action];
+		if (ambientLabel) parts2.push(ambientLabel);
+		parts2.push(typeFormatted);
+		if (locationLabel) parts2.push('en', locationLabel);
+		suggestions.push(parts2.join(' '));
+
+		// Suggestion 3: Emphasizing location
+		const parts3 = [typeFormatted];
+		if (ambientLabel)
+			parts3.push('con', String(bedroomsNum), 'dormitorio' + (bedroomsNum > 1 ? 's' : ''));
+		parts3.push('en', locationLabel);
+		suggestions.push(parts3.join(' '));
+
+		return suggestions.slice(0, 3);
+	}
+
+	// Mock description generator based on property attributes
+	function generateDescriptionSuggestions(): string[] {
+		const typeLabel = propertyType || 'propiedad';
+		const locationLabel = location || 'Mercedes';
+		const bedroomsNum = parseInt(bedrooms) || 0;
+		const bathroomsNum = parseInt(bathrooms) || 0;
+		const areaNum = parseInt(area) || 0;
+		const isRent = operation === 'rent';
+
+		const descriptions: string[] = [];
+
+		// Description 1: Classic formal
+		let desc1 = `${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} ${isRent ? 'en alquiler' : 'en venta'} en ${locationLabel}. `;
+		if (bedroomsNum > 0) {
+			desc1 += `Cuenta con ${bedroomsNum} dormitorios`;
+			if (bathroomsNum > 0) desc1 += ` y ${bathroomsNum} baños`;
+			desc1 += '. ';
+		}
+		if (areaNum > 0) desc1 += `Superficie de ${areaNum}m². `;
+		desc1 += 'Excelente ubicación, cercano a medios de transporte y servicios. ';
+		desc1 += 'Ideal para vivir o invertir. ';
+		desc1 += 'Consultá por visita.';
+		descriptions.push(desc1);
+
+		// Description 2: More appealing/inviting
+		let desc2 = '¡No te pierdas esta oportunidad! ';
+		desc2 += `${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} ${isRent ? 'para alquilar' : 'a la venta'} `;
+		desc2 += `en ${locationLabel}. `;
+		desc2 += 'Propiedad con excelente iluminación natural, ';
+		if (bedroomsNum > 0) desc2 += `${bedroomsNum} ambientes amplios, `;
+		if (areaNum > 0) desc2 += `${areaNum}m² cubiertos, `;
+		desc2 += 'buena distribución y ubicación privilegiada. ';
+		desc2 += isRent ? 'Alquiler accesible.' : 'Precio competitivo.';
+		descriptions.push(desc2);
+
+		return descriptions.slice(0, 2);
+	}
+
+	async function handleGenerateTitles() {
+		generatingTitles = true;
+		showTitleSuggestions = false;
+		titleSuggestions = [];
+		// Simulate async generation
+		await new Promise((resolve) => setTimeout(resolve, 600));
+		titleSuggestions = generateTitleSuggestions();
+		generatingTitles = false;
+		showTitleSuggestions = true;
+	}
+
+	async function handleGenerateDescriptions() {
+		generatingDescriptions = true;
+		showDescriptionSuggestions = false;
+		descriptionSuggestions = [];
+		// Simulate async generation
+		await new Promise((resolve) => setTimeout(resolve, 600));
+		descriptionSuggestions = generateDescriptionSuggestions();
+		generatingDescriptions = false;
+		showDescriptionSuggestions = true;
+	}
+
+	function applyTitle(titleToApply: string) {
+		title = titleToApply;
+		showTitleSuggestions = false;
+	}
+
+	function applyDescription(descToApply: string) {
+		description = descToApply;
+		showDescriptionSuggestions = false;
+	}
 
 	if (isEditing) {
 		const existing = getPropertyById(editId);
@@ -310,6 +427,7 @@
 				currency: currency as 'USD' | 'ARS',
 				location,
 				address: address || undefined,
+				aptoCredito,
 				attributes: {
 					bedrooms: parseInt(bedrooms) || 0,
 					bathrooms: parseInt(bathrooms) || 0,
@@ -661,29 +779,119 @@
 							Información básica
 						</h2>
 
+						<div
+							class="flex items-start gap-2 p-3 bg-primary/5 border border-primary/10 rounded-lg"
+						>
+							<Sparkles class="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+							<p class="text-sm text-gray-600">
+								<strong class="text-gray-700">Consejo:</strong> Completá los datos de
+								la propiedad (tipo, ubicación, dormitorios, etc.) antes de generar el
+								título y la descripción. Así las sugerencias serán más completas y personalizadas.
+							</p>
+						</div>
+
 						<div>
 							<label class="block text-sm font-medium text-gray-700 mb-1"
 								>Título de la propiedad *</label
 							>
-							<input
-								type="text"
-								bind:value={title}
-								maxlength={70}
-								placeholder="ej: Departamento de 2 ambientes en el Centro"
-								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-							/>
+							<div class="relative">
+								<input
+									type="text"
+									bind:value={title}
+									maxlength={70}
+									placeholder="ej: Departamento de 2 ambientes en el Centro"
+									class="w-full px-4 py-3 pr-24 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
+								<button
+									type="button"
+									on:click={handleGenerateTitles}
+									disabled={generatingTitles}
+									class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary-light transition-colors disabled:opacity-50"
+								>
+									{#if generatingTitles}
+										<Loader2 class="w-4 h-4 animate-spin" />
+									{:else}
+										<Sparkles class="w-4 h-4" />
+									{/if}
+									Generar
+								</button>
+							</div>
+							{#if showTitleSuggestions && titleSuggestions.length > 0}
+								<div
+									class="mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+								>
+									<p
+										class="px-3 py-2 text-xs font-medium text-gray-500 bg-gray-50"
+									>
+										Sugerencias:
+									</p>
+									{#each titleSuggestions as suggestion, i}
+										<button
+											type="button"
+											on:click={() => applyTitle(suggestion)}
+											class="w-full px-3 py-2.5 text-left text-sm hover:bg-primary/5 transition-colors border-b border-gray-100 last:border-b-0"
+										>
+											{suggestion}
+										</button>
+									{/each}
+								</div>
+							{/if}
 						</div>
 
 						<div>
 							<label class="block text-sm font-medium text-gray-700 mb-1"
 								>Descripción</label
 							>
-							<textarea
-								bind:value={description}
-								rows="4"
-								placeholder="Descripción de la propiedad..."
-								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
-							></textarea>
+							<div class="relative">
+								<textarea
+									bind:value={description}
+									rows="4"
+									placeholder="Descripción de la propiedad..."
+									class="w-full px-4 py-3 pr-24 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
+								></textarea>
+								<button
+									type="button"
+									on:click={handleGenerateDescriptions}
+									disabled={generatingDescriptions}
+									class="absolute right-2 top-2 flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary-light transition-colors disabled:opacity-50"
+								>
+									{#if generatingDescriptions}
+										<Loader2 class="w-4 h-4 animate-spin" />
+									{:else}
+										<Sparkles class="w-4 h-4" />
+									{/if}
+									Generar
+								</button>
+							</div>
+							{#if showDescriptionSuggestions && descriptionSuggestions.length > 0}
+								<div class="mt-2 space-y-2">
+									{#each descriptionSuggestions as suggestion, i}
+										<div
+											class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+										>
+											<button
+												type="button"
+												on:click={() => applyDescription(suggestion)}
+												class="w-full px-3 py-2.5 text-left text-sm hover:bg-primary/5 transition-colors flex items-center justify-between"
+											>
+												<span class="text-gray-700 pr-2"
+													>Opción {i + 1}</span
+												>
+												<span
+													class="text-primary font-medium flex items-center gap-1"
+												>
+													Usar <Sparkles class="w-3 h-3" />
+												</span>
+											</button>
+											<p
+												class="px-3 py-2.5 text-sm text-gray-600 border-t border-gray-100 bg-gray-50"
+											>
+												{suggestion}
+											</p>
+										</div>
+									{/each}
+								</div>
+							{/if}
 						</div>
 
 						<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -800,6 +1008,22 @@
 									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 								/>
 							</div>
+						</div>
+
+						<div class="bg-white rounded-2xl shadow-sm p-6">
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={aptoCredito}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<div>
+									<span class="font-medium text-gray-900">Apto Crédito</span>
+									<p class="text-sm text-gray-500">
+										La propiedad es elegible para financiamiento bancario
+									</p>
+								</div>
+							</label>
 						</div>
 					</div>
 

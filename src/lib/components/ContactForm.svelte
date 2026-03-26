@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Check, Phone } from 'lucide-svelte';
 	import { messages } from '$lib/stores/messages';
+	import { notifications } from '$lib/stores/notifications';
 
 	export let propertyId: string;
 	export let propertyTitle: string;
@@ -20,7 +21,7 @@
 
 		isSubmitting = true;
 
-		messages.addConversation({
+		const convId = messages.addConversation({
 			id: crypto.randomUUID(),
 			name,
 			email,
@@ -39,6 +40,14 @@
 					})
 				}
 			]
+		});
+
+		notifications.add({
+			conversationId: convId,
+			propertyId,
+			propertyTitle,
+			prospectName: name,
+			text: message
 		});
 
 		isSubmitting = false;

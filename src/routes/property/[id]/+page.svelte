@@ -29,7 +29,7 @@
 	import { allProperties } from '$lib/stores/properties';
 	import { favorites } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
-	import { agencyStore } from '$lib/stores/agencies';
+	import { agenciesStore } from '$lib/stores/agencies';
 	import { currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { incrementViews } from '$lib/api/properties';
@@ -39,7 +39,7 @@
 	$: isFavorite = property ? $favorites.includes(property.id) : false;
 
 	$: agentAgency = $currentUser?.id
-		? $agencyStore.find((a) => a.agentId === $currentUser.id)
+		? $agenciesStore.find((a) => a.agentId === $currentUser.id)
 		: undefined;
 
 	$: images =
@@ -213,6 +213,13 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								>
 									{property.operation === 'buy' ? 'Venta' : 'Alquiler'}
 								</span>
+								{#if property.aptoCredito}
+									<span
+										class="px-3 py-1 bg-green-600 text-white text-sm font-medium rounded"
+									>
+										Apto Crédito
+									</span>
+								{/if}
 								{#if property.featured}
 									<span
 										class="px-3 py-1 bg-accent text-white text-sm font-medium rounded"

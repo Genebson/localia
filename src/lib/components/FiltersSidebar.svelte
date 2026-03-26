@@ -401,7 +401,7 @@
 			>
 		</div>
 
-		{#each [{ key: 'operation', label: 'Operación' }, { key: 'estado', label: 'Estado' }, { key: 'rooms', label: 'Habitaciones y baños' }, { key: 'zone', label: 'Zona' }, { key: 'features', label: 'Características' }, { key: 'equipamiento', label: 'Equipamiento' }, { key: 'date', label: 'Fecha de publicación' }] as section}
+		{#each [{ key: 'operation', label: 'Operación' }, { key: 'estado', label: 'Estado' }, { key: 'rooms', label: 'Habitaciones y baños' }, { key: 'zone', label: 'Zona' }, { key: 'features', label: 'Características' }, { key: 'equipamiento', label: 'Equipamiento' }, { key: 'aptoCredito', label: 'Apto Crédito' }, { key: 'date', label: 'Fecha de publicación' }] as section}
 			<div class="border-b border-gray-100 last:border-0">
 				<button
 					on:click={() => toggleSection(section.key)}
@@ -589,6 +589,33 @@
 										>
 									</label>
 								{/each}
+							</div>
+						{:else if section.key === 'aptoCredito'}
+							<div class="space-y-2">
+								<label class="flex items-center gap-3 cursor-pointer group">
+									<input
+										type="radio"
+										name="aptoCredito"
+										checked={$filters.aptoCredito === null}
+										on:change={() => filters.setAptoCredito(null)}
+										class="w-4 h-4 text-primary"
+									/>
+									<span class="text-sm text-gray-600 group-hover:text-gray-900"
+										>Todos</span
+									>
+								</label>
+								<label class="flex items-center gap-3 cursor-pointer group">
+									<input
+										type="radio"
+										name="aptoCredito"
+										checked={$filters.aptoCredito === true}
+										on:change={() => filters.setAptoCredito(true)}
+										class="w-4 h-4 text-primary"
+									/>
+									<span class="text-sm text-gray-600 group-hover:text-gray-900"
+										>Solo Apto Crédito</span
+									>
+								</label>
 							</div>
 						{:else if section.key === 'date'}
 							<div class="space-y-2">

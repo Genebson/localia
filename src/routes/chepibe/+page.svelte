@@ -2,10 +2,12 @@
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { Phone, Send, CheckCircle, Bot, User, Building2 } from 'lucide-svelte';
 	import { isAgent, currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { messages } from '$lib/stores/messages';
+	import { notifications, badgeVisible } from '$lib/stores/notifications';
 
 	$: isAuthorized = $currentUser && $isAgent;
 
@@ -131,12 +133,43 @@
 	];
 
 	$: conversations = $messages;
-	$: selectedConversation = conversations[0] || null;
+	let selectedConversationId: string | null = null;
+	let selectedConversation: any = null;
 	let newMessage = '';
 
+	// Keep selectedConversation in sync with conversations store (for reactive updates)
+	$: {
+		if (selectedConversationId && conversations) {
+			const found = conversations.find((c: any) => c.id === selectedConversationId);
+			selectedConversation = found ?? conversations[0] ?? null;
+		} else if (conversations?.length > 0) {
+			selectedConversation = conversations[0];
+			selectedConversationId = conversations[0].id;
+		}
+	}
+
+	// Pre-select from URL param only on initial load
+	onMount(() => {
+		const convId = $page.url.searchParams.get('convId');
+		if (convId && conversations) {
+			const found = conversations.find((c: any) => c.id === convId);
+			if (found) {
+				selectedConversationId = convId;
+				messages.markRead(found.id);
+			}
+		}
+
+		// Clear both avatar badge and all notifications when agent reviews
+		badgeVisible.set(false);
+		notifications.markAllRead();
+	});
+
 	function selectConversation(conv: any) {
-		selectedConversation = conv;
+		selectedConversationId = conv.id;
 		messages.markRead(conv.id);
+
+		// Also mark corresponding notification as read when agent reads conversation
+		notifications.markRead(conv.id);
 	}
 
 	function sendMessage() {
