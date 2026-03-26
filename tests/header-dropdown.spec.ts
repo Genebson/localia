@@ -45,10 +45,10 @@ test.describe('Header Dropdown', () => {
 			await page.waitForTimeout(500);
 
 			await expect(page.getByRole('link', { name: 'Mi Perfil' })).toBeVisible();
+			await expect(page.getByRole('link', { name: 'Mis Chats' })).toBeVisible();
 			await expect(page.getByRole('link', { name: 'Mis Propiedades' })).toBeVisible();
 			await expect(page.getByRole('link', { name: 'Tablero de Búsquedas' })).toBeVisible();
 			await expect(page.getByRole('link', { name: /Furnisher/ })).toBeVisible();
-			await expect(page.getByRole('link', { name: /ChePibe/ })).toBeVisible();
 			await expect(page.getByRole('button', { name: 'Cerrar sesión' })).toBeVisible();
 		});
 
@@ -60,22 +60,18 @@ test.describe('Header Dropdown', () => {
 			).toBeVisible();
 		});
 
-		test('should show furnisher and chepibe with gradient styling', async ({ page }) => {
+		test('should show furnisher with gradient styling', async ({ page }) => {
 			await loginAs(page, agenteEmail);
 
 			await page.locator('.user-menu > button').click();
 			await page.waitForTimeout(500);
 
 			const furnisherLink = page.getByRole('link', { name: /Furnisher/ });
-			const chepibeLink = page.getByRole('link', { name: /ChePibe/ });
 
 			await expect(furnisherLink).toBeVisible();
-			await expect(chepibeLink).toBeVisible();
 
 			await expect(furnisherLink).toHaveClass(/from-green-600/);
 			await expect(furnisherLink).toHaveClass(/to-emerald-500/);
-			await expect(chepibeLink).toHaveClass(/from-green-600/);
-			await expect(chepibeLink).toHaveClass(/to-emerald-500/);
 		});
 
 		test('should show Nuevo badge on furnisher', async ({ page }) => {
