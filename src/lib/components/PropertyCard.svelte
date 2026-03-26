@@ -78,20 +78,18 @@
 					Destacado
 				</div>
 			{/if}
-			{#if property.aptoCredito}
-				<div
-					class="absolute top-3 {property.featured
-						? 'left-3 mt-6'
-						: 'left-3'} px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded z-10"
-				>
-					Apto Crédito
-				</div>
-			{/if}
 			<div
 				class="absolute bottom-3 left-3 px-2 py-1 bg-primary text-white text-xs font-medium rounded z-10"
 			>
 				{property.operation === 'buy' ? 'Venta' : 'Alquiler'}
 			</div>
+			{#if property.aptoCredito}
+				<div
+					class="absolute bottom-3 right-3 px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded z-10"
+				>
+					Apto Crédito
+				</div>
+			{/if}
 		</div>
 
 		<div class="p-4">

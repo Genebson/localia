@@ -8,7 +8,7 @@ export default defineConfig({
 	workers: 2,
 	reporter: [['list'], ['html', { outputFolder: 'playwright-report' }]],
 	use: {
-		baseURL: 'http://localhost:5173/localia/',
+		baseURL: 'http://localhost:5173/',
 		trace: 'on-first-retry',
 		screenshot: 'only-on-failure'
 	},
@@ -22,7 +22,7 @@ export default defineConfig({
 		? undefined
 		: {
 				command: 'npm run dev',
-				url: 'http://localhost:5173/localia/',
+				url: 'http://localhost:5173/',
 				reuseExistingServer: !process.env.CI,
 				timeout: 120000
 			}
