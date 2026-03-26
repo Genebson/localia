@@ -246,25 +246,6 @@
 	{#if isMenuOpen}
 		<div class="md:hidden bg-white border-t border-gray-100 shadow-lg">
 			<nav class="px-4 py-4 space-y-3">
-				{#if $isAgent}
-					<a
-						href="{base}/chepibe{$mostRecentUnread
-							? `?convId=${$mostRecentUnread.conversationId}`
-							: ''}"
-						on:click={() => (isMenuOpen = false)}
-						class="block py-2 text-gray-700 flex items-center justify-between"
-					>
-						<span class="font-medium">Mis Chats</span>
-						{#if $unreadCount > 0}
-							<span
-								class="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-							>
-								{$unreadCount}
-							</span>
-						{/if}
-					</a>
-				{/if}
-
 				{#if $currentUser}
 					<div class="pt-3 border-t border-gray-100">
 						<div class="flex items-center gap-3 mb-3">
@@ -312,32 +293,43 @@
 						{/if}
 						<div class="border-t border-gray-100 my-2"></div>
 						<a
+							href="{base}/publicar"
+							on:click={() => (isMenuOpen = false)}
+							class="block py-2 text-gray-700">Publicar</a
+						>
+						<a
+							href="{base}/mercado"
+							on:click={() => (isMenuOpen = false)}
+							class="block py-2 text-gray-700">Mercado</a
+						>
+						{#if $isAgent}
+							<a
+								href="{base}/furnisher"
+								on:click={() => (isMenuOpen = false)}
+								class="block py-2 text-gray-700">Furnisher</a
+							>
+						{/if}
+						<a
 							href="{base}/masterplans"
 							on:click={() => (isMenuOpen = false)}
 							class="block py-2 text-gray-700">Masterplans</a
+						>
+						<a
+							href="{base}/inmobiliarias"
+							on:click={() => (isMenuOpen = false)}
+							class="block py-2 text-gray-700">Inmobiliarias</a
 						>
 						<a
 							href="{base}/tablero"
 							on:click={() => (isMenuOpen = false)}
 							class="block py-2 text-gray-700">Tablero de Búsquedas</a
 						>
-						{#if $isAgent}
-							<a
-								href="{base}/furnisher"
-								on:click={() => (isMenuOpen = false)}
-								class="block py-2 px-3 mx-0 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg font-semibold text-center"
-							>
-								✨ Furnisher <span
-									class="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1"
-									>Nuevo</span
-								>
-							</a>
-						{/if}
 						<div class="border-t border-gray-100 my-2"></div>
 						<button
 							on:click={handleLogout}
-							class="block py-2 text-red-600 w-full text-left"
+							class="block py-2 text-red-600 w-full text-left flex items-center gap-2"
 						>
+							<LogOut class="w-4 h-4" />
 							Cerrar sesión
 						</button>
 					</div>

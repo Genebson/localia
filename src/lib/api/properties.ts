@@ -24,6 +24,7 @@ export interface CreatePropertyRequest {
 	images: string[];
 	featured?: boolean;
 	distributedTo?: string[];
+	aptoCredito?: boolean;
 }
 
 export interface UpdatePropertyRequest extends Partial<CreatePropertyRequest> {}
@@ -136,7 +137,8 @@ export async function createProperty(data: CreatePropertyRequest): Promise<Prope
 		published: true,
 		views: 0,
 		publishedAt: new Date().toISOString(),
-		lastUpdatedAt: new Date().toISOString()
+		lastUpdatedAt: new Date().toISOString(),
+		aptoCredito: data.aptoCredito ?? false
 	});
 
 	return newProperty;
