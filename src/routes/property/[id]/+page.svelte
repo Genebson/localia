@@ -311,7 +311,10 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 
 							<div class="mt-6">
 								<h2 class="text-lg font-semibold text-gray-900 mb-3">Ubicación</h2>
-								<PropertyMap location={property.location} />
+								<PropertyMap
+									properties={property?.lat && property?.lng ? [property] : []}
+									height="300px"
+								/>
 							</div>
 
 							<div class="mt-6">
