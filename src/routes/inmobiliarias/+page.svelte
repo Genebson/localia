@@ -34,8 +34,14 @@
 				<input
 					type="text"
 					bind:value={searchQuery}
+					placeholder="Buscar inmobiliarias"
+					class="sm:hidden w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-lg"
+				/>
+				<input
+					type="text"
+					bind:value={searchQuery}
 					placeholder="Buscar inmobiliarias por nombre o descripción..."
-					class="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-lg"
+					class="hidden sm:block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-lg"
 				/>
 			</div>
 		</div>

@@ -136,9 +136,9 @@
 				</div>
 				<a
 					href="{base}/publicar"
-					class="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors"
+					class="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors text-sm sm:text-base"
 				>
-					<Plus class="w-5 h-5" />
+					<Plus class="w-4 h-4 sm:w-5 sm:h-5" />
 					Nueva propiedad
 				</a>
 			</div>
@@ -166,161 +166,145 @@
 				<div class="space-y-4">
 					{#each userProperties as property (property.id)}
 						<div
-							class="bg-white rounded-xl shadow-sm overflow-hidden group"
-							style="height: 172px; max-width: 1216px;"
+							class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col sm:flex-row"
 						>
-							<div class="flex h-full">
-								<div
-									class="w-[324px] h-full flex-shrink-0"
-									style="width: 324px; height: 172px;"
-								>
-									<a
-										href="{base}/property/{property.id}"
-										class="block w-full h-full"
-									>
-										<img
-											src={property.image}
-											alt={property.title}
-											class="w-full h-full object-cover"
-										/>
-									</a>
-								</div>
-								<div class="flex-1 p-4 flex items-center">
-									<div class="flex items-start justify-between gap-4 w-full">
-										<div class="flex-1 min-w-0 flex items-center gap-6">
-											<div class="flex-1 min-w-0">
-												<div class="flex flex-wrap items-center gap-2 mb-1">
-													<a
-														href="{base}/property/{property.id}"
-														class="hover:text-primary transition-colors"
-													>
-														<h3
-															class="text-lg font-semibold text-gray-900 truncate max-w-full"
-														>
-															{property.title}
-														</h3>
-													</a>
-													{#if property.aptoCredito}
-														<span
-															class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
-														>
-															Apto Crédito
-														</span>
-													{/if}
-													{#if property.published === false}
-														<span
-															class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded"
-														>
-															No publicada
-														</span>
-													{/if}
-												</div>
-												<p class="text-accent font-bold text-xl mb-1">
-													{property.priceLabel}
-												</p>
-												<div
-													class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500"
-												>
-													<span class="flex items-center gap-1">
-														<MapPin class="w-4 h-4" />
-														{property.location}
-													</span>
-													{#if property.attributes.bedrooms > 0}
-														<span class="flex items-center gap-1">
-															<Bed class="w-4 h-4" />
-															{property.attributes.bedrooms}
-														</span>
-													{/if}
-													<span class="flex items-center gap-1">
-														<Bath class="w-4 h-4" />
-														{property.attributes.bathrooms}
-													</span>
-													<span class="flex items-center gap-1">
-														<Maximize class="w-4 h-4" />
-														{property.attributes.area} m²
-													</span>
-													<span class="flex items-center gap-1">
-														<Eye class="w-4 h-4" />
-														{property.views || 0} vistas
-													</span>
-													<span class="flex items-center gap-1">
-														<Clock class="w-4 h-4" />
-														{property.publishedAt
-															? getDaysOnMarket(
-																	property.publishedAt
-																) === 0
-																? 'Publicado hoy'
-																: `Publicado hace ${getDaysOnMarket(property.publishedAt)} ${getDaysOnMarket(property.publishedAt) === 1 ? 'día' : 'días'}`
-															: 'Sin publicar'}
-													</span>
-													{#if getDaysOnMarket(property.publishedAt) > 30}
-														<span
-															class="flex items-center gap-1 text-orange-600"
-														>
-															<AlertTriangle class="w-4 h-4" />
-															+30 días
-														</span>
-													{/if}
-												</div>
-												{#if property.distributedTo && property.distributedTo.length > 0}
-													<div class="flex items-center gap-1 mt-2">
-														<Globe class="w-3 h-3 text-gray-400" />
-														<span class="text-xs text-gray-500"
-															>Distribuido:</span
-														>
-														{#if property.distributedTo.includes('zonaprop')}
-															<span
-																class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded"
-																>ZonaProp</span
-															>
-														{/if}
-														{#if property.distributedTo.includes('argenprop')}
-															<span
-																class="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs rounded"
-																>ArgenProp</span
-															>
-														{/if}
-														{#if property.distributedTo.includes('mercadolibre')}
-															<span
-																class="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded"
-																>MercadoLibre</span
-															>
-														{/if}
-													</div>
-												{/if}
-											</div>
-										</div>
-										<div class="flex items-center gap-2 flex-shrink-0">
-											<button
-												on:click={() => togglePublished(property.id)}
-												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-												title={property.published === false
-													? 'Publicar'
-													: 'Despublicar'}
+							<a
+								href="{base}/property/{property.id}"
+								class="block w-full sm:w-[324px] sm:h-full h-40 sm:h-auto sm:flex-shrink-0"
+							>
+								<img
+									src={property.image}
+									alt={property.title}
+									class="w-full h-full object-cover"
+								/>
+							</a>
+							<div
+								class="flex-1 p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"
+							>
+								<div class="flex-1 min-w-0">
+									<div class="flex flex-wrap items-center gap-2 mb-1">
+										<a
+											href="{base}/property/{property.id}"
+											class="hover:text-primary transition-colors"
+										>
+											<h3
+												class="text-lg font-semibold text-gray-900 truncate max-w-full"
 											>
-												{#if property.published === false}
-													<Eye class="w-5 h-5" />
-												{:else}
-													<UnpublishIcon class="w-5 h-5" />
-												{/if}
-											</button>
-											<a
-												href="{base}/publicar?edit={property.id}"
-												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-												title="Editar"
+												{property.title}
+											</h3>
+										</a>
+										{#if property.aptoCredito}
+											<span
+												class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
 											>
-												<Edit class="w-5 h-5" />
-											</a>
-											<button
-												on:click={() => (showDeleteConfirm = property.id)}
-												class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-												title="Eliminar"
+												Apto Crédito
+											</span>
+										{/if}
+										{#if property.published === false}
+											<span
+												class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded"
 											>
-												<Trash2 class="w-5 h-5" />
-											</button>
-										</div>
+												No publicada
+											</span>
+										{/if}
 									</div>
+									<p class="text-accent font-bold text-xl mb-1">
+										{property.priceLabel}
+									</p>
+									<div
+										class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500"
+									>
+										<span class="flex items-center gap-1">
+											<MapPin class="w-4 h-4" />
+											{property.location}
+										</span>
+										{#if property.attributes.bedrooms > 0}
+											<span class="flex items-center gap-1">
+												<Bed class="w-4 h-4" />
+												{property.attributes.bedrooms}
+											</span>
+										{/if}
+										<span class="flex items-center gap-1">
+											<Bath class="w-4 h-4" />
+											{property.attributes.bathrooms}
+										</span>
+										<span class="flex items-center gap-1">
+											<Maximize class="w-4 h-4" />
+											{property.attributes.area} m²
+										</span>
+										<span class="flex items-center gap-1">
+											<Eye class="w-4 h-4" />
+											{property.views || 0} vistas
+										</span>
+										<span class="flex items-center gap-1">
+											<Clock class="w-4 h-4" />
+											{property.publishedAt
+												? getDaysOnMarket(property.publishedAt) === 0
+													? 'Publicado hoy'
+													: `Publicado hace ${getDaysOnMarket(property.publishedAt)} ${getDaysOnMarket(property.publishedAt) === 1 ? 'día' : 'días'}`
+												: 'Sin publicar'}
+										</span>
+										{#if getDaysOnMarket(property.publishedAt) > 30}
+											<span class="flex items-center gap-1 text-orange-600">
+												<AlertTriangle class="w-4 h-4" />
+												+30 días
+											</span>
+										{/if}
+									</div>
+									{#if property.distributedTo && property.distributedTo.length > 0}
+										<div class="flex items-center gap-1 mt-2">
+											<Globe class="w-3 h-3 text-gray-400" />
+											<span class="text-xs text-gray-500">Distribuido:</span>
+											{#if property.distributedTo.includes('zonaprop')}
+												<span
+													class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded"
+													>ZonaProp</span
+												>
+											{/if}
+											{#if property.distributedTo.includes('argenprop')}
+												<span
+													class="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs rounded"
+													>ArgenProp</span
+												>
+											{/if}
+											{#if property.distributedTo.includes('mercadolibre')}
+												<span
+													class="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded"
+													>MercadoLibre</span
+												>
+											{/if}
+										</div>
+									{/if}
 								</div>
+							</div>
+							<div class="flex items-center gap-2 flex-shrink-0">
+								<button
+									on:click={() => togglePublished(property.id)}
+									class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+									title={property.published === false
+										? 'Publicar'
+										: 'Despublicar'}
+								>
+									{#if property.published === false}
+										<Eye class="w-5 h-5" />
+									{:else}
+										<UnpublishIcon class="w-5 h-5" />
+									{/if}
+								</button>
+								<a
+									href="{base}/publicar?edit={property.id}"
+									class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+									title="Editar"
+								>
+									<Edit class="w-5 h-5" />
+								</a>
+								<button
+									on:click={() => (showDeleteConfirm = property.id)}
+									class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+									title="Eliminar"
+								>
+									<Trash2 class="w-5 h-5" />
+								</button>
 							</div>
 						</div>
 

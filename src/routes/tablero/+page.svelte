@@ -125,7 +125,7 @@
 
 <main class="pt-16 md:pt-20 min-h-screen bg-background">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-		<div class="flex items-center justify-between mb-8">
+		<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
 			<div>
 				<h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
 					Buscamos propiedades
@@ -134,13 +134,15 @@
 					Encontrá compradores que buscan exactamente lo que tenés
 				</p>
 			</div>
-			<button
-				on:click={openForm}
-				class="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors"
-			>
-				<Plus class="w-5 h-5" />
-				Publicar búsqueda
-			</button>
+			{#if $currentUser}
+				<button
+					on:click={openForm}
+					class="flex items-center justify-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors text-sm sm:text-base w-full sm:w-auto"
+				>
+					<Plus class="w-4 h-4 sm:w-5 sm:h-5" />
+					Publicar búsqueda
+				</button>
+			{/if}
 		</div>
 
 		<div class="mb-6 flex flex-wrap gap-2">

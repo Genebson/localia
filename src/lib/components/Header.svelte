@@ -292,11 +292,13 @@
 							>
 						{/if}
 						<div class="border-t border-gray-100 my-2"></div>
-						<a
-							href="{base}/publicar"
-							on:click={() => (isMenuOpen = false)}
-							class="block py-2 text-gray-700">Publicar</a
-						>
+						{#if $isAgent}
+							<a
+								href="{base}/publicar"
+								on:click={() => (isMenuOpen = false)}
+								class="block py-2 text-gray-700">Publicar</a
+							>
+						{/if}
 						<a
 							href="{base}/mercado"
 							on:click={() => (isMenuOpen = false)}
@@ -334,7 +336,27 @@
 						</button>
 					</div>
 				{:else if !$authLoading}
-					<div class="pt-3 border-t border-gray-100 space-y-2">
+					<a
+						href="{base}/mercado"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-2 text-gray-700">Mercado</a
+					>
+					<a
+						href="{base}/inmobiliarias"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-2 text-gray-700">Inmobiliarias</a
+					>
+					<a
+						href="{base}/masterplans"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-2 text-gray-700">Masterplans</a
+					>
+					<a
+						href="{base}/tablero"
+						on:click={() => (isMenuOpen = false)}
+						class="block py-2 text-gray-700">Tablero de Búsquedas</a
+					>
+					<div class="border-t border-gray-100 my-2 pt-3 space-y-2">
 						<button
 							on:click={() => {
 								openAuthModal('login');
