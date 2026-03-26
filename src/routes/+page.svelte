@@ -1,5 +1,19 @@
 <script lang="ts">
-	import { Filter, Building2, TrendingUp, Shield, ChevronDown, MapPin } from 'lucide-svelte';
+	import {
+		Filter,
+		Building2,
+		TrendingUp,
+		Shield,
+		ChevronDown,
+		MapPin,
+		Home,
+		Grid3X3,
+		Trees,
+		Palmtree,
+		Mountain,
+		Warehouse,
+		Store
+	} from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import SearchBar from '$lib/components/SearchBar.svelte';
@@ -72,7 +86,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<TrendingUp class="w-4 h-4" />
+				<Home class="w-4 h-4" />
 				Casas
 			</button>
 			<button
@@ -85,7 +99,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<Shield class="w-4 h-4" />
+				<MapPin class="w-4 h-4" />
 				Terrenos
 			</button>
 			<button
@@ -98,7 +112,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<Shield class="w-4 h-4" />
+				<Grid3X3 class="w-4 h-4" />
 				Lotes
 			</button>
 			<button
@@ -111,7 +125,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<TrendingUp class="w-4 h-4" />
+				<Trees class="w-4 h-4" />
 				Chacras
 			</button>
 			<button
@@ -124,7 +138,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<Building2 class="w-4 h-4" />
+				<Palmtree class="w-4 h-4" />
 				Quintas
 			</button>
 			<button
@@ -137,7 +151,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<Shield class="w-4 h-4" />
+				<Mountain class="w-4 h-4" />
 				Campos
 			</button>
 			<button
@@ -150,7 +164,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<TrendingUp class="w-4 h-4" />
+				<Home class="w-4 h-4" />
 				Estancias
 			</button>
 			<button
@@ -163,7 +177,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<Building2 class="w-4 h-4" />
+				<Warehouse class="w-4 h-4" />
 				Galpones
 			</button>
 			<button
@@ -176,7 +190,7 @@
 					? 'bg-white text-primary'
 					: 'bg-white/10 text-white'} hover:bg-white/20 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
 			>
-				<Building2 class="w-4 h-4" />
+				<Store class="w-4 h-4" />
 				Locales
 			</button>
 		</div>
