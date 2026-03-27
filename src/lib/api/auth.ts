@@ -29,7 +29,7 @@ export interface ApiError {
 	message: string;
 }
 
-async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
 	const url = `${API_BASE_URL}${endpoint}`;
 	const response = await fetch(url, {
 		...options,
@@ -113,4 +113,18 @@ export async function updateRole(role: UserRole, licenseNumber?: string): Promis
 
 export async function signOut(): Promise<void> {
 	await apiFetch('/auth/sign-out', { method: 'POST' });
+}
+
+export async function requestPasswordReset(email: string): Promise<{ success: boolean }> {
+	return apiFetch<{ success: boolean }>('/notifications/forgot-password', {
+		method: 'POST',
+		body: JSON.stringify({ email }),
+	});
+}
+
+export async function resetPassword(token: string, password: string): Promise<{ success: boolean }> {
+	return apiFetch<{ success: boolean }>('/auth/reset-password', {
+		method: 'POST',
+		body: JSON.stringify({ newPassword: password, token }),
+	});
 }
