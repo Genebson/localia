@@ -18,13 +18,45 @@
 	} from 'lucide-svelte';
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
-	import { propertiesStore, getPropertyById } from '$lib/stores/properties';
 	import { onMount } from 'svelte';
-	import type { PropertyType } from '$lib/data/properties';
+	import { createProperty, updateProperty } from '$lib/api/properties';
+	import { API_BASE_URL } from '$lib/config';
 
-	onMount(() => {
+	onMount(async () => {
 		auth.init();
+
+		if (isEditing && editId) {
+			isLoading = true;
+			try {
+				const res = await fetch(`${API_BASE_URL}/property/${editId}`, {
+					credentials: 'include'
+				});
+				if (res.ok) {
+					const data = await res.json();
+					const existing = data.property;
+					title = existing.title;
+					description = existing.description || '';
+					operation = existing.operation;
+					propertyType = propertyTypeLabels[existing.propertyType] || '';
+					price = existing.price.toString();
+					currency = existing.currency;
+					location = existing.location;
+					address = existing.address || '';
+					bedrooms = existing.attributes.bedrooms.toString();
+					bathrooms = existing.attributes.bathrooms.toString();
+					area = existing.attributes.area.toString();
+					if (existing.images?.length) imagePreviews = existing.images;
+					publishMode = 'form';
+				}
+			} catch {
+				error = 'No se pudo cargar la propiedad';
+			} finally {
+				isLoading = false;
+			}
+		}
 	});
+
+	let isLoading = false;
 
 	let editId = $page.url.searchParams.get('edit');
 	let isEditing = !!editId;
@@ -109,25 +141,6 @@
 		terrain: 'Terreno',
 		commercial: 'Local comercial'
 	};
-
-	if (isEditing) {
-		const existing = getPropertyById(editId);
-		if (existing) {
-			title = existing.title;
-			description = existing.description || '';
-			operation = existing.operation;
-			propertyType = propertyTypeLabels[existing.propertyType] || '';
-			price = existing.price.toString();
-			currency = existing.currency;
-			location = existing.location;
-			address = existing.address;
-			bedrooms = existing.attributes.bedrooms.toString();
-			bathrooms = existing.attributes.bathrooms.toString();
-			area = existing.attributes.area.toString();
-			if (existing.images?.length) imagePreviews = existing.images;
-			publishMode = 'form';
-		}
-	}
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
@@ -249,7 +262,18 @@
 		simulateExtraction('url');
 	}
 
-	function handleSubmit() {
+	async function fileToBase64(file: File): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	}
+
+	let submitting = false;
+
+	async function handleSubmit() {
 		if (extractedData) applyExtractedData();
 		error = '';
 		if (!title.trim() || !price || !location) {
@@ -262,40 +286,56 @@
 		}
 
 		const priceNum = parseInt(price);
-		const propertyData = {
-			title: title.trim(),
-			description,
-			price: priceNum,
-			priceLabel: `${currency === 'USD' ? 'USD' : '$'} ${priceNum.toLocaleString('es-AR')}${operation === 'rent' ? '/mes' : ''}`,
-			currency,
-			location,
-			address,
-			image:
-				imagePreviews[0] ||
-				'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
-			images: imagePreviews,
-			propertyType: propertyTypeMap[propertyType] || 'apartment',
-			attributes: {
-				bedrooms: parseInt(bedrooms) || 0,
-				bathrooms: parseInt(bathrooms) || 0,
-				area: parseInt(area) || 0
-			},
-			operation,
-			featured: true,
-			agentEmail: $currentUser!.email,
-			agentId: $currentUser!.id,
-			isUserProperty: true
-		};
 
-		if (isEditing && editId) {
-			propertiesStore.update(editId, propertyData);
+		submitting = true;
+		try {
+			let uploadedImages: string[] = [];
+			for (const file of images) {
+				const base64 = await fileToBase64(file);
+				const res = await fetch(`${API_BASE_URL}/upload`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					credentials: 'include',
+					body: JSON.stringify({ data: base64 })
+				});
+				if (!res.ok) throw new Error('Image upload failed');
+				const { url } = await res.json();
+				uploadedImages.push(url);
+			}
+
+			const effectiveImages = uploadedImages.length > 0 ? uploadedImages : imagePreviews;
+
+			const propertyData = {
+				title: title.trim(),
+				description,
+				price: priceNum,
+				currency,
+				location,
+				address,
+				images: effectiveImages,
+				propertyType: (propertyTypeMap[propertyType] || 'apartment') as 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial',
+				attributes: {
+					bedrooms: parseInt(bedrooms) || 0,
+					bathrooms: parseInt(bathrooms) || 0,
+					area: parseInt(area) || 0
+				},
+				operation,
+				featured: true
+			};
+
+			if (isEditing && editId) {
+				await updateProperty(editId, propertyData);
+			} else {
+				const result = await createProperty(propertyData);
+				createdPropertyId = result.property.id;
+			}
 			success = true;
-		} else {
-			const newProp = propertiesStore.add(propertyData);
-			createdPropertyId = newProp.id;
-			success = true;
+			window.scrollTo(0, 0);
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Error al guardar la propiedad. Verificá los datos e intentá de nuevo.';
+		} finally {
+			submitting = false;
 		}
-		window.scrollTo(0, 0);
 	}
 
 	function handleImageUpload(e: Event) {
@@ -462,10 +502,12 @@
 
 			{#if error}
 				<div
-					class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2"
+					class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"
 				>
-					<AlertCircle class="w-4 h-4 flex-shrink-0" />
-					{error}
+					<div class="flex items-start gap-2">
+						<AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5" />
+						<div class="whitespace-pre-line">{error}</div>
+					</div>
 				</div>
 			{/if}
 
@@ -855,9 +897,15 @@
 					<div class="flex justify-end">
 						<button
 							type="submit"
-							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors"
+							disabled={submitting}
+							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
 						>
-							{isEditing ? 'Guardar cambios' : 'Publicar en Localia'}
+							{#if submitting}
+								<Loader2 class="w-4 h-4 animate-spin" />
+								{isEditing ? 'Guardando...' : 'Publicando...'}
+							{:else}
+								{isEditing ? 'Guardar cambios' : 'Publicar en Localia'}
+							{/if}
 						</button>
 					</div>
 				</form>

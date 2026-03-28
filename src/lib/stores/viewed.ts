@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { allProperties } from './properties';
+import { propertiesStore } from './properties';
 
 function createViewedStore() {
 	const stored: string[] = [];
@@ -46,6 +46,6 @@ function createViewedStore() {
 export const viewed = createViewedStore();
 
 export const viewedProperties = derived(viewed, ($viewed) => {
-	const all = get(allProperties);
+	const all = get(propertiesStore);
 	return $viewed.map((id) => all.find((p) => p.id === id)).filter(Boolean);
 });

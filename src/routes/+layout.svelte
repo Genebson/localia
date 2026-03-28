@@ -5,11 +5,9 @@
 	import AuthModal from '$lib/components/AuthModal.svelte';
 	import { authModalOpen, closeAuthModal } from '$lib/stores/authModal';
 	import { auth } from '$lib/stores/auth';
-	import { propertiesStore } from '$lib/stores/properties';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		propertiesStore.load();
 		auth.init();
 	});
 </script>

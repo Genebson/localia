@@ -1,6 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
+import { replaceState } from '$app/navigation';
 import { type Property, type PropertyState, type Equipment } from '$lib/data/properties';
-import { allProperties } from './properties';
+import { propertiesStore } from './properties';
 
 export interface Filters {
 	operation: 'buy' | 'rent' | 'all';
@@ -185,15 +186,13 @@ export function syncFiltersToUrl() {
 	if (f.zone) params.set('zone', f.zone);
 	const search = params.toString();
 	const newUrl = search ? `?${search}` : window.location.pathname + '?';
-	history.replaceState(null, '', newUrl);
+	replaceState(newUrl, {});
 }
 
 export const filteredProperties = derived(
-	[filters, allProperties],
-	([$filters, $allProperties]) => {
-		const all = $allProperties.filter((p: Property) => p.featured);
-
-		return all.filter((property: Property) => {
+	[filters, propertiesStore],
+	([$filters, $propertiesStore]) => {
+		return $propertiesStore.filter((property: Property) => {
 			if ($filters.operation !== 'all' && property.operation !== $filters.operation)
 				return false;
 
@@ -305,6 +304,6 @@ export const filteredProperties = derived(
 );
 
 export const totalProperties = derived(
-	allProperties,
-	($allProperties) => $allProperties.filter((p: Property) => p.featured).length
+	propertiesStore,
+	($propertiesStore) => $propertiesStore.length
 );

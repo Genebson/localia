@@ -17,8 +17,7 @@
 	import { base } from '$app/paths';
 	import { currentUser, isAgent, auth } from '$lib/stores/auth';
 	import { favoriteProperties } from '$lib/stores/favorites';
-	import { viewed } from '$lib/stores/viewed';
-	import { allProperties } from '$lib/stores/properties';
+	import { viewedProperties } from '$lib/stores/viewed';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { agencyStore } from '$lib/stores/agencies';
 	import { onMount } from 'svelte';
@@ -27,9 +26,7 @@
 		auth.init();
 	});
 
-	$: viewedList = $viewed
-		.map((id) => $allProperties.find((p) => p.id === id))
-		.filter((p): p is NonNullable<typeof p> => p !== undefined);
+	$: viewedList = $viewedProperties;
 
 	$: userAgency = $currentUser?.id
 		? $agencyStore.find((a) => a.agentId === $currentUser.id)

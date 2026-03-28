@@ -75,7 +75,7 @@ export async function signInWithGoogle(callbackUrl?: string): Promise<void> {
 		credentials: 'include',
 		body: JSON.stringify({ provider: 'google', callbackURL: callbackUrl || 'http://localhost:5173/localia/' })
 	});
-	const { url } = await response.json() as { url: string };
+	const { url } = (await response.json()) as { url: string };
 	window.location.href = url;
 }
 

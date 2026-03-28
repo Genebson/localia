@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { allProperties } from './properties';
+import { propertiesStore } from './properties';
 
 function createFavoritesStore() {
 	const stored: string[] = [];
@@ -62,8 +62,8 @@ function createFavoritesStore() {
 export const favorites = createFavoritesStore();
 
 export const favoriteProperties = derived(
-	[favorites, allProperties],
-	([$favorites, $allProperties]) => {
-		return $allProperties.filter((p) => $favorites.includes(p.id));
+	[favorites, propertiesStore],
+	([$favorites, $propertiesStore]) => {
+		return $propertiesStore.filter((p) => $favorites.includes(p.id));
 	}
 );

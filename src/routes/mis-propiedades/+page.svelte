@@ -9,34 +9,75 @@
 		MapPin,
 		Bed,
 		Bath,
-		Maximize
+		Maximize,
+		Loader2,
+		AlertCircle
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { auth, currentUser, isAgent } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
-	import { propertiesStore, allProperties } from '$lib/stores/properties';
 	import { onMount } from 'svelte';
+	import {
+		listMyProperties,
+		deleteProperty,
+		updateProperty,
+		type PropertyResponse
+	} from '$lib/api/properties';
 
 	onMount(() => {
 		auth.init();
 	});
 
+	let properties: PropertyResponse[] = [];
+	let loading = true;
+	let error = '';
 	let showDeleteConfirm: string | null = null;
 
-	$: userProperties = $allProperties.filter((p) => p.agentEmail === $currentUser?.email);
+	async function loadProperties() {
+		loading = true;
+		error = '';
+		try {
+			const res = await listMyProperties();
+			properties = res.properties;
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Error al cargar propiedades';
+		} finally {
+			loading = false;
+		}
+	}
+
+	onMount(() => {
+		auth.init();
+	});
+
+	$: if ($currentUser && $isAgent) {
+		loadProperties();
+	}
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
 	}
 
-	function toggleVisibility(id: string) {
-		propertiesStore.toggleFeatured(id);
+	async function toggleVisibility(property: PropertyResponse) {
+		try {
+			await updateProperty(property.id, { featured: !property.featured });
+			properties = properties.map((p) =>
+				p.id === property.id ? { ...p, featured: !p.featured } : p
+			);
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Error al actualizar';
+		}
 	}
 
-	function deleteProperty(id: string) {
-		propertiesStore.delete(id);
-		showDeleteConfirm = null;
+	async function confirmDelete(id: string) {
+		try {
+			await deleteProperty(id);
+			properties = properties.filter((p) => p.id !== id);
+			showDeleteConfirm = null;
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Error al eliminar';
+		}
 	}
 
 	function formatPrice(price: number, currency: string): string {
@@ -44,6 +85,26 @@
 			return `USD ${price.toLocaleString('en-US')}`;
 		}
 		return `$ ${price.toLocaleString('es-AR')}`;
+	}
+
+	function getImage(property: PropertyResponse): string {
+		return property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80';
+	}
+
+	function getPriceLabel(property: PropertyResponse): string {
+		const formatted = formatPrice(property.price, property.currency);
+		return property.operation === 'rent' ? `${formatted}/mes` : formatted;
+	}
+
+	function getPropertyTypeLabel(type: string): string {
+		const labels: Record<string, string> = {
+			apartment: 'Departamento',
+			house: 'Casa',
+			penthouse: 'Penthouse',
+			terrain: 'Terreno',
+			commercial: 'Local comercial'
+		};
+		return labels[type] || type;
 	}
 </script>
 
@@ -93,8 +154,8 @@
 						Mis propiedades
 					</h1>
 					<p class="text-gray-500">
-						{userProperties.length}
-						{userProperties.length === 1 ? 'propiedad' : 'propiedades'} publicadas
+						{properties.length}
+						{properties.length === 1 ? 'propiedad' : 'propiedades'} publicadas
 					</p>
 				</div>
 				<a
@@ -106,7 +167,20 @@
 				</a>
 			</div>
 
-			{#if userProperties.length === 0}
+			{#if error}
+				<div
+					class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2"
+				>
+					<AlertCircle class="w-4 h-4 flex-shrink-0" />
+					{error}
+				</div>
+			{/if}
+
+			{#if loading}
+				<div class="flex items-center justify-center py-16">
+					<Loader2 class="w-8 h-8 text-primary animate-spin" />
+				</div>
+			{:else if properties.length === 0}
 				<div class="bg-white rounded-2xl shadow-sm p-12 text-center">
 					<div
 						class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -127,7 +201,7 @@
 				</div>
 			{:else}
 				<div class="space-y-4">
-					{#each userProperties as property (property.id)}
+					{#each properties as property (property.id)}
 						<div
 							class="bg-white rounded-xl shadow-sm overflow-hidden group"
 							style="height: 172px; max-width: 1216px;"
@@ -142,7 +216,7 @@
 										class="block w-full h-full"
 									>
 										<img
-											src={property.image}
+											src={getImage(property)}
 											alt={property.title}
 											class="w-full h-full object-cover"
 										/>
@@ -150,86 +224,88 @@
 								</div>
 								<div class="flex-1 p-4 flex items-center">
 									<div class="flex items-start justify-between gap-4 w-full">
-										<div class="flex-1 min-w-0 flex items-center gap-6">
-											<div class="flex-1 min-w-0">
-												<div class="flex flex-wrap items-center gap-2 mb-1">
-													<a
-														href="{base}/property/{property.id}"
-														class="hover:text-primary transition-colors"
+										<div class="flex items-start justify-between gap-4 w-full">
+											<div class="flex-1 min-w-0 flex items-center gap-6">
+												<div class="flex-1 min-w-0">
+													<div class="flex flex-wrap items-center gap-2 mb-1">
+														<a
+															href="{base}/property/{property.id}"
+															class="hover:text-primary transition-colors"
+														>
+															<h3
+																class="text-lg font-semibold text-gray-900 truncate max-w-full"
+															>
+																{property.title}
+															</h3>
+														</a>
+														{#if property.featured}
+															<span
+																class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
+															>
+																Visible
+															</span>
+														{:else}
+															<span
+																class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded"
+															>
+																Oculta
+															</span>
+														{/if}
+													</div>
+													<p class="text-accent font-bold text-xl mb-1">
+														{getPriceLabel(property)}
+													</p>
+													<div
+														class="flex items-center gap-4 text-sm text-gray-500"
 													>
-														<h3
-															class="text-lg font-semibold text-gray-900 truncate max-w-full"
-														>
-															{property.title}
-														</h3>
-													</a>
-													{#if property.featured}
-														<span
-															class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
-														>
-															Visible
-														</span>
-													{:else}
-														<span
-															class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded"
-														>
-															Oculta
-														</span>
-													{/if}
-												</div>
-												<p class="text-accent font-bold text-xl mb-1">
-													{property.priceLabel}
-												</p>
-												<div
-													class="flex items-center gap-4 text-sm text-gray-500"
-												>
-													<span class="flex items-center gap-1">
-														<MapPin class="w-4 h-4" />
-														{property.location}
-													</span>
-													{#if property.attributes.bedrooms > 0}
 														<span class="flex items-center gap-1">
-															<Bed class="w-4 h-4" />
-															{property.attributes.bedrooms}
+															<MapPin class="w-4 h-4" />
+															{property.location}
 														</span>
-													{/if}
-													<span class="flex items-center gap-1">
-														<Bath class="w-4 h-4" />
-														{property.attributes.bathrooms}
-													</span>
-													<span class="flex items-center gap-1">
-														<Maximize class="w-4 h-4" />
-														{property.attributes.area} m²
-													</span>
+														{#if property.attributes.bedrooms > 0}
+															<span class="flex items-center gap-1">
+																<Bed class="w-4 h-4" />
+																{property.attributes.bedrooms}
+															</span>
+														{/if}
+														<span class="flex items-center gap-1">
+															<Bath class="w-4 h-4" />
+															{property.attributes.bathrooms}
+														</span>
+														<span class="flex items-center gap-1">
+															<Maximize class="w-4 h-4" />
+															{property.attributes.area} m²
+														</span>
+													</div>
 												</div>
 											</div>
-										</div>
-										<div class="flex items-center gap-2 flex-shrink-0">
-											<a
-												href="{base}/publicar?edit={property.id}"
-												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-												title="Editar"
-											>
-												<Edit class="w-5 h-5" />
-											</a>
-											<button
-												on:click={() => toggleVisibility(property.id)}
-												class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-												title={property.featured ? 'Ocultar' : 'Mostrar'}
-											>
-												{#if property.featured}
-													<EyeOff class="w-5 h-5" />
-												{:else}
-													<Eye class="w-5 h-5" />
-												{/if}
-											</button>
-											<button
-												on:click={() => (showDeleteConfirm = property.id)}
-												class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-												title="Eliminar"
-											>
-												<Trash2 class="w-5 h-5" />
-											</button>
+											<div class="flex items-center gap-2 flex-shrink-0">
+												<a
+													href="{base}/publicar?edit={property.id}"
+													class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+													title="Editar"
+												>
+													<Edit class="w-5 h-5" />
+												</a>
+												<button
+													on:click={() => toggleVisibility(property)}
+													class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+													title={property.featured ? 'Ocultar' : 'Mostrar'}
+												>
+													{#if property.featured}
+														<EyeOff class="w-5 h-5" />
+													{:else}
+														<Eye class="w-5 h-5" />
+													{/if}
+												</button>
+												<button
+													on:click={() => (showDeleteConfirm = property.id)}
+													class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+													title="Eliminar"
+												>
+													<Trash2 class="w-5 h-5" />
+												</button>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -264,7 +340,7 @@
 											Cancelar
 										</button>
 										<button
-											on:click={() => deleteProperty(property.id)}
+											on:click={() => confirmDelete(property.id)}
 											class="flex-1 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
 										>
 											Eliminar

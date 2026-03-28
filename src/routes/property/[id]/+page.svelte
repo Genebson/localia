@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { base } from '$app/paths';
+	import type { PageData } from './$types';
 	import {
 		Heart,
 		Bed,
@@ -21,27 +22,24 @@
 	import '@splidejs/svelte-splide/css';
 	import ImageLightbox from '$lib/components/ImageLightbox.svelte';
 	import PropertyMap from '$lib/components/PropertyMap.svelte';
-	import { allProperties } from '$lib/stores/properties';
 	import { favorites } from '$lib/stores/favorites';
 	import { viewed } from '$lib/stores/viewed';
 	import { agencyStore } from '$lib/stores/agencies';
 	import { currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { onMount } from 'svelte';
+	import { getPriceLabel } from '$lib/api/properties';
 
-	$: property = $allProperties.find((p) => p.id === $page.params.id);
+	export let data: PageData;
+
+	$: property = data.property;
 	$: isFavorite = property ? $favorites.includes(property.id) : false;
 
 	$: agentAgency = $currentUser?.id
 		? $agencyStore.find((a) => a.agentId === $currentUser.id)
 		: undefined;
 
-	$: images =
-		property?.images && property.images.length > 0
-			? property.images
-			: property?.image
-				? [property.image]
-				: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'];
+	$: images = property?.images ?? [];
 
 	let lightboxOpen = false;
 
@@ -259,62 +257,6 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								<PropertyMap location={property.location} />
 							</div>
 
-							<div class="mt-6">
-								<h2 class="text-lg font-semibold text-gray-900 mb-3">
-									Características
-								</h2>
-								<div class="flex flex-wrap gap-2">
-									{#each property.features || ['Aire acondicionado', 'Calefacción central', 'Piso de madera', 'Balcón', 'Cochera', 'Seguridad'] as feature}
-										<span
-											class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full"
-											>{feature}</span
-										>
-									{/each}
-								</div>
-							</div>
-
-							{#if property.propertyType === 'chacra' || property.propertyType === 'quinta' || property.propertyType === 'galpon'}
-								<div class="mt-6">
-									<h2 class="text-lg font-semibold text-gray-900 mb-3">
-										Amenities
-									</h2>
-									<div class="flex flex-wrap gap-3">
-										{#if property.pool}
-											<div
-												class="flex items-center gap-2 px-3 py-2 bg-primary/5 text-primary rounded-lg"
-											>
-												<Waves class="w-5 h-5" />
-												<span class="text-sm font-medium">Piscina</span>
-											</div>
-										{/if}
-										{#if property.garden}
-											<div
-												class="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg"
-											>
-												<Trees class="w-5 h-5" />
-												<span class="text-sm font-medium">Jardín</span>
-											</div>
-										{/if}
-										{#if property.garage}
-											<div
-												class="flex items-center gap-2 px-3 py-2 bg-orange-50 text-orange-700 rounded-lg"
-											>
-												<Warehouse class="w-5 h-5" />
-												<span class="text-sm font-medium">Garage</span>
-											</div>
-										{/if}
-										{#if property.outdoor}
-											<div
-												class="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg"
-											>
-												<Home class="w-5 h-5" />
-												<span class="text-sm font-medium">Aire libre</span>
-											</div>
-										{/if}
-									</div>
-								</div>
-							{/if}
-
 							{#if interiorTypeLabels[property.propertyType]}
 								<div class="mt-6">
 									<span
@@ -333,7 +275,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 					<div class="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
 						<div class="text-center mb-6">
 							<p class="text-3xl md:text-4xl font-bold text-primary">
-								{property.priceLabel}
+								{getPriceLabel(property)}
 							</p>
 							{#if property.operation === 'rent'}
 								<p class="text-gray-500 text-sm mt-1">Precio por mes</p>
