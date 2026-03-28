@@ -24,6 +24,7 @@
 		syncFiltersToUrl
 	} from '$lib/stores/filters';
 	import { onMount } from 'svelte';
+	import { loadHomepageProperties } from '$lib/api/homepage';
 
 	let filtersOpen = false;
 	let viewMode: 'grid' | 'map' = 'grid';
@@ -33,6 +34,10 @@
 		lastUrl = $page.url.href;
 		filters.initFromUrl($page.url);
 	}
+
+	onMount(() => {
+		loadHomepageProperties();
+	});
 </script>
 
 <section

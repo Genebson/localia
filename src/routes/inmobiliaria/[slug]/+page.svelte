@@ -3,7 +3,7 @@
 	import { base } from '$app/paths';
 	import { MapPin, Phone, Mail, Building2, Plus } from 'lucide-svelte';
 	import { allAgencies } from '$lib/stores/agencies';
-	import { allProperties } from '$lib/stores/properties';
+	import { propertiesStore } from '$lib/stores/properties';
 	import { isAgent, currentUser } from '$lib/stores/auth';
 
 	$: slug = ($page.params as any).slug || '';
@@ -14,7 +14,7 @@
 		: '';
 
 	$: properties = inmob
-		? $allProperties.filter((p: any) => {
+		? $propertiesStore.filter((p: any) => {
 				if (!inmob.agentId) return false;
 				return p.agentId === inmob.agentId;
 			})
