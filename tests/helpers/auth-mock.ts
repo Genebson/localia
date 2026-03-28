@@ -4,23 +4,29 @@ const TEST_AGENT = { email: 'agente@test.com', password: 'password123' };
 const TEST_SEEKER = { email: 'buscador@test.com', password: 'password123' };
 
 function createAuthMocks(page: Page) {
-	let loggedInUser: { email: string; name: string; role: 'seeker' | 'agent' } | null = null;
-
-	function mockUser(email: string, isAgent: boolean) {
-		return {
-			email,
-			name: isAgent ? 'Agente Test' : 'Buscador Test',
-			role: (isAgent ? 'agent' : 'seeker') as 'seeker' | 'agent'
-		};
-	}
-
 	async function setup() {
 		await page.route('**/auth/sign-in/email', async (route) => {
 			const body = JSON.parse(route.request().postData() || '{}');
 			if (body.email && body.password) {
 				const isAgent = body.email.includes('agente');
-				loggedInUser = mockUser(body.email, isAgent);
+				const name = isAgent ? 'Agente Test' : 'Buscador Test';
+				const role = isAgent ? 'agent' : 'seeker';
 				await page.context().addCookies([{
+					name: 'mock_user_email',
+					value: encodeURIComponent(body.email),
+					domain: 'localhost',
+					path: '/'
+				}, {
+					name: 'mock_user_name',
+					value: encodeURIComponent(name),
+					domain: 'localhost',
+					path: '/'
+				}, {
+					name: 'mock_user_role',
+					value: role,
+					domain: 'localhost',
+					path: '/'
+				}, {
 					name: 'better-auth.session_token',
 					value: 'mock-session-token',
 					domain: 'localhost',
@@ -34,8 +40,8 @@ function createAuthMocks(page: Page) {
 							user: {
 								id: 'test-user-id',
 								email: body.email,
-								name: isAgent ? 'Agente Test' : 'Buscador Test',
-								role: isAgent ? 'agent' : 'seeker',
+								name,
+								role,
 								emailVerified: false,
 								image: null,
 								createdAt: new Date().toISOString(),
@@ -53,12 +59,24 @@ function createAuthMocks(page: Page) {
 			const body = JSON.parse(route.request().postData() || '{}');
 			if (body.email && body.password) {
 				const isAgent = body.role === 'agent';
-				loggedInUser = {
-					email: body.email,
-					name: body.name || body.email.split('@')[0],
-					role: isAgent ? 'agent' : 'seeker'
-				};
+				const name = body.name || body.email.split('@')[0];
+				const role = isAgent ? 'agent' : 'seeker';
 				await page.context().addCookies([{
+					name: 'mock_user_email',
+					value: encodeURIComponent(body.email),
+					domain: 'localhost',
+					path: '/'
+				}, {
+					name: 'mock_user_name',
+					value: encodeURIComponent(name),
+					domain: 'localhost',
+					path: '/'
+				}, {
+					name: 'mock_user_role',
+					value: role,
+					domain: 'localhost',
+					path: '/'
+				}, {
 					name: 'better-auth.session_token',
 					value: 'mock-session-token',
 					domain: 'localhost',
@@ -72,8 +90,8 @@ function createAuthMocks(page: Page) {
 							user: {
 								id: 'new-user-id',
 								email: body.email,
-								name: body.name || body.email.split('@')[0],
-								role: isAgent ? 'agent' : 'seeker',
+								name,
+								role,
 								emailVerified: false,
 								image: null,
 								createdAt: new Date().toISOString(),
@@ -88,13 +106,12 @@ function createAuthMocks(page: Page) {
 		});
 
 		await page.route('**/auth/sign-out', async (route) => {
-			loggedInUser = null;
-			await page.context().addCookies([{
-				name: 'better-auth.session_token',
-				value: '',
-				domain: 'localhost',
-				path: '/'
-			}]);
+			await page.context().addCookies([
+				{ name: 'mock_user_email', value: '', domain: 'localhost', path: '/' },
+				{ name: 'mock_user_name', value: '', domain: 'localhost', path: '/' },
+				{ name: 'mock_user_role', value: '', domain: 'localhost', path: '/' },
+				{ name: 'better-auth.session_token', value: '', domain: 'localhost', path: '/' }
+			]);
 			await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
 		});
 
@@ -115,16 +132,20 @@ function createAuthMocks(page: Page) {
 		});
 
 		await page.route('**/auth/me', async (route) => {
-			if (loggedInUser) {
+			const cookies = await page.context().cookies();
+			const emailCookie = cookies.find(c => c.name === 'mock_user_email');
+			const nameCookie = cookies.find(c => c.name === 'mock_user_name');
+			const roleCookie = cookies.find(c => c.name === 'mock_user_role');
+			if (emailCookie && nameCookie && roleCookie) {
 				await route.fulfill({
 					status: 200,
 					contentType: 'application/json',
 					body: JSON.stringify({
 						user: {
 							id: 'test-user-id',
-							email: loggedInUser.email,
-							name: loggedInUser.name,
-							role: loggedInUser.role,
+							email: decodeURIComponent(emailCookie.value),
+							name: decodeURIComponent(nameCookie.value),
+							role: roleCookie.value,
 							emailVerified: false,
 							image: null,
 							createdAt: new Date().toISOString(),
@@ -138,7 +159,11 @@ function createAuthMocks(page: Page) {
 		});
 
 		await page.route('**/profile', async (route) => {
-			if (loggedInUser) {
+			const cookies = await page.context().cookies();
+			const emailCookie = cookies.find(c => c.name === 'mock_user_email');
+			const nameCookie = cookies.find(c => c.name === 'mock_user_name');
+			const roleCookie = cookies.find(c => c.name === 'mock_user_role');
+			if (emailCookie && nameCookie && roleCookie) {
 				await route.fulfill({
 					status: 200,
 					contentType: 'application/json',
@@ -147,12 +172,12 @@ function createAuthMocks(page: Page) {
 							id: 'test-user-id',
 							attributes: {
 								id: 'test-user-id',
-								email: loggedInUser.email,
-								name: loggedInUser.name,
-								role: loggedInUser.role,
+								email: decodeURIComponent(emailCookie.value),
+								name: decodeURIComponent(nameCookie.value),
+								role: roleCookie.value,
 								emailVerified: false,
 								image: null,
-								licenseNumber: loggedInUser.role === 'agent' ? 'MAT-12345' : null,
+								licenseNumber: roleCookie.value === 'agent' ? 'MAT-12345' : null,
 								createdAt: new Date().toISOString(),
 								updatedAt: new Date().toISOString()
 							}
@@ -178,7 +203,6 @@ function createAuthMocks(page: Page) {
 	}
 
 	async function logout() {
-		loggedInUser = null;
 		await page.context().clearCookies();
 		await page.goto('about:blank');
 		await setup();
