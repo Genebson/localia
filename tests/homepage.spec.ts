@@ -1,6 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
 import { loginAs, logout, mockAuthApi } from './helpers/auth-mock';
-import { mockPropertyApi, addProperty } from './helpers/property-mock';
 
 const agenteEmail = 'agente@test.com';
 const buscadorEmail = 'buscador@test.com';
@@ -8,8 +7,6 @@ const buscadorEmail = 'buscador@test.com';
 test.describe('Homepage', () => {
 	test.beforeEach(async ({ page }) => {
 		await mockAuthApi(page);
-		await mockPropertyApi(page);
-		addProperty();
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 	});
@@ -20,7 +17,7 @@ test.describe('Homepage', () => {
 	});
 
 	test('should show search bar with location input', async ({ page }) => {
-		const searchInput = page.locator('input[placeholder="Ciudad, barrio o dirección"]');
+		const searchInput = page.locator('input[placeholder="Zona o barrio"]');
 		await expect(searchInput).toBeVisible();
 	});
 
@@ -49,8 +46,6 @@ test.describe('Homepage', () => {
 test.describe('Homepage - Filters', () => {
 	test.beforeEach(async ({ page }) => {
 		await mockAuthApi(page);
-		await mockPropertyApi(page);
-		addProperty();
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 	});
@@ -66,7 +61,7 @@ test.describe('Homepage - Filters', () => {
 
 	test('should clear all filters with "Limpiar" button', async ({ page }) => {
 		await page.goto('/?operation=buy&estado=nueva');
-		await page.getByRole('button', { name: 'Limpiar', exact: true }).click();
+		await page.getByRole('button', { name: 'Limpiar' }).click();
 	});
 });
 
@@ -96,7 +91,7 @@ test.describe('Homepage - Search', () => {
 	});
 
 	test('should accept text in search input', async ({ page }) => {
-		const searchInput = page.locator('input[placeholder*="Ciudad"]');
+		const searchInput = page.locator('input[placeholder*="Zona"]');
 		await searchInput.waitFor({ state: 'visible' });
 		await searchInput.fill('Mercedes');
 		await expect(searchInput).toHaveValue('Mercedes');

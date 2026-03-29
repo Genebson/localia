@@ -225,8 +225,7 @@
 						<div class="text-right">
 							<a
 								href="{base}/olvide-mi-contrasena"
-								class="text-sm text-primary hover:text-primary-light"
-								on:click={onClose}
+								class="text-sm text-primary hover:text-primary-light font-medium"
 							>
 								¿Olvidaste tu contraseña?
 							</a>

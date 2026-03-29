@@ -54,7 +54,7 @@
 	<title>Restablecer contraseña | Localia</title>
 </svelte:head>
 
-<div class="min-h-screen bg-background flex items-center justify-center px-4">
+<main class="pt-16 md:pt-20 min-h-screen bg-background flex items-center justify-center px-4">
 	<div class="w-full max-w-md">
 		<a href="{base}/" class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-8 transition-colors">
 			<ArrowLeft class="w-4 h-4" />
@@ -197,4 +197,4 @@
 			{/if}
 		</div>
 	</div>
-</div>
+</main>

@@ -14,49 +14,20 @@
 		Link,
 		Loader2,
 		AlertCircle,
-		ExternalLink
+		ExternalLink,
+		CheckCircle2,
+		Sparkles
 	} from 'lucide-svelte';
 	import { auth, isAgent, currentUser } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
+	import { getPropertyById } from '$lib/stores/properties';
 	import { onMount } from 'svelte';
-	import { createProperty, updateProperty } from '$lib/api/properties';
-	import { API_BASE_URL } from '$lib/config';
+	import type { PropertyType } from '$lib/data/properties';
+	import { createProperty, updateProperty, uploadImage } from '$lib/api/properties';
 
-	onMount(async () => {
+	onMount(() => {
 		auth.init();
-
-		if (isEditing && editId) {
-			isLoading = true;
-			try {
-				const res = await fetch(`${API_BASE_URL}/property/${editId}`, {
-					credentials: 'include'
-				});
-				if (res.ok) {
-					const data = await res.json();
-					const existing = data.property;
-					title = existing.title;
-					description = existing.description || '';
-					operation = existing.operation;
-					propertyType = propertyTypeLabels[existing.propertyType] || '';
-					price = existing.price.toString();
-					currency = existing.currency;
-					location = existing.location;
-					address = existing.address || '';
-					bedrooms = existing.attributes.bedrooms.toString();
-					bathrooms = existing.attributes.bathrooms.toString();
-					area = existing.attributes.area.toString();
-					if (existing.images?.length) imagePreviews = existing.images;
-					publishMode = 'form';
-				}
-			} catch {
-				error = 'No se pudo cargar la propiedad';
-			} finally {
-				isLoading = false;
-			}
-		}
 	});
-
-	let isLoading = false;
 
 	let editId = $page.url.searchParams.get('edit');
 	let isEditing = !!editId;
@@ -76,11 +47,13 @@
 	let bedrooms = '';
 	let bathrooms = '';
 	let area = '';
+	let aptoCredito = false;
 	let images: File[] = [];
 	let imagePreviews: string[] = [];
 	let error = '';
 	let success = false;
 	let createdPropertyId: string | null = null;
+	let submitting = false;
 
 	// File upload state
 	let fileDragOver = false;
@@ -94,6 +67,17 @@
 	let urlUploading = false;
 	let urlExtractionProgress = 0;
 	let urlExtractionDone = false;
+
+	// Distribution state (mocked)
+	let distributedTo: string[] = [];
+
+	// Title/description generator state (mocked)
+	let titleSuggestions: string[] = [];
+	let descriptionSuggestions: string[] = [];
+	let showTitleSuggestions = false;
+	let showDescriptionSuggestions = false;
+	let generatingTitles = false;
+	let generatingDescriptions = false;
 
 	// Extracted data (from file or URL)
 	let extractedData: {
@@ -141,6 +125,133 @@
 		terrain: 'Terreno',
 		commercial: 'Local comercial'
 	};
+
+	// Mock title generator based on property attributes
+	function generateTitleSuggestions(): string[] {
+		const typeLabel = propertyType || 'Propiedad';
+		const locationLabel = location || 'ubicación a definir';
+		const bedroomsNum = parseInt(bedrooms) || 0;
+		const isRent = operation === 'rent';
+
+		const ambientLabel =
+			bedroomsNum === 1 ? '1 ambiente' : bedroomsNum > 1 ? `${bedroomsNum} ambientes` : '';
+		const typeFormatted = typeLabel === 'Propiedad' ? typeLabel : typeLabel.toLowerCase();
+
+		const suggestions: string[] = [];
+
+		// Suggestion 1: Standard format
+		const parts1 = [typeFormatted];
+		if (ambientLabel) parts1.unshift(ambientLabel + ' en');
+		parts1.push('en', locationLabel);
+		suggestions.push(parts1.join(' '));
+
+		// Suggestion 2: Action-oriented
+		const action = isRent ? 'Alquiler de' : 'Venta de';
+		const parts2 = [action];
+		if (ambientLabel) parts2.push(ambientLabel);
+		parts2.push(typeFormatted);
+		if (locationLabel) parts2.push('en', locationLabel);
+		suggestions.push(parts2.join(' '));
+
+		// Suggestion 3: Emphasizing location
+		const parts3 = [typeFormatted];
+		if (ambientLabel)
+			parts3.push('con', String(bedroomsNum), 'dormitorio' + (bedroomsNum > 1 ? 's' : ''));
+		parts3.push('en', locationLabel);
+		suggestions.push(parts3.join(' '));
+
+		return suggestions.slice(0, 3);
+	}
+
+	// Mock description generator based on property attributes
+	function generateDescriptionSuggestions(): string[] {
+		const typeLabel = propertyType || 'propiedad';
+		const locationLabel = location || 'Mercedes';
+		const bedroomsNum = parseInt(bedrooms) || 0;
+		const bathroomsNum = parseInt(bathrooms) || 0;
+		const areaNum = parseInt(area) || 0;
+		const isRent = operation === 'rent';
+
+		const descriptions: string[] = [];
+
+		// Description 1: Classic formal
+		let desc1 = `${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} ${isRent ? 'en alquiler' : 'en venta'} en ${locationLabel}. `;
+		if (bedroomsNum > 0) {
+			desc1 += `Cuenta con ${bedroomsNum} dormitorios`;
+			if (bathroomsNum > 0) desc1 += ` y ${bathroomsNum} baños`;
+			desc1 += '. ';
+		}
+		if (areaNum > 0) desc1 += `Superficie de ${areaNum}m². `;
+		desc1 += 'Excelente ubicación, cercano a medios de transporte y servicios. ';
+		desc1 += 'Ideal para vivir o invertir. ';
+		desc1 += 'Consultá por visita.';
+		descriptions.push(desc1);
+
+		// Description 2: More appealing/inviting
+		let desc2 = '¡No te pierdas esta oportunidad! ';
+		desc2 += `${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} ${isRent ? 'para alquilar' : 'a la venta'} `;
+		desc2 += `en ${locationLabel}. `;
+		desc2 += 'Propiedad con excelente iluminación natural, ';
+		if (bedroomsNum > 0) desc2 += `${bedroomsNum} ambientes amplios, `;
+		if (areaNum > 0) desc2 += `${areaNum}m² cubiertos, `;
+		desc2 += 'buena distribución y ubicación privilegiada. ';
+		desc2 += isRent ? 'Alquiler accesible.' : 'Precio competitivo.';
+		descriptions.push(desc2);
+
+		return descriptions.slice(0, 2);
+	}
+
+	async function handleGenerateTitles() {
+		generatingTitles = true;
+		showTitleSuggestions = false;
+		titleSuggestions = [];
+		// Simulate async generation
+		await new Promise((resolve) => setTimeout(resolve, 600));
+		titleSuggestions = generateTitleSuggestions();
+		generatingTitles = false;
+		showTitleSuggestions = true;
+	}
+
+	async function handleGenerateDescriptions() {
+		generatingDescriptions = true;
+		showDescriptionSuggestions = false;
+		descriptionSuggestions = [];
+		// Simulate async generation
+		await new Promise((resolve) => setTimeout(resolve, 600));
+		descriptionSuggestions = generateDescriptionSuggestions();
+		generatingDescriptions = false;
+		showDescriptionSuggestions = true;
+	}
+
+	function applyTitle(titleToApply: string) {
+		title = titleToApply;
+		showTitleSuggestions = false;
+	}
+
+	function applyDescription(descToApply: string) {
+		description = descToApply;
+		showDescriptionSuggestions = false;
+	}
+
+	if (isEditing) {
+		const existing = getPropertyById(editId);
+		if (existing) {
+			title = existing.title;
+			description = existing.description || '';
+			operation = existing.operation;
+			propertyType = propertyTypeLabels[existing.propertyType] || '';
+			price = existing.price.toString();
+			currency = existing.currency;
+			location = existing.location;
+			address = existing.address;
+			bedrooms = existing.attributes.bedrooms.toString();
+			bathrooms = existing.attributes.bathrooms.toString();
+			area = existing.attributes.area.toString();
+			if (existing.images?.length) imagePreviews = existing.images;
+			distributedTo = existing.distributedTo ?? [];
+			publishMode = 'form';
+		}
+	}
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
@@ -206,11 +317,11 @@
 					currency: isRent ? 'ARS' : 'USD',
 					operation: isRent ? 'rent' : 'buy',
 					location: isTerrain
-						? 'Nordelta, Tigre'
+						? 'Zona Rural, Mercedes'
 						: isHouse
-							? 'Olivos, Vicente López'
-							: 'Palermo, Buenos Aires',
-					address: isTerrain ? 'Manzana 12 Lote 45' : 'Av. Santa Fe 2456',
+							? 'Barrio Norte, Mercedes'
+							: 'Centro, Mercedes',
+					address: isTerrain ? 'Manzana 12 Lote 45' : 'Calle 123 entre 14 y 16',
 					bedrooms: isHouse
 						? '4'
 						: isTerrain
@@ -262,17 +373,6 @@
 		simulateExtraction('url');
 	}
 
-	async function fileToBase64(file: File): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader();
-			reader.onload = () => resolve(reader.result as string);
-			reader.onerror = reject;
-			reader.readAsDataURL(file);
-		});
-	}
-
-	let submitting = false;
-
 	async function handleSubmit() {
 		if (extractedData) applyExtractedData();
 		error = '';
@@ -285,54 +385,70 @@
 			return;
 		}
 
-		const priceNum = parseInt(price);
-
 		submitting = true;
 		try {
-			let uploadedImages: string[] = [];
+			// Upload new images first
+			const uploadedImages: string[] = [];
 			for (const file of images) {
-				const base64 = await fileToBase64(file);
-				const res = await fetch(`${API_BASE_URL}/upload`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					credentials: 'include',
-					body: JSON.stringify({ data: base64 })
-				});
-				if (!res.ok) throw new Error('Image upload failed');
-				const { url } = await res.json();
-				uploadedImages.push(url);
+				try {
+					const url = await uploadImage(file);
+					uploadedImages.push(url);
+				} catch {
+					// Fall back to preview URL if upload fails
+					const reader = new FileReader();
+					const result = await new Promise<string>((resolve) => {
+						reader.onload = (e) => resolve(e.target?.result as string);
+						reader.readAsDataURL(file);
+					});
+					uploadedImages.push(result);
+				}
 			}
 
-			const effectiveImages = uploadedImages.length > 0 ? uploadedImages : imagePreviews;
+			// If editing with existing images that weren't changed, keep them
+			const existingImages = isEditing
+				? (getPropertyById(editId)?.images ?? []).filter((url) =>
+						imagePreviews.includes(url)
+					)
+				: [];
+			const allImages = [...existingImages, ...uploadedImages];
 
-			const propertyData = {
+			const priceNum = parseInt(price);
+			const apiData = {
 				title: title.trim(),
-				description,
+				description: description || undefined,
+				operation: operation as 'buy' | 'rent',
+				propertyType: (propertyTypeMap[propertyType] || 'apartment') as
+					| 'apartment'
+					| 'house'
+					| 'penthouse'
+					| 'terrain'
+					| 'commercial',
 				price: priceNum,
-				currency,
+				currency: currency as 'USD' | 'ARS',
 				location,
-				address,
-				images: effectiveImages,
-				propertyType: (propertyTypeMap[propertyType] || 'apartment') as 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial',
+				address: address || undefined,
+				aptoCredito,
 				attributes: {
 					bedrooms: parseInt(bedrooms) || 0,
 					bathrooms: parseInt(bathrooms) || 0,
 					area: parseInt(area) || 0
 				},
-				operation,
-				featured: true
+				images: allImages,
+				featured: true,
+				distributedTo
 			};
 
 			if (isEditing && editId) {
-				await updateProperty(editId, propertyData);
+				await updateProperty(editId, apiData);
+				success = true;
 			} else {
-				const result = await createProperty(propertyData);
-				createdPropertyId = result.property.id;
+				const result = await createProperty(apiData);
+				createdPropertyId = result.id;
+				success = true;
 			}
-			success = true;
 			window.scrollTo(0, 0);
 		} catch (e) {
-			error = e instanceof Error ? e.message : 'Error al guardar la propiedad. Verificá los datos e intentá de nuevo.';
+			error = e instanceof Error ? e.message : 'Error al guardar la propiedad';
 		} finally {
 			submitting = false;
 		}
@@ -361,12 +477,11 @@
 	}
 
 	function distributeToPortal(portal: 'zonaprop' | 'argenprop' | 'mercadolibre') {
-		const urls = {
-			zonaprop: 'https://www.zonaprop.com.ar/publicar-propiedad.html',
-			argenprop: 'https://www.argenprop.com.ar/Publicar',
-			mercadolibre: 'https://www.mercadolibre.com.ar/anuncios/publicar'
-		};
-		window.open(urls[portal], '_blank', 'noopener,noreferrer');
+		if (distributedTo.includes(portal)) {
+			distributedTo = distributedTo.filter((p) => p !== portal);
+		} else {
+			distributedTo = [...distributedTo, portal];
+		}
 	}
 </script>
 
@@ -502,12 +617,10 @@
 
 			{#if error}
 				<div
-					class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"
+					class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2"
 				>
-					<div class="flex items-start gap-2">
-						<AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5" />
-						<div class="whitespace-pre-line">{error}</div>
-					</div>
+					<AlertCircle class="w-4 h-4 flex-shrink-0" />
+					{error}
 				</div>
 			{/if}
 
@@ -666,29 +779,119 @@
 							Información básica
 						</h2>
 
+						<div
+							class="flex items-start gap-2 p-3 bg-primary/5 border border-primary/10 rounded-lg"
+						>
+							<Sparkles class="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+							<p class="text-sm text-gray-600">
+								<strong class="text-gray-700">Consejo:</strong> Completá los datos de
+								la propiedad (tipo, ubicación, dormitorios, etc.) antes de generar el
+								título y la descripción. Así las sugerencias serán más completas y personalizadas.
+							</p>
+						</div>
+
 						<div>
 							<label class="block text-sm font-medium text-gray-700 mb-1"
 								>Título de la propiedad *</label
 							>
-							<input
-								type="text"
-								bind:value={title}
-								maxlength={70}
-								placeholder="ej: Departamento de 2 ambientes en Palermo"
-								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-							/>
+							<div class="relative">
+								<input
+									type="text"
+									bind:value={title}
+									maxlength={70}
+									placeholder="ej: Departamento de 2 ambientes en el Centro"
+									class="w-full px-4 py-3 pr-24 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								/>
+								<button
+									type="button"
+									on:click={handleGenerateTitles}
+									disabled={generatingTitles}
+									class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary-light transition-colors disabled:opacity-50"
+								>
+									{#if generatingTitles}
+										<Loader2 class="w-4 h-4 animate-spin" />
+									{:else}
+										<Sparkles class="w-4 h-4" />
+									{/if}
+									Generar
+								</button>
+							</div>
+							{#if showTitleSuggestions && titleSuggestions.length > 0}
+								<div
+									class="mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+								>
+									<p
+										class="px-3 py-2 text-xs font-medium text-gray-500 bg-gray-50"
+									>
+										Sugerencias:
+									</p>
+									{#each titleSuggestions as suggestion, i}
+										<button
+											type="button"
+											on:click={() => applyTitle(suggestion)}
+											class="w-full px-3 py-2.5 text-left text-sm hover:bg-primary/5 transition-colors border-b border-gray-100 last:border-b-0"
+										>
+											{suggestion}
+										</button>
+									{/each}
+								</div>
+							{/if}
 						</div>
 
 						<div>
 							<label class="block text-sm font-medium text-gray-700 mb-1"
 								>Descripción</label
 							>
-							<textarea
-								bind:value={description}
-								rows="4"
-								placeholder="Descripción de la propiedad..."
-								class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
-							></textarea>
+							<div class="relative">
+								<textarea
+									bind:value={description}
+									rows="4"
+									placeholder="Descripción de la propiedad..."
+									class="w-full px-4 py-3 pr-24 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
+								></textarea>
+								<button
+									type="button"
+									on:click={handleGenerateDescriptions}
+									disabled={generatingDescriptions}
+									class="absolute right-2 top-2 flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary-light transition-colors disabled:opacity-50"
+								>
+									{#if generatingDescriptions}
+										<Loader2 class="w-4 h-4 animate-spin" />
+									{:else}
+										<Sparkles class="w-4 h-4" />
+									{/if}
+									Generar
+								</button>
+							</div>
+							{#if showDescriptionSuggestions && descriptionSuggestions.length > 0}
+								<div class="mt-2 space-y-2">
+									{#each descriptionSuggestions as suggestion, i}
+										<div
+											class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+										>
+											<button
+												type="button"
+												on:click={() => applyDescription(suggestion)}
+												class="w-full px-3 py-2.5 text-left text-sm hover:bg-primary/5 transition-colors flex items-center justify-between"
+											>
+												<span class="text-gray-700 pr-2"
+													>Opción {i + 1}</span
+												>
+												<span
+													class="text-primary font-medium flex items-center gap-1"
+												>
+													Usar <Sparkles class="w-3 h-3" />
+												</span>
+											</button>
+											<p
+												class="px-3 py-2.5 text-sm text-gray-600 border-t border-gray-100 bg-gray-50"
+											>
+												{suggestion}
+											</p>
+										</div>
+									{/each}
+								</div>
+							{/if}
 						</div>
 
 						<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -737,7 +940,7 @@
 								<input
 									type="text"
 									bind:value={location}
-									placeholder="Ej: Palermo, Buenos Aires"
+									placeholder="Ej: Centro, Mercedes"
 									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 								/>
 							</div>
@@ -748,7 +951,7 @@
 								<input
 									type="text"
 									bind:value={address}
-									placeholder="Ej: Av. Santa Fe 2456"
+									placeholder="Ej: Calle 123 entre 14 y 16"
 									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
 								/>
 							</div>
@@ -806,6 +1009,22 @@
 								/>
 							</div>
 						</div>
+
+						<div class="bg-white rounded-2xl shadow-sm p-6">
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={aptoCredito}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<div>
+									<span class="font-medium text-gray-900">Apto Crédito</span>
+									<p class="text-sm text-gray-500">
+										La propiedad es elegible para financiamiento bancario
+									</p>
+								</div>
+							</label>
+						</div>
 					</div>
 
 					<div class="bg-white rounded-2xl shadow-sm p-6 space-y-4">
@@ -855,57 +1074,90 @@
 						{/if}
 					</div>
 
-					{#if !isEditing}
-						<div class="bg-white rounded-2xl shadow-sm p-6">
-							<h2 class="text-lg font-semibold text-gray-900 mb-4">
-								Distribuir en otros portales
-							</h2>
-							<p class="text-sm text-gray-500 mb-4">
-								Publicá la misma propiedad en otros portales con un solo clic.
-							</p>
-							<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-								<button
-									type="button"
-									on:click={() => distributeToPortal('zonaprop')}
-									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors"
+					<div class="bg-white rounded-2xl shadow-sm p-6">
+						<h2 class="text-lg font-semibold text-gray-900 mb-4">
+							Distribuir en otros portales
+						</h2>
+						<p class="text-sm text-gray-500 mb-4">
+							Publicá la misma propiedad en otros portales con un solo clic.
+						</p>
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+							<button
+								type="button"
+								on:click={() => distributeToPortal('zonaprop')}
+								class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
+									'zonaprop'
+								)
+									? 'border-green-500 bg-green-50'
+									: 'border-gray-200 hover:border-primary'}"
+							>
+								<span
+									class="font-medium text-sm {distributedTo.includes('zonaprop')
+										? 'text-green-700'
+										: 'text-gray-700'}">ZonaProp</span
 								>
-									<span class="font-medium text-sm text-gray-700">ZonaProp</span>
+								{#if distributedTo.includes('zonaprop')}
+									<CheckCircle2 class="w-4 h-4 text-green-600" />
+								{:else}
 									<ExternalLink class="w-4 h-4 text-gray-400" />
-								</button>
-								<button
-									type="button"
-									on:click={() => distributeToPortal('argenprop')}
-									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors"
+								{/if}
+							</button>
+							<button
+								type="button"
+								on:click={() => distributeToPortal('argenprop')}
+								class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
+									'argenprop'
+								)
+									? 'border-green-500 bg-green-50'
+									: 'border-gray-200 hover:border-primary'}"
+							>
+								<span
+									class="font-medium text-sm {distributedTo.includes('argenprop')
+										? 'text-green-700'
+										: 'text-gray-700'}">ArgenProp</span
 								>
-									<span class="font-medium text-sm text-gray-700">ArgenProp</span>
+								{#if distributedTo.includes('argenprop')}
+									<CheckCircle2 class="w-4 h-4 text-green-600" />
+								{:else}
 									<ExternalLink class="w-4 h-4 text-gray-400" />
-								</button>
-								<button
-									type="button"
-									on:click={() => distributeToPortal('mercadolibre')}
-									class="flex items-center justify-between px-4 py-3 border border-gray-200 hover:border-primary rounded-lg transition-colors"
+								{/if}
+							</button>
+							<button
+								type="button"
+								on:click={() => distributeToPortal('mercadolibre')}
+								class="flex items-center justify-between px-4 py-3 border rounded-lg transition-colors {distributedTo.includes(
+									'mercadolibre'
+								)
+									? 'border-green-500 bg-green-50'
+									: 'border-gray-200 hover:border-primary'}"
+							>
+								<span
+									class="font-medium text-sm {distributedTo.includes(
+										'mercadolibre'
+									)
+										? 'text-green-700'
+										: 'text-gray-700'}">MercadoLibre</span
 								>
-									<span class="font-medium text-sm text-gray-700"
-										>MercadoLibre</span
-									>
+								{#if distributedTo.includes('mercadolibre')}
+									<CheckCircle2 class="w-4 h-4 text-green-600" />
+								{:else}
 									<ExternalLink class="w-4 h-4 text-gray-400" />
-								</button>
-							</div>
+								{/if}
+							</button>
 						</div>
-					{/if}
+					</div>
 
 					<div class="flex justify-end">
 						<button
 							type="submit"
 							disabled={submitting}
-							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+							class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							{#if submitting}
-								<Loader2 class="w-4 h-4 animate-spin" />
-								{isEditing ? 'Guardando...' : 'Publicando...'}
-							{:else}
-								{isEditing ? 'Guardar cambios' : 'Publicar en Localia'}
-							{/if}
+							{submitting
+								? 'Publicando...'
+								: isEditing
+									? 'Guardar cambios'
+									: 'Publicar en Localia'}
 						</button>
 					</div>
 				</form>

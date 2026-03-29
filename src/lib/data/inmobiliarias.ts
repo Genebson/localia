@@ -39,20 +39,6 @@ export const inmobiliarias: Inmobiliaria[] = [
 		]
 	},
 	{
-		id: '2',
-		slug: 'bienes-raices-del-centro',
-		name: 'Bienes Raíces del Centro',
-		logo: 'https://ui-avatars.com/api/?name=BR&background=E8A838&color=fff&size=128',
-		banner: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80',
-		tagline: 'Expertos en el centro y alrededores',
-		description:
-			'Especialistas en propiedades comerciales y residenciales en el centro de la ciudad.',
-		phone: '5491123456789',
-		email: 'info@bienesraicesdelcentro.com',
-		whatsapp: '5491123456789',
-		team: [{ name: 'Carlos García', role: 'Gerente', phone: '5491123456789' }]
-	},
-	{
 		id: '3',
 		slug: 'tu-hogar-ideal',
 		name: 'Tu Hogar Ideal',

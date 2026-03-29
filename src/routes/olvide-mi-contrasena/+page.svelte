@@ -27,7 +27,7 @@
 	<title>Olvidé mi contraseña | Localia</title>
 </svelte:head>
 
-<div class="min-h-screen bg-background flex items-center justify-center px-4">
+<main class="pt-16 md:pt-20 min-h-screen bg-background flex items-center justify-center px-4">
 	<div class="w-full max-w-md">
 		<a href="{base}/" class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-8 transition-colors">
 			<ArrowLeft class="w-4 h-4" />
@@ -88,7 +88,7 @@
 							<span class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
 							Enviando...
 						{:else}
-							Enviar
+							Enviar enlace
 						{/if}
 					</button>
 				</form>
@@ -104,4 +104,4 @@
 			{/if}
 		</div>
 	</div>
-</div>
+</main>

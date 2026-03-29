@@ -28,6 +28,7 @@ export interface Filters {
 	accessible: boolean | null;
 	publishedDays: number | null;
 	zone: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro';
+	aptoCredito: boolean | null;
 }
 
 const DEFAULT_FILTERS: Filters = {
@@ -54,7 +55,8 @@ const DEFAULT_FILTERS: Filters = {
 	storageRoom: null,
 	accessible: null,
 	publishedDays: null,
-	zone: ''
+	zone: '',
+	aptoCredito: null
 };
 
 function createFiltersStore() {
@@ -85,6 +87,7 @@ function createFiltersStore() {
 		setPublishedDays: (v: number | null) => update((f) => ({ ...f, publishedDays: v })),
 		setZone: (v: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro') =>
 			update((f) => ({ ...f, zone: v })),
+		setAptoCredito: (v: boolean | null) => update((f) => ({ ...f, aptoCredito: v })),
 		reset: () => {
 			set({ ...DEFAULT_FILTERS });
 			history.replaceState(null, '', window.location.pathname + '?');
@@ -149,7 +152,10 @@ function createFiltersStore() {
 						| 'barrio-norte'
 						| 'barrio-sur'
 						| 'zona-club'
-						| 'centro') || ''
+						| 'centro') || '',
+				aptoCredito: url.searchParams.get('aptoCredito')
+					? url.searchParams.get('aptoCredito') === 'true'
+					: null
 			});
 		}
 	};
@@ -184,6 +190,7 @@ export function syncFiltersToUrl() {
 	if (f.accessible !== null) params.set('accessible', String(f.accessible));
 	if (f.publishedDays !== null) params.set('publishedDays', String(f.publishedDays));
 	if (f.zone) params.set('zone', f.zone);
+	if (f.aptoCredito !== null) params.set('aptoCredito', String(f.aptoCredito));
 	const search = params.toString();
 	const newUrl = search ? `?${search}` : window.location.pathname + '?';
 	replaceState(newUrl, {});
@@ -269,6 +276,9 @@ export const filteredProperties = derived(
 			if ($filters.storageRoom !== null && property.storageRoom !== $filters.storageRoom)
 				return false;
 			if ($filters.accessible !== null && property.accessible !== $filters.accessible)
+				return false;
+
+			if ($filters.aptoCredito !== null && property.aptoCredito !== $filters.aptoCredito)
 				return false;
 
 			if ($filters.publishedDays !== null) {

@@ -227,7 +227,7 @@
 
 		{#if hoveredParcel}
 			<div
-				class="fixed z-50 px-3 py-2 rounded-lg shadow-lg text-sm font-medium"
+				class="hidden sm:block fixed z-50 px-3 py-2 rounded-lg shadow-lg text-sm font-medium"
 				style="left: {tooltipX}px; top: {tooltipY}px; background-color: {statusColors[
 					hoveredParcel.status
 				].bg}; color: white; pointer-events: none;"
