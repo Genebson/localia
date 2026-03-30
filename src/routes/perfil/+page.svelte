@@ -61,7 +61,7 @@
 				name: userAgency.name,
 				tagline: userAgency.tagline || '',
 				description: userAgency.description || '',
-				phone: userAgency.phone,
+				phone: userAgency.phone || '',
 				email: userAgency.email || '',
 				whatsapp: userAgency.whatsapp || '',
 				location: userAgency.location || '',
@@ -121,6 +121,7 @@
 			});
 		} else {
 			agenciesStore.create({
+				verified: false,
 				slug,
 				name: agencyForm.name.trim(),
 				tagline: agencyForm.tagline.trim() || 'Tu hogar ideal está acá',
@@ -129,7 +130,7 @@
 				email: agencyForm.email.trim(),
 				whatsapp: agencyForm.whatsapp.trim() || agencyForm.phone.trim(),
 				location: agencyForm.location.trim() || 'Mercedes, Buenos Aires',
-				website: agencyForm.website.trim() || undefined,
+				website: agencyForm.website.trim(),
 				logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(agencyForm.name)}&background=1E3A5F&color=fff&size=128`,
 				banner: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
 				team: [

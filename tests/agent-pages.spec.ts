@@ -3,7 +3,7 @@ import { mockAuthApi } from './helpers/auth-mock';
 
 const mockAgentLogin = async ({ page }: { page: Page }) => {
 	await mockAuthApi(page);
-	await page.goto('/localia/');
+	await page.goto('/');
 	await page.waitForLoadState('networkidle');
 	await page.evaluate(() => {
 		localStorage.setItem(
@@ -32,7 +32,7 @@ const mockAgentLogin = async ({ page }: { page: Page }) => {
 test.describe('Publicar Property Page', () => {
 	test('should allow agent to access publicar page after login', async ({ page }) => {
 		await mockAgentLogin({ page });
-		await page.goto('/localia/publicar');
+		await page.goto('/publicar');
 		await expect(page).toHaveURL(/\/publicar/);
 	});
 });
@@ -40,7 +40,7 @@ test.describe('Publicar Property Page', () => {
 test.describe('Mis Propiedades Page', () => {
 	test('should allow agent to access mis-propiedades page after login', async ({ page }) => {
 		await mockAgentLogin({ page });
-		await page.goto('/localia/mis-propiedades');
+		await page.goto('/mis-propiedades');
 		await expect(page).toHaveURL(/\/mis-propiedades/);
 	});
 });
@@ -48,7 +48,7 @@ test.describe('Mis Propiedades Page', () => {
 test.describe('Perfil Page', () => {
 	test('should allow agent to access perfil page after login', async ({ page }) => {
 		await mockAgentLogin({ page });
-		await page.goto('/localia/perfil');
+		await page.goto('/perfil');
 		await expect(page).toHaveURL(/\/perfil/);
 	});
 });
@@ -56,7 +56,7 @@ test.describe('Perfil Page', () => {
 test.describe('ChePibe CRM Page', () => {
 	test('should allow agent to access chepibe page after login', async ({ page }) => {
 		await mockAgentLogin({ page });
-		await page.goto('/localia/chepibe');
+		await page.goto('/chepibe');
 		await expect(page).toHaveURL(/\/chepibe/);
 	});
 });

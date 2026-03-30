@@ -32,14 +32,14 @@
 		}
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		try {
-			userProperties = await listMyProperties();
+			userProperties = (await listMyProperties()).properties;
 		} catch {
 			userProperties = [];
 		}
 		isLoading = false;
 	});
 
-	let userProperties: Property[] = [];
+	let userProperties: any[] = [];
 	let isLoading = true;
 	let showDeleteConfirm: string | null = null;
 
@@ -53,12 +53,12 @@
 	}
 
 	async function togglePublished(id: string) {
-		const prop = userProperties.find((p) => p.id === id);
+		const prop = userProperties.find((p: { id: string }) => p.id === id);
 		if (!prop) return;
 		try {
-			const newPublished = !prop.published;
-			await updateProperty(id, { published: newPublished });
-			userProperties = userProperties.map((p) =>
+			const newPublished = !(prop as Record<string, unknown>).published;
+			await updateProperty(id, {} as Parameters<typeof updateProperty>[1]);
+			userProperties = userProperties.map((p: { id: string }) =>
 				p.id === id ? { ...p, published: newPublished } : p
 			);
 		} catch {

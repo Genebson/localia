@@ -126,9 +126,9 @@
 					<div class="flex gap-2 p-1 bg-gray-100 rounded-lg mb-6">
 						<button
 							type="button"
-							on:click={() => selectRole('user')}
+							on:click={() => selectRole('seeker')}
 							class="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 {selectedRole ===
-							'user'
+							'seeker'
 								? 'bg-primary text-white'
 								: 'text-gray-600 hover:text-gray-900'}"
 						>

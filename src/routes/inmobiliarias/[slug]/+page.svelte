@@ -9,7 +9,7 @@
 		agenciesStore.init();
 	});
 
-	$: slug = $page.params.slug;
+	$: slug = $page.params.slug || '';
 	$: agency = getAgencyById(slug) || $allAgencies.find((a) => a.slug === slug);
 </script>
 

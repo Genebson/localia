@@ -6,7 +6,7 @@
 	import { Phone, Send, CheckCircle, Bot, User, Building2 } from 'lucide-svelte';
 	import { isAgent, currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
-	import { messages } from '$lib/stores/messages';
+	import { messages, type Message, type MessageSender } from '$lib/stores/messages';
 	import { notifications, badgeVisible } from '$lib/stores/notifications';
 
 	$: isAuthorized = $currentUser && $isAgent;
@@ -53,32 +53,32 @@
 				{
 					id: '1-1',
 					text: 'Hola! Vi la propiedad en Localia. Está disponible?',
-					sender: 'prospect',
+					sender: 'prospect' as MessageSender,
 					timestamp: '10:30'
 				},
 				{
 					id: '1-2',
 					text: '¡Hola María! Soy ChePibe, el asistente de Localia. Sí, la propiedad está disponible. Para poder ayudarte mejor, ¿cuál es tu presupuesto approximate?',
-					sender: 'bot',
+					sender: 'bot' as MessageSender,
 					timestamp: '10:31'
 				},
 				{
 					id: '1-3',
 					text: 'Tengo presupuesto USD 150.000',
-					sender: 'prospect',
+					sender: 'prospect' as MessageSender,
 					timestamp: '10:32'
 				},
 				{
 					id: '1-4',
 					text: '¡Perfecto! Según tu presupuesto, te encontré 3 propiedades que pueden interesarte. ¿Querés que te las envíe?',
-					sender: 'bot',
+					sender: 'bot' as MessageSender,
 					timestamp: '10:33'
 				},
-				{ id: '1-5', text: 'Sí por favor!', sender: 'prospect', timestamp: '10:34' },
+				{ id: '1-5', text: 'Sí por favor!', sender: 'prospect' as MessageSender, timestamp: '10:34' },
 				{
 					id: '1-6',
 					text: 'Aquí van:\n\n1. Departamento 2 ambientes en Centro - USD 185.000\n2. PH en Barrio Sur - USD 165.000\n3. Loft en Centro - USD 210.000\n\n¿Querés coordinar una visita?',
-					sender: 'bot',
+					sender: 'bot' as MessageSender,
 					timestamp: '10:35'
 				}
 			]
@@ -92,20 +92,20 @@
 				{
 					id: '2-1',
 					text: 'ChePibe, pasale la casa de calle San Martín a Juan',
-					sender: 'prospect',
+					sender: 'prospect' as MessageSender,
 					timestamp: '14:20'
 				},
 				{
 					id: '2-2',
 					text: '¡Listo! Te genero el mensaje para Juan:\n\n"Hola Juan! Te paso la info de la casa en San Martín 1234. Casa de 3 dormitorios, 2 baños, 150m². USD 280.000. Link: localia.com.ar/property/018d1a2b\n\n¿Lo envío?',
-					sender: 'bot',
+					sender: 'bot' as MessageSender,
 					timestamp: '14:21'
 				},
-				{ id: '2-3', text: 'Sí, envío.', sender: 'prospect', timestamp: '14:22' },
+				{ id: '2-3', text: 'Sí, envío.', sender: 'prospect' as MessageSender, timestamp: '14:22' },
 				{
 					id: '2-4',
 					text: '✅ Mensaje enviado a Juan. También lo guardé en el CRM como "Lead en seguimiento".',
-					sender: 'bot',
+					sender: 'bot' as MessageSender,
 					timestamp: '14:22'
 				}
 			]
@@ -119,13 +119,13 @@
 				{
 					id: '3-1',
 					text: 'ChePibe, ¿tenemos algo de 2 dormitorios por menos de USD 50.000?',
-					sender: 'prospect',
+					sender: 'prospect' as MessageSender,
 					timestamp: '16:45'
 				},
 				{
 					id: '3-2',
 					text: 'Buscando en la base de Localia...\n\nNo hay propiedades que matcheen esos filtros actualmente. Pero te ofrezco alternativas:\n\n1. Terreno en Zona del Club - USD 45.000 (0 dormitorios, pero 850m²)\n2. Lofts desde USD 65.000 (1 dormitorio)\n\n¿Ampliás el rango?',
-					sender: 'bot',
+					sender: 'bot' as MessageSender,
 					timestamp: '16:46'
 				}
 			]
@@ -176,7 +176,7 @@
 		if (!newMessage.trim() || !selectedConversation) return;
 		messages.addMessage(selectedConversation.id, {
 			text: newMessage,
-			sender: 'agent'
+				sender: 'agent' as MessageSender,
 		});
 		newMessage = '';
 	}

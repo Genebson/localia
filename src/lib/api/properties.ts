@@ -163,3 +163,7 @@ export async function uploadImage(file: File): Promise<string> {
 		reader.readAsDataURL(file);
 	});
 }
+
+export async function incrementViews(_id: string): Promise<void> {
+	// No-op for API version — views tracked server-side
+}

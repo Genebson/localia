@@ -46,7 +46,7 @@ function makeProperty(overrides: Partial<MockProperty> = {}): MockProperty {
 		priceLabel,
 		image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
 		featured: true,
-		agentId: 'test-user-id',
+		agentId: 'test-user-1',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
 		...overrides
@@ -160,6 +160,8 @@ function clearProperties() {
 async function mockPropertyApi(page: Page) {
 	clearProperties();
 	await setupPropertyRoutes(page);
+	addProperty({ id: 'featured-1', title: 'Depto Palermo', featured: true });
+	addProperty({ id: 'featured-2', title: 'Casa Nordelta', featured: true });
 }
 
 export { mockPropertyApi, addProperty, clearProperties, type MockProperty };

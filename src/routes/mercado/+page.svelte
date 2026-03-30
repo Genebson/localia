@@ -7,9 +7,11 @@
 	let chartCanvas: HTMLCanvasElement;
 	let chartInstance: any = null;
 
-	onMount(async () => {
-		if (browser && chartCanvas) {
-			const {
+	onMount(() => {
+		if (!browser || !chartCanvas) return;
+
+		import('chart.js').then(
+			({
 				Chart,
 				BarController,
 				BarElement,
@@ -18,82 +20,82 @@
 				Title,
 				Tooltip,
 				Legend
-			} = await import('chart.js');
+			}) => {
+				Chart.register(
+					BarController,
+					BarElement,
+					CategoryScale,
+					LinearScale,
+					Title,
+					Tooltip,
+					Legend
+				);
 
-			Chart.register(
-				BarController,
-				BarElement,
-				CategoryScale,
-				LinearScale,
-				Title,
-				Tooltip,
-				Legend
-			);
-
-			chartInstance = new Chart(chartCanvas, {
-				type: 'bar',
-				data: {
-					labels: mercadoData.priceRanges.map((r) => r.label),
-					datasets: [
-						{
-							label: 'Propiedades',
-							data: mercadoData.priceRanges.map((r) => r.count),
-							backgroundColor: [
-								'rgba(59, 130, 246, 0.7)',
-								'rgba(99, 102, 241, 0.7)',
-								'rgba(139, 92, 246, 0.7)',
-								'rgba(167, 139, 250, 0.7)'
-							],
-							borderColor: [
-								'rgb(59, 130, 246)',
-								'rgb(99, 102, 241)',
-								'rgb(139, 92, 246)',
-								'rgb(167, 139, 250)'
-							],
-							borderWidth: 1,
-							borderRadius: 6
-						}
-					]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-						legend: {
-							display: false
-						},
-						tooltip: {
-							backgroundColor: 'rgba(0, 0, 0, 0.8)',
-							titleFont: { size: 14 },
-							bodyFont: { size: 13 },
-							padding: 12,
-							cornerRadius: 8
-						}
-					},
-					scales: {
-						y: {
-							beginAtZero: true,
-							grid: {
-								color: 'rgba(0, 0, 0, 0.05)'
-							},
-							ticks: {
-								font: { size: 12 }
+				chartInstance = new Chart(chartCanvas, {
+					type: 'bar',
+					data: {
+						labels: mercadoData.priceRanges.map((r) => r.label),
+						datasets: [
+							{
+								label: 'Propiedades',
+								data: mercadoData.priceRanges.map((r) => r.count),
+								backgroundColor: [
+									'rgba(59, 130, 246, 0.7)',
+									'rgba(99, 102, 241, 0.7)',
+									'rgba(139, 92, 246, 0.7)',
+									'rgba(167, 139, 250, 0.7)'
+								],
+								borderColor: [
+									'rgb(59, 130, 246)',
+									'rgb(99, 102, 241)',
+									'rgb(139, 92, 246)',
+									'rgb(167, 139, 250)'
+								],
+								borderWidth: 1,
+								borderRadius: 6
 							}
-						},
-						x: {
-							grid: {
+						]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: {
 								display: false
 							},
-							ticks: {
-								font: { size: 11 },
-								maxRotation: 45,
-								minRotation: 0
+							tooltip: {
+								backgroundColor: 'rgba(0, 0, 0, 0.8)',
+								titleFont: { size: 14 },
+								bodyFont: { size: 13 },
+								padding: 12,
+								cornerRadius: 8
+							}
+						},
+						scales: {
+							y: {
+								beginAtZero: true,
+								grid: {
+									color: 'rgba(0, 0, 0, 0.05)'
+								},
+								ticks: {
+									font: { size: 12 }
+								}
+							},
+							x: {
+								grid: {
+									display: false
+								},
+								ticks: {
+									font: { size: 11 },
+									maxRotation: 45,
+									minRotation: 0
+								}
 							}
 						}
 					}
-				}
-			});
-		}
+				});
+			}
+		);
 
 		return () => {
 			if (chartInstance) {

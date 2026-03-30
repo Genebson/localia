@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { loginAs, logout, mockAuthApi } from './helpers/auth-mock';
+import { mockPropertyApi } from './helpers/property-mock';
 
 const agenteEmail = 'agente@test.com';
 const buscadorEmail = 'buscador@test.com';
@@ -7,8 +8,9 @@ const buscadorEmail = 'buscador@test.com';
 test.describe('Homepage', () => {
 	test.beforeEach(async ({ page }) => {
 		await mockAuthApi(page);
+		await mockPropertyApi(page);
 		await page.goto('/');
-		await page.waitForLoadState('networkidle');
+		await page.waitForTimeout(500);
 	});
 
 	test('should display the Localia header with logo', async ({ page }) => {
@@ -46,8 +48,9 @@ test.describe('Homepage', () => {
 test.describe('Homepage - Filters', () => {
 	test.beforeEach(async ({ page }) => {
 		await mockAuthApi(page);
+		await mockPropertyApi(page);
 		await page.goto('/');
-		await page.waitForLoadState('networkidle');
+		await page.waitForTimeout(500);
 	});
 
 	test('should show filters sidebar with "Filtros" heading', async ({ page }) => {
@@ -61,23 +64,28 @@ test.describe('Homepage - Filters', () => {
 
 	test('should clear all filters with "Limpiar" button', async ({ page }) => {
 		await page.goto('/?operation=buy&estado=nueva');
-		await page.getByRole('button', { name: 'Limpiar' }).click();
+		await page.locator('aside button:text("Limpiar")').click();
 	});
 });
 
 test.describe('Homepage - Agent CTA', () => {
 	test('should show "¿Sos agente?" CTA when not logged in', async ({ page }) => {
 		await mockAuthApi(page);
+		await mockPropertyApi(page);
 		await logout(page);
 		await expect(page.getByText('¿Sos agente inmobiliario?')).toBeVisible();
 	});
 
 	test('should NOT show "¿Sos agente?" CTA when logged in as buscador', async ({ page }) => {
+		await mockAuthApi(page);
+		await mockPropertyApi(page);
 		await loginAs(page, buscadorEmail);
 		await expect(page.getByText('¿Sos agente inmobiliario?')).not.toBeVisible();
 	});
 
 	test('should NOT show "¿Sos agente?" CTA when logged in as agente', async ({ page }) => {
+		await mockAuthApi(page);
+		await mockPropertyApi(page);
 		await loginAs(page, agenteEmail);
 		await expect(page.getByText('¿Sos agente inmobiliario?')).not.toBeVisible();
 	});
@@ -86,8 +94,9 @@ test.describe('Homepage - Agent CTA', () => {
 test.describe('Homepage - Search', () => {
 	test.beforeEach(async ({ page }) => {
 		await mockAuthApi(page);
+		await mockPropertyApi(page);
 		await page.goto('/');
-		await page.waitForLoadState('networkidle');
+		await page.waitForTimeout(500);
 	});
 
 	test('should accept text in search input', async ({ page }) => {

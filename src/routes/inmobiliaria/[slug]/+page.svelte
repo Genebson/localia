@@ -3,11 +3,25 @@
 	import { base } from '$app/paths';
 	import { MapPin, Phone, Mail, Building2, Plus } from 'lucide-svelte';
 	import { allAgencies } from '$lib/stores/agencies';
+	import { type Agency } from '$lib/data/agencies';
+
+	interface TeamMember {
+		name: string;
+		role: string;
+		phone: string;
+	}
 	import { propertiesStore } from '$lib/stores/properties';
 	import { isAgent, currentUser } from '$lib/stores/auth';
 
+	function getInitials(name: string): string {
+		return name
+			.split(' ')
+			.map((n) => n[0])
+			.join('');
+	}
+
 	$: slug = ($page.params as any).slug || '';
-	$: inmob = $allAgencies.find((i) => i.slug === slug);
+	$: inmob = $allAgencies.find((i) => i.slug === slug) as (Agency & { team?: TeamMember[] }) | undefined;
 
 	$: whatsappMsg = inmob
 		? `Hola! Vi la inmobiliaria ${inmob.name} en Localia y me interesa conocer sus propiedades.`
@@ -105,16 +119,13 @@
 							Nuestro equipo
 						</h3>
 						<div class="space-y-4 mb-6">
-							{#each inmob.team as member}
+							{#each inmob?.team || [] as member}
 								<div class="flex items-center gap-3">
 									<div
 										class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"
 									>
 										<span class="text-primary font-semibold"
-											>{member.name
-												.split(' ')
-												.map((n) => n[0])
-												.join('')}</span
+											>{getInitials(member.name)}</span
 										>
 									</div>
 									<div>

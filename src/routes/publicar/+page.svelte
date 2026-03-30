@@ -233,7 +233,7 @@
 		showDescriptionSuggestions = false;
 	}
 
-	if (isEditing) {
+	if (isEditing && editId) {
 		const existing = getPropertyById(editId);
 		if (existing) {
 			title = existing.title;
@@ -405,7 +405,7 @@
 			}
 
 			// If editing with existing images that weren't changed, keep them
-			const existingImages = isEditing
+			const existingImages = isEditing && editId
 				? (getPropertyById(editId)?.images ?? []).filter((url) =>
 						imagePreviews.includes(url)
 					)
@@ -443,7 +443,7 @@
 				success = true;
 			} else {
 				const result = await createProperty(apiData);
-				createdPropertyId = result.id;
+				createdPropertyId = result.property.id;
 				success = true;
 			}
 			window.scrollTo(0, 0);

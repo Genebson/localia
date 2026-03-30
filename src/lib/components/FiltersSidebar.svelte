@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { X, ChevronDown } from 'lucide-svelte';
-	import { filters, syncFiltersToUrl } from '$lib/stores/filters';
+	import { filters, syncFiltersToUrl, type Filters } from '$lib/stores/filters';
 	import { type PropertyState, type Equipment } from '$lib/data/properties';
 
 	export let isOpen = false;
@@ -21,6 +21,12 @@
 	function toggleSection(key: string) {
 		expandedSections[key] = !expandedSections[key];
 	}
+
+	const publishedDaysOptions: Array<{ label: string; days: number }> = [
+		{ label: 'Últimas 24 horas', days: 1 },
+		{ label: 'La última semana', days: 7 },
+		{ label: 'El último mes', days: 30 }
+	];
 
 	function clearFilters() {
 		filters.reset();
@@ -78,11 +84,8 @@
 		syncFiltersToUrl();
 	}
 
-	function setZoneValue(
-		val: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro'
-	) {
-		filters.setZone($filters.zone === val ? '' : val);
-		syncFiltersToUrl();
+	function setZoneValue(val: string) {
+		filters.setZone($filters.zone === val ? '' : val as Filters['zone']);
 	}
 
 	function toggleFeature(label: string) {
@@ -357,20 +360,20 @@
 					</button>
 					{#if expandedSections.date}
 						<div class="flex flex-wrap gap-2 pb-3">
-							{#each [['Últimas 24 horas', 1], ['La última semana', 7], ['El último mes', 30]] as [label, days]}
+							{#each publishedDaysOptions as option}
 								<button
 									on:click={() => {
 										filters.setPublishedDays(
-											$filters.publishedDays === days ? null : days
+											$filters.publishedDays === option.days ? null : option.days
 										);
 										syncFiltersToUrl();
 									}}
 									class="px-3 py-1.5 rounded-full text-sm {$filters.publishedDays ===
-									days
+									option.days
 										? 'bg-primary text-white'
 										: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 								>
-									{label}
+									{option.label}
 								</button>
 							{/each}
 						</div>
@@ -619,21 +622,21 @@
 							</div>
 						{:else if section.key === 'date'}
 							<div class="space-y-2">
-								{#each [['Últimas 24 horas', 1], ['La última semana', 7], ['El último mes', 30]] as [label, days]}
+								{#each publishedDaysOptions as option}
 									<label class="flex items-center gap-3 cursor-pointer group">
 										<input
 											type="radio"
 											name="date"
-											checked={$filters.publishedDays === days}
+											checked={$filters.publishedDays === option.days}
 											on:change={() => {
-												filters.setPublishedDays(days);
+												filters.setPublishedDays(option.days);
 												syncFiltersToUrl();
 											}}
 											class="w-4 h-4 text-primary"
 										/>
 										<span
 											class="text-sm text-gray-600 group-hover:text-gray-900"
-											>{label}</span
+											>{option.label}</span
 										>
 									</label>
 								{/each}

@@ -254,6 +254,22 @@ function createAuthMocks(page: Page) {
 				body: JSON.stringify({ success: true })
 			});
 		});
+
+		await page.route('**/notifications/forgot-password', async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify({ success: true })
+			});
+		});
+
+		await page.route('**/auth/reset-password', async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify({ success: true })
+			});
+		});
 	}
 
 	async function logout() {
