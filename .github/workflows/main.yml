@@ -2,7 +2,7 @@ name: CI Tests & Deploy
 
 on:
     push:
-        branches: ['main']
+        branches: ['main', 'localia/demo']
     pull_request:
         branches: ['*']
 
@@ -27,7 +27,7 @@ jobs:
               run: npm ci
 
             - name: Install Playwright Browsers
-              run: npx playwright install --with-deps
+              run: npx playwright install
 
             - name: Run Tests with Coverage
               run: npm run test:coverage
@@ -48,7 +48,7 @@ jobs:
     build:
         runs-on: ubuntu-latest
         needs: test
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/localia/demo'
 
         steps:
             - name: Checkout
@@ -82,7 +82,7 @@ jobs:
             url: ${{ steps.deployment.outputs.page_url }}
         runs-on: ubuntu-latest
         needs: build
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/localia/demo'
         permissions:
             contents: read
             pages: write

@@ -1,21 +1,22 @@
 import { test, expect, type Page } from '@playwright/test';
-import { mockAuthApi } from './helpers/auth-mock';
-import { mockPropertyApi, addProperty } from './helpers/property-mock';
+import { loginAs, logout, mockAuthApi } from './helpers/auth-mock';
+import { mockPropertyApi } from './helpers/property-mock';
 
 async function ensureLogout(page: Page) {
 	await page.context().clearCookies();
 	await mockAuthApi(page);
 	await mockPropertyApi(page);
-	addProperty();
 	await page.goto('/');
-	await page.waitForLoadState('networkidle');
+	await page.waitForTimeout(500);
 }
 
 test.describe('Property Detail Page', () => {
-	test('should navigate to property detail when clicking a property card', async ({ page }) => {
+	test.beforeEach(async ({ page }) => {
 		await mockAuthApi(page);
 		await mockPropertyApi(page);
-		addProperty();
+	});
+
+	test('should navigate to property detail when clicking a property card', async ({ page }) => {
 		await page.goto('/');
 		await page.waitForSelector('a[href*="/property/"]', { timeout: 10000 });
 		await page.locator('a[href*="/property/"]').first().click();

@@ -42,11 +42,10 @@
 				: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'];
 </script>
 
-<div class="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
-	<a
-		href="{base}/property/{property.id}"
-		class="group block"
-	>
+<div
+	class="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+>
+	<a href="{base}/property/{property.id}" class="group block">
 		<div class="relative aspect-[16/10] overflow-hidden bg-gray-100">
 			<Splide
 				options={{
@@ -84,6 +83,13 @@
 			>
 				{property.operation === 'buy' ? 'Venta' : 'Alquiler'}
 			</div>
+			{#if property.aptoCredito}
+				<div
+					class="absolute bottom-3 right-3 px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded z-10"
+				>
+					Apto Crédito
+				</div>
+			{/if}
 		</div>
 
 		<div class="p-4">

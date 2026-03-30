@@ -37,7 +37,7 @@ La página principal muestra las propiedades destacadas con un sistema de filtro
 
 En la parte superior hay un buscador con:
 
-- Ciudad, barrio o dirección
+- Zona o barrio
 - Cantidad de habitaciones
 - Botón "Buscar"
 
@@ -385,7 +385,27 @@ Todas las propiedades mockeadas incluyen datos para todos los filtros:
 
 ## Notas Técnicas
 
-- **Frontend only** — No hay backend real. Todos los datos son mockeados con localStorage y stores de Svelte.
+### Demo UI — Solo Frontend
+
+Este proyecto es un **demo de interfaz de usuario (UI-only)**. No tiene backend real.
+
+- Todos los datos son mockeados con localStorage y stores de Svelte
+- La autenticación es simulada (mock)
+- Las imágenes se almacenan como base64 en localStorage
+- Los portales externos (ZonaProp, ArgenProp, MercadoLibre) son botones mockeados sin integración real
+
+### Limitaciones de almacenamiento (localStorage)
+
+El navegador tiene un límite de almacenamiento (~5-10MB por origen). Como las imágenes se guardan como texto base64 (sin compresión), alcanzar este límite es probable al publicar varias propiedades con múltiples fotos.
+
+**Error que puede aparecer:**
+
+> "No se pudo guardar la propiedad. El almacenamiento está lleno. Probá borrando propiedades anteriores."
+
+**Solución:** Eliminar propiedades publicadas anteriormente desde "Mis Propiedades" para liberar espacio.
+
+### Ubicación y configuración
+
 - **Ubicación**: Todas las propiedades mockeadas se encuentran en Mercedes, provincia de Buenos Aires, Argentina.
 - **Dev server**: `npm run dev` en el directorio `/localia`
 - **URL base**: `http://localhost:5173/localia/`

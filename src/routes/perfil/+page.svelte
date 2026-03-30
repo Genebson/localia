@@ -12,24 +12,28 @@
 		ExternalLink,
 		Plus,
 		X,
-		Check
+		Check,
+		AlertTriangle
 	} from 'lucide-svelte';
 	import { base } from '$app/paths';
 	import { currentUser, isAgent, auth } from '$lib/stores/auth';
 	import { favoriteProperties } from '$lib/stores/favorites';
-	import { viewedProperties } from '$lib/stores/viewed';
+	import { viewed } from '$lib/stores/viewed';
+	import { allProperties } from '$lib/stores/properties';
 	import { authModalOpen } from '$lib/stores/authModal';
-	import { agencyStore } from '$lib/stores/agencies';
+	import { agenciesStore } from '$lib/stores/agencies';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
 		auth.init();
 	});
 
-	$: viewedList = $viewedProperties;
+	$: viewedList = $viewed
+		.map((id) => $allProperties.find((p) => p.id === id))
+		.filter((p): p is NonNullable<typeof p> => p !== undefined);
 
 	$: userAgency = $currentUser?.id
-		? $agencyStore.find((a) => a.agentId === $currentUser.id)
+		? $agenciesStore.find((a) => a.agentId === $currentUser.id)
 		: undefined;
 
 	function handleLoginRedirect() {
@@ -37,13 +41,16 @@
 	}
 
 	let showAgencyModal = false;
+	let showDeleteModal = false;
 	let agencyForm = {
 		name: '',
 		tagline: '',
 		description: '',
 		phone: '',
 		email: '',
-		whatsapp: ''
+		whatsapp: '',
+		location: '',
+		website: ''
 	};
 	let agencySuccess = false;
 	let agencyError = '';
@@ -52,11 +59,13 @@
 		if (userAgency) {
 			agencyForm = {
 				name: userAgency.name,
-				tagline: userAgency.tagline,
-				description: userAgency.description,
-				phone: userAgency.phone,
-				email: userAgency.email,
-				whatsapp: userAgency.whatsapp || ''
+				tagline: userAgency.tagline || '',
+				description: userAgency.description || '',
+				phone: userAgency.phone || '',
+				email: userAgency.email || '',
+				whatsapp: userAgency.whatsapp || '',
+				location: userAgency.location || '',
+				website: userAgency.website || ''
 			};
 		} else {
 			agencyForm = {
@@ -65,7 +74,9 @@
 				description: '',
 				phone: '',
 				email: '',
-				whatsapp: ''
+				whatsapp: '',
+				location: '',
+				website: ''
 			};
 		}
 		showAgencyModal = true;
@@ -98,16 +109,19 @@
 			.replace(/(^-|-$)/g, '');
 
 		if (userAgency) {
-			agencyStore.update(userAgency.id, {
+			agenciesStore.update(userAgency.id, {
 				name: agencyForm.name.trim(),
 				tagline: agencyForm.tagline.trim(),
 				description: agencyForm.description.trim(),
 				phone: agencyForm.phone.trim(),
 				email: agencyForm.email.trim(),
-				whatsapp: agencyForm.whatsapp.trim() || undefined
+				whatsapp: agencyForm.whatsapp.trim() || undefined,
+				location: agencyForm.location.trim() || undefined,
+				website: agencyForm.website.trim() || undefined
 			});
 		} else {
-			agencyStore.create({
+			agenciesStore.create({
+				verified: false,
 				slug,
 				name: agencyForm.name.trim(),
 				tagline: agencyForm.tagline.trim() || 'Tu hogar ideal está acá',
@@ -115,12 +129,15 @@
 				phone: agencyForm.phone.trim(),
 				email: agencyForm.email.trim(),
 				whatsapp: agencyForm.whatsapp.trim() || agencyForm.phone.trim(),
+				location: agencyForm.location.trim() || 'Mercedes, Buenos Aires',
+				website: agencyForm.website.trim(),
 				logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(agencyForm.name)}&background=1E3A5F&color=fff&size=128`,
 				banner: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
 				team: [
 					{ name: $currentUser!.name, role: 'Agente', phone: agencyForm.phone.trim() }
 				],
-				agentId: $currentUser!.id
+				agentId: $currentUser!.id,
+				propertyCount: 0
 			});
 		}
 
@@ -128,6 +145,21 @@
 		setTimeout(() => {
 			showAgencyModal = false;
 		}, 1500);
+	}
+
+	function handleDeleteAgency() {
+		showDeleteModal = true;
+	}
+
+	function confirmDeleteAgency() {
+		if (userAgency) {
+			agenciesStore.remove(userAgency.id);
+			showDeleteModal = false;
+		}
+	}
+
+	function closeDeleteModal() {
+		showDeleteModal = false;
 	}
 </script>
 
@@ -243,6 +275,12 @@
 								>
 									Ver página <ExternalLink class="w-4 h-4" />
 								</a>
+								<button
+									on:click={handleDeleteAgency}
+									class="px-3 py-2 text-sm text-red-600 hover:text-red-700 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+								>
+									Eliminar
+								</button>
 							</div>
 						</div>
 					{:else}
@@ -472,6 +510,26 @@
 							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
 						></textarea>
 					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">Ubicación</label
+						>
+						<input
+							type="text"
+							bind:value={agencyForm.location}
+							placeholder="Ej: Mercedes, Buenos Aires"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-1">Sitio Web</label
+						>
+						<input
+							type="url"
+							bind:value={agencyForm.website}
+							placeholder="Ej: https://tuinmobiliaria.com"
+							class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+						/>
+					</div>
 					<button
 						type="submit"
 						class="w-full py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-lg transition-colors"
@@ -480,6 +538,53 @@
 					</button>
 				</form>
 			{/if}
+		</div>
+	</div>
+{/if}
+
+{#if showDeleteModal}
+	<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+		<div
+			class="absolute inset-0 bg-black/50"
+			on:click={closeDeleteModal}
+			on:keydown={(e) => e.key === 'Escape' && closeDeleteModal()}
+			role="button"
+			tabindex="0"
+			aria-label="Cerrar"
+		></div>
+		<div class="relative bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full">
+			<button
+				on:click={closeDeleteModal}
+				class="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full"
+			>
+				<X class="w-5 h-5 text-gray-500" />
+			</button>
+			<div class="text-center">
+				<div
+					class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"
+				>
+					<AlertTriangle class="w-8 h-8 text-red-600" />
+				</div>
+				<h2 class="text-xl font-bold text-gray-900 mb-2">Eliminar inmobiliaria</h2>
+				<p class="text-gray-600 mb-6">
+					¿Estás seguro de que querés eliminar tu inmobiliaria? Esta acción no se puede
+					deshacer.
+				</p>
+				<div class="flex gap-3">
+					<button
+						on:click={closeDeleteModal}
+						class="flex-1 py-3 px-4 border border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+					>
+						Cancelar
+					</button>
+					<button
+						on:click={confirmDeleteAgency}
+						class="flex-1 py-3 px-4 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
+					>
+						Eliminar
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 {/if}

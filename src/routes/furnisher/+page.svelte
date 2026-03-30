@@ -3,12 +3,18 @@
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { Sparkles, Upload, Check } from 'lucide-svelte';
-	import { isAgent, currentUser } from '$lib/stores/auth';
+	import { isAgent, currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 
 	$: isAuthorized = $currentUser && $isAgent;
 
-	onMount(() => {
+	onMount(async () => {
+		try {
+			await auth.init();
+		} catch {
+			// ignore auth errors
+		}
+
 		if (!$currentUser) {
 			authModalOpen.set(true);
 			goto(base + '/');

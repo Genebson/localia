@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { X, ChevronDown } from 'lucide-svelte';
-	import { filters, syncFiltersToUrl } from '$lib/stores/filters';
+	import { filters, syncFiltersToUrl, type Filters } from '$lib/stores/filters';
 	import { type PropertyState, type Equipment } from '$lib/data/properties';
 
 	export let isOpen = false;
@@ -21,6 +21,12 @@
 	function toggleSection(key: string) {
 		expandedSections[key] = !expandedSections[key];
 	}
+
+	const publishedDaysOptions: Array<{ label: string; days: number }> = [
+		{ label: 'Últimas 24 horas', days: 1 },
+		{ label: 'La última semana', days: 7 },
+		{ label: 'El último mes', days: 30 }
+	];
 
 	function clearFilters() {
 		filters.reset();
@@ -78,11 +84,8 @@
 		syncFiltersToUrl();
 	}
 
-	function setZoneValue(
-		val: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro'
-	) {
-		filters.setZone($filters.zone === val ? '' : val);
-		syncFiltersToUrl();
+	function setZoneValue(val: string) {
+		filters.setZone($filters.zone === val ? '' : val as Filters['zone']);
 	}
 
 	function toggleFeature(label: string) {
@@ -280,23 +283,6 @@
 								</button>
 							{/each}
 						</div>
-						<div class="flex items-center gap-3 pb-3">
-							<label class="flex items-center gap-2 cursor-pointer">
-								<input
-									type="checkbox"
-									checked={$filters.outdoor === true}
-									on:change={() => {
-										filters.setBoolean(
-											'outdoor',
-											$filters.outdoor === true ? null : true
-										);
-										syncFiltersToUrl();
-									}}
-									class="w-4 h-4 text-primary rounded"
-								/>
-								<span class="text-sm text-gray-600">Aire libre</span>
-							</label>
-						</div>
 					{/if}
 				</div>
 
@@ -374,20 +360,20 @@
 					</button>
 					{#if expandedSections.date}
 						<div class="flex flex-wrap gap-2 pb-3">
-							{#each [['Últimas 24 horas', 1], ['La última semana', 7], ['El último mes', 30]] as [label, days]}
+							{#each publishedDaysOptions as option}
 								<button
 									on:click={() => {
 										filters.setPublishedDays(
-											$filters.publishedDays === days ? null : days
+											$filters.publishedDays === option.days ? null : option.days
 										);
 										syncFiltersToUrl();
 									}}
 									class="px-3 py-1.5 rounded-full text-sm {$filters.publishedDays ===
-									days
+									option.days
 										? 'bg-primary text-white'
 										: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 								>
-									{label}
+									{option.label}
 								</button>
 							{/each}
 						</div>
@@ -418,7 +404,7 @@
 			>
 		</div>
 
-		{#each [{ key: 'operation', label: 'Operación' }, { key: 'estado', label: 'Estado' }, { key: 'rooms', label: 'Habitaciones y baños' }, { key: 'zone', label: 'Zona' }, { key: 'features', label: 'Características' }, { key: 'equipamiento', label: 'Equipamiento' }, { key: 'date', label: 'Fecha de publicación' }] as section}
+		{#each [{ key: 'operation', label: 'Operación' }, { key: 'estado', label: 'Estado' }, { key: 'rooms', label: 'Habitaciones y baños' }, { key: 'zone', label: 'Zona' }, { key: 'features', label: 'Características' }, { key: 'equipamiento', label: 'Equipamiento' }, { key: 'aptoCredito', label: 'Apto Crédito' }, { key: 'date', label: 'Fecha de publicación' }] as section}
 			<div class="border-b border-gray-100 last:border-0">
 				<button
 					on:click={() => toggleSection(section.key)}
@@ -571,21 +557,6 @@
 										</label>
 									{/each}
 								</div>
-								<label class="flex items-center gap-2 cursor-pointer">
-									<input
-										type="checkbox"
-										checked={$filters.outdoor === true}
-										on:change={() => {
-											filters.setBoolean(
-												'outdoor',
-												$filters.outdoor === true ? null : true
-											);
-											syncFiltersToUrl();
-										}}
-										class="w-4 h-4 text-primary rounded"
-									/>
-									<span class="text-sm text-gray-600">Aire libre</span>
-								</label>
 							</div>
 						{:else if section.key === 'features'}
 							<div class="space-y-2">
@@ -622,23 +593,50 @@
 									</label>
 								{/each}
 							</div>
+						{:else if section.key === 'aptoCredito'}
+							<div class="space-y-2">
+								<label class="flex items-center gap-3 cursor-pointer group">
+									<input
+										type="radio"
+										name="aptoCredito"
+										checked={$filters.aptoCredito === null}
+										on:change={() => filters.setAptoCredito(null)}
+										class="w-4 h-4 text-primary"
+									/>
+									<span class="text-sm text-gray-600 group-hover:text-gray-900"
+										>Todos</span
+									>
+								</label>
+								<label class="flex items-center gap-3 cursor-pointer group">
+									<input
+										type="radio"
+										name="aptoCredito"
+										checked={$filters.aptoCredito === true}
+										on:change={() => filters.setAptoCredito(true)}
+										class="w-4 h-4 text-primary"
+									/>
+									<span class="text-sm text-gray-600 group-hover:text-gray-900"
+										>Solo Apto Crédito</span
+									>
+								</label>
+							</div>
 						{:else if section.key === 'date'}
 							<div class="space-y-2">
-								{#each [['Últimas 24 horas', 1], ['La última semana', 7], ['El último mes', 30]] as [label, days]}
+								{#each publishedDaysOptions as option}
 									<label class="flex items-center gap-3 cursor-pointer group">
 										<input
 											type="radio"
 											name="date"
-											checked={$filters.publishedDays === days}
+											checked={$filters.publishedDays === option.days}
 											on:change={() => {
-												filters.setPublishedDays(days);
+												filters.setPublishedDays(option.days);
 												syncFiltersToUrl();
 											}}
 											class="w-4 h-4 text-primary"
 										/>
 										<span
 											class="text-sm text-gray-600 group-hover:text-gray-900"
-											>{label}</span
+											>{option.label}</span
 										>
 									</label>
 								{/each}

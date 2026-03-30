@@ -15,7 +15,7 @@
 				</a>
 				<p class="text-blue-200 text-sm leading-relaxed">
 					Tu próximo hogar está en Localia. Encontrá casas, departamentos y más en las
-					mejores zonas.
+					mejores zonas de Mercedes.
 				</p>
 			</div>
 
@@ -64,8 +64,8 @@
 					</li>
 					<li class="flex items-center gap-2">
 						<Phone class="w-4 h-4" />
-						<a href="tel:+541145678900" class="hover:text-white transition-colors"
-							>+54 11 4567 8900</a
+						<a href="tel:+5492324568392" class="hover:text-white transition-colors"
+							>+54 9 2324 56-8392</a
 						>
 					</li>
 				</ul>

@@ -105,7 +105,7 @@ For domain knowledge, user flows, and feature details, see:
 | `/masterplan`          | List of developments         | Public |
 | `/masterplan/[id]`     | Interactive development map  | Public |
 | `/tablero`             | Public search board          | Public |
-| `/furnisher`           | Virtual staging tool         | Public |
+| `/furnisher`           | Virtual staging tool         | Agents |
 | `/publicar`            | Publish property form        | Agents |
 | `/mis-propiedades`     | Agent's property list        | Agents |
 | `/perfil`              | Agent profile & agency       | Agents |

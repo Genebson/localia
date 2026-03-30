@@ -10,7 +10,7 @@
 
 	const popularPages = [
 		{ href: `${base}/`, label: 'Inicio', icon: Home },
-		{ href: `${base}/masterplan`, label: 'Loteos y Desarrollos', icon: Compass },
+		{ href: `${base}/masterplans`, label: 'Loteos y Desarrollos', icon: Compass },
 		{ href: `${base}/tablero`, label: 'Tablero de búsquedas', icon: Search },
 		{ href: `${base}/furnisher`, label: 'Furnisher', icon: Compass }
 	];

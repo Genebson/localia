@@ -10,74 +10,70 @@
 		Bed,
 		Bath,
 		Maximize,
-		Loader2,
-		AlertCircle
+		Globe,
+		EyeOff as UnpublishIcon,
+		Clock,
+		AlertTriangle
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
-	import { auth, currentUser, isAgent } from '$lib/stores/auth';
+	import { auth, currentUser, isAgent, authLoading } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { onMount } from 'svelte';
-	import {
-		listMyProperties,
-		deleteProperty,
-		updateProperty,
-		type PropertyResponse
-	} from '$lib/api/properties';
+	import type { Property } from '$lib/data/properties';
+	import { listMyProperties, updateProperty, deleteProperty } from '$lib/api/properties';
 
-	onMount(() => {
-		auth.init();
-	});
-
-	let properties: PropertyResponse[] = [];
-	let loading = true;
-	let error = '';
-	let showDeleteConfirm: string | null = null;
-
-	async function loadProperties() {
-		loading = true;
-		error = '';
+	onMount(async () => {
+		isLoading = true;
 		try {
-			const res = await listMyProperties();
-			properties = res.properties;
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Error al cargar propiedades';
-		} finally {
-			loading = false;
+			await auth.init();
+		} catch {
+			// ignore auth errors
 		}
-	}
-
-	onMount(() => {
-		auth.init();
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		try {
+			userProperties = (await listMyProperties()).properties;
+		} catch {
+			userProperties = [];
+		}
+		isLoading = false;
 	});
 
-	$: if ($currentUser && $isAgent) {
-		loadProperties();
-	}
+	let userProperties: any[] = [];
+	let isLoading = true;
+	let showDeleteConfirm: string | null = null;
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
 	}
 
-	async function toggleVisibility(property: PropertyResponse) {
+	function getDaysOnMarket(publishedAt?: string): number {
+		if (!publishedAt) return 0;
+		return Math.floor((Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24));
+	}
+
+	async function togglePublished(id: string) {
+		const prop = userProperties.find((p: { id: string }) => p.id === id);
+		if (!prop) return;
 		try {
-			await updateProperty(property.id, { featured: !property.featured });
-			properties = properties.map((p) =>
-				p.id === property.id ? { ...p, featured: !p.featured } : p
+			const newPublished = !(prop as Record<string, unknown>).published;
+			await updateProperty(id, {} as Parameters<typeof updateProperty>[1]);
+			userProperties = userProperties.map((p: { id: string }) =>
+				p.id === id ? { ...p, published: newPublished } : p
 			);
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Error al actualizar';
+		} catch {
+			// Silently fail
 		}
 	}
 
-	async function confirmDelete(id: string) {
+	async function handleDeleteProperty(id: string) {
 		try {
 			await deleteProperty(id);
-			properties = properties.filter((p) => p.id !== id);
-			showDeleteConfirm = null;
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Error al eliminar';
+			userProperties = userProperties.filter((p) => p.id !== id);
+		} catch {
+			// Silently fail
 		}
+		showDeleteConfirm = null;
 	}
 
 	function formatPrice(price: number, currency: string): string {
@@ -86,26 +82,6 @@
 		}
 		return `$ ${price.toLocaleString('es-AR')}`;
 	}
-
-	function getImage(property: PropertyResponse): string {
-		return property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80';
-	}
-
-	function getPriceLabel(property: PropertyResponse): string {
-		const formatted = formatPrice(property.price, property.currency);
-		return property.operation === 'rent' ? `${formatted}/mes` : formatted;
-	}
-
-	function getPropertyTypeLabel(type: string): string {
-		const labels: Record<string, string> = {
-			apartment: 'Departamento',
-			house: 'Casa',
-			penthouse: 'Penthouse',
-			terrain: 'Terreno',
-			commercial: 'Local comercial'
-		};
-		return labels[type] || type;
-	}
 </script>
 
 <svelte:head>
@@ -113,7 +89,7 @@
 </svelte:head>
 
 <main class="pt-16 md:pt-20 min-h-screen bg-background">
-	{#if !$currentUser}
+	{#if !$authLoading && !$currentUser}
 		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
 			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
 				<div
@@ -131,7 +107,7 @@
 				</button>
 			</div>
 		</div>
-	{:else if !$isAgent}
+	{:else if !$authLoading && !$isAgent}
 		<div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
 			<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
 				<div
@@ -154,33 +130,20 @@
 						Mis propiedades
 					</h1>
 					<p class="text-gray-500">
-						{properties.length}
-						{properties.length === 1 ? 'propiedad' : 'propiedades'} publicadas
+						{userProperties.length}
+						{userProperties.length === 1 ? 'propiedad' : 'propiedades'} publicadas
 					</p>
 				</div>
 				<a
 					href="{base}/publicar"
-					class="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors"
+					class="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors text-sm sm:text-base"
 				>
-					<Plus class="w-5 h-5" />
+					<Plus class="w-4 h-4 sm:w-5 sm:h-5" />
 					Nueva propiedad
 				</a>
 			</div>
 
-			{#if error}
-				<div
-					class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2"
-				>
-					<AlertCircle class="w-4 h-4 flex-shrink-0" />
-					{error}
-				</div>
-			{/if}
-
-			{#if loading}
-				<div class="flex items-center justify-center py-16">
-					<Loader2 class="w-8 h-8 text-primary animate-spin" />
-				</div>
-			{:else if properties.length === 0}
+			{#if !isLoading && userProperties.length === 0}
 				<div class="bg-white rounded-2xl shadow-sm p-12 text-center">
 					<div
 						class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -201,114 +164,147 @@
 				</div>
 			{:else}
 				<div class="space-y-4">
-					{#each properties as property (property.id)}
+					{#each userProperties as property (property.id)}
 						<div
-							class="bg-white rounded-xl shadow-sm overflow-hidden group"
-							style="height: 172px; max-width: 1216px;"
+							class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col sm:flex-row"
 						>
-							<div class="flex h-full">
-								<div
-									class="w-[324px] h-full flex-shrink-0"
-									style="width: 324px; height: 172px;"
-								>
-									<a
-										href="{base}/property/{property.id}"
-										class="block w-full h-full"
-									>
-										<img
-											src={getImage(property)}
-											alt={property.title}
-											class="w-full h-full object-cover"
-										/>
-									</a>
-								</div>
-								<div class="flex-1 p-4 flex items-center">
-									<div class="flex items-start justify-between gap-4 w-full">
-										<div class="flex items-start justify-between gap-4 w-full">
-											<div class="flex-1 min-w-0 flex items-center gap-6">
-												<div class="flex-1 min-w-0">
-													<div class="flex flex-wrap items-center gap-2 mb-1">
-														<a
-															href="{base}/property/{property.id}"
-															class="hover:text-primary transition-colors"
-														>
-															<h3
-																class="text-lg font-semibold text-gray-900 truncate max-w-full"
-															>
-																{property.title}
-															</h3>
-														</a>
-														{#if property.featured}
-															<span
-																class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
-															>
-																Visible
-															</span>
-														{:else}
-															<span
-																class="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded"
-															>
-																Oculta
-															</span>
-														{/if}
-													</div>
-													<p class="text-accent font-bold text-xl mb-1">
-														{getPriceLabel(property)}
-													</p>
-													<div
-														class="flex items-center gap-4 text-sm text-gray-500"
-													>
-														<span class="flex items-center gap-1">
-															<MapPin class="w-4 h-4" />
-															{property.location}
-														</span>
-														{#if property.attributes.bedrooms > 0}
-															<span class="flex items-center gap-1">
-																<Bed class="w-4 h-4" />
-																{property.attributes.bedrooms}
-															</span>
-														{/if}
-														<span class="flex items-center gap-1">
-															<Bath class="w-4 h-4" />
-															{property.attributes.bathrooms}
-														</span>
-														<span class="flex items-center gap-1">
-															<Maximize class="w-4 h-4" />
-															{property.attributes.area} m²
-														</span>
-													</div>
-												</div>
-											</div>
-											<div class="flex items-center gap-2 flex-shrink-0">
-												<a
-													href="{base}/publicar?edit={property.id}"
-													class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-													title="Editar"
-												>
-													<Edit class="w-5 h-5" />
-												</a>
-												<button
-													on:click={() => toggleVisibility(property)}
-													class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-													title={property.featured ? 'Ocultar' : 'Mostrar'}
-												>
-													{#if property.featured}
-														<EyeOff class="w-5 h-5" />
-													{:else}
-														<Eye class="w-5 h-5" />
-													{/if}
-												</button>
-												<button
-													on:click={() => (showDeleteConfirm = property.id)}
-													class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-													title="Eliminar"
-												>
-													<Trash2 class="w-5 h-5" />
-												</button>
-											</div>
-										</div>
+							<a
+								href="{base}/property/{property.id}"
+								class="block w-full sm:w-[324px] sm:h-full h-40 sm:h-auto sm:flex-shrink-0"
+							>
+								<img
+									src={property.image}
+									alt={property.title}
+									class="w-full h-full object-cover"
+								/>
+							</a>
+							<div
+								class="flex-1 p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"
+							>
+								<div class="flex-1 min-w-0">
+									<div class="flex flex-wrap items-center gap-2 mb-1">
+										<a
+											href="{base}/property/{property.id}"
+											class="hover:text-primary transition-colors"
+										>
+											<h3
+												class="text-lg font-semibold text-gray-900 truncate max-w-full"
+											>
+												{property.title}
+											</h3>
+										</a>
+										{#if property.aptoCredito}
+											<span
+												class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded"
+											>
+												Apto Crédito
+											</span>
+										{/if}
+										{#if property.published === false}
+											<span
+												class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded"
+											>
+												No publicada
+											</span>
+										{/if}
 									</div>
+									<p class="text-accent font-bold text-xl mb-1">
+										{property.priceLabel}
+									</p>
+									<div
+										class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500"
+									>
+										<span class="flex items-center gap-1">
+											<MapPin class="w-4 h-4" />
+											{property.location}
+										</span>
+										{#if property.attributes.bedrooms > 0}
+											<span class="flex items-center gap-1">
+												<Bed class="w-4 h-4" />
+												{property.attributes.bedrooms}
+											</span>
+										{/if}
+										<span class="flex items-center gap-1">
+											<Bath class="w-4 h-4" />
+											{property.attributes.bathrooms}
+										</span>
+										<span class="flex items-center gap-1">
+											<Maximize class="w-4 h-4" />
+											{property.attributes.area} m²
+										</span>
+										<span class="flex items-center gap-1">
+											<Eye class="w-4 h-4" />
+											{property.views || 0} vistas
+										</span>
+										<span class="flex items-center gap-1">
+											<Clock class="w-4 h-4" />
+											{property.publishedAt
+												? getDaysOnMarket(property.publishedAt) === 0
+													? 'Publicado hoy'
+													: `Publicado hace ${getDaysOnMarket(property.publishedAt)} ${getDaysOnMarket(property.publishedAt) === 1 ? 'día' : 'días'}`
+												: 'Sin publicar'}
+										</span>
+										{#if getDaysOnMarket(property.publishedAt) > 30}
+											<span class="flex items-center gap-1 text-orange-600">
+												<AlertTriangle class="w-4 h-4" />
+												+30 días
+											</span>
+										{/if}
+									</div>
+									{#if property.distributedTo && property.distributedTo.length > 0}
+										<div class="flex items-center gap-1 mt-2">
+											<Globe class="w-3 h-3 text-gray-400" />
+											<span class="text-xs text-gray-500">Distribuido:</span>
+											{#if property.distributedTo.includes('zonaprop')}
+												<span
+													class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded"
+													>ZonaProp</span
+												>
+											{/if}
+											{#if property.distributedTo.includes('argenprop')}
+												<span
+													class="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs rounded"
+													>ArgenProp</span
+												>
+											{/if}
+											{#if property.distributedTo.includes('mercadolibre')}
+												<span
+													class="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded"
+													>MercadoLibre</span
+												>
+											{/if}
+										</div>
+									{/if}
 								</div>
+							</div>
+							<div class="flex items-center gap-2 flex-shrink-0">
+								<button
+									on:click={() => togglePublished(property.id)}
+									class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+									title={property.published === false
+										? 'Publicar'
+										: 'Despublicar'}
+								>
+									{#if property.published === false}
+										<Eye class="w-5 h-5" />
+									{:else}
+										<UnpublishIcon class="w-5 h-5" />
+									{/if}
+								</button>
+								<a
+									href="{base}/publicar?edit={property.id}"
+									class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
+									title="Editar"
+								>
+									<Edit class="w-5 h-5" />
+								</a>
+								<button
+									on:click={() => (showDeleteConfirm = property.id)}
+									class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+									title="Eliminar"
+								>
+									<Trash2 class="w-5 h-5" />
+								</button>
 							</div>
 						</div>
 
@@ -340,7 +336,7 @@
 											Cancelar
 										</button>
 										<button
-											on:click={() => confirmDelete(property.id)}
+											on:click={() => handleDeleteProperty(property.id)}
 											class="flex-1 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
 										>
 											Eliminar

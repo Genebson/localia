@@ -5,12 +5,28 @@ const mockAgentLogin = async ({ page }: { page: Page }) => {
 	await mockAuthApi(page);
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
-	await page.getByRole('button', { name: 'Iniciar sesión' }).click();
+	await page.evaluate(() => {
+		localStorage.setItem(
+			'localia_mock_users',
+			JSON.stringify([
+				{
+					id: 'test-user-1',
+					email: 'agente@test.com',
+					name: 'Agente Test',
+					role: 'agent',
+					licenseNumber: 'MAT-12345',
+					passwordHash: 'xxx'
+				}
+			])
+		);
+		localStorage.setItem(
+			'localia_mock_session',
+			JSON.stringify({ userId: 'test-user-1', token: 'test_token_123' })
+		);
+	});
+	await page.reload();
+	await page.waitForLoadState('networkidle');
 	await page.waitForTimeout(500);
-	await page.locator('input[type="email"]').fill('agente@test.com');
-	await page.locator('input[type="password"]').fill('password123');
-	await page.locator('[role="dialog"] button:has-text("Iniciar sesión")').click();
-	await page.waitForTimeout(1500);
 };
 
 test.describe('Publicar Property Page', () => {
