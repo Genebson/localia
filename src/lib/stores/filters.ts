@@ -29,6 +29,7 @@ export interface Filters {
 	publishedDays: number | null;
 	zone: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro';
 	aptoCredito: boolean | null;
+	page: number;
 }
 
 const DEFAULT_FILTERS: Filters = {
@@ -56,7 +57,8 @@ const DEFAULT_FILTERS: Filters = {
 	accessible: null,
 	publishedDays: null,
 	zone: '',
-	aptoCredito: null
+	aptoCredito: null,
+	page: 1
 };
 
 function createFiltersStore() {
@@ -65,31 +67,32 @@ function createFiltersStore() {
 	return {
 		subscribe,
 		set,
-		setOperation: (op: 'buy' | 'rent' | 'all') => update((f) => ({ ...f, operation: op })),
-		setLocation: (loc: string) => update((f) => ({ ...f, location: loc })),
-		setMinPrice: (price: string) => update((f) => ({ ...f, minPrice: price })),
-		setMaxPrice: (price: string) => update((f) => ({ ...f, maxPrice: price })),
-		setCurrency: (currency: 'USD' | 'ARS' | 'all') => update((f) => ({ ...f, currency })),
-		setBedrooms: (beds: number | null) => update((f) => ({ ...f, bedrooms: beds })),
-		setPropertyType: (type: string) => update((f) => ({ ...f, propertyType: type })),
-		setRooms: (v: number | null) => update((f) => ({ ...f, rooms: v })),
-		setBathrooms: (v: number | null) => update((f) => ({ ...f, bathrooms: v })),
-		setEstado: (v: PropertyState | '') => update((f) => ({ ...f, estado: v })),
+		setOperation: (op: 'buy' | 'rent' | 'all') => update((f) => ({ ...f, operation: op, page: 1 })),
+		setLocation: (loc: string) => update((f) => ({ ...f, location: loc, page: 1 })),
+		setMinPrice: (price: string) => update((f) => ({ ...f, minPrice: price, page: 1 })),
+		setMaxPrice: (price: string) => update((f) => ({ ...f, maxPrice: price, page: 1 })),
+		setCurrency: (currency: 'USD' | 'ARS' | 'all') => update((f) => ({ ...f, currency, page: 1 })),
+		setBedrooms: (beds: number | null) => update((f) => ({ ...f, bedrooms: beds, page: 1 })),
+		setPropertyType: (type: string) => update((f) => ({ ...f, propertyType: type, page: 1 })),
+		setRooms: (v: number | null) => update((f) => ({ ...f, rooms: v, page: 1 })),
+		setBathrooms: (v: number | null) => update((f) => ({ ...f, bathrooms: v, page: 1 })),
+		setEstado: (v: PropertyState | '') => update((f) => ({ ...f, estado: v, page: 1 })),
 		toggleFeature: (feat: string) =>
 			update((f) => {
 				const features = f.features.includes(feat)
 					? f.features.filter((x) => x !== feat)
 					: [...f.features, feat];
-				return { ...f, features };
+				return { ...f, features, page: 1 };
 			}),
-		setEquipamiento: (v: Equipment | '') => update((f) => ({ ...f, equipamiento: v })),
-		setBoolean: (key: keyof Filters, v: boolean | null) => update((f) => ({ ...f, [key]: v })),
-		setPublishedDays: (v: number | null) => update((f) => ({ ...f, publishedDays: v })),
+		setEquipamiento: (v: Equipment | '') => update((f) => ({ ...f, equipamiento: v, page: 1 })),
+		setBoolean: (key: keyof Filters, v: boolean | null) => update((f) => ({ ...f, [key]: v, page: 1 })),
+		setPublishedDays: (v: number | null) => update((f) => ({ ...f, publishedDays: v, page: 1 })),
 		setZone: (v: '' | 'plaza' | 'barrio-norte' | 'barrio-sur' | 'zona-club' | 'centro') =>
-			update((f) => ({ ...f, zone: v })),
+			update((f) => ({ ...f, zone: v, page: 1 })),
 		setAptoCredito: (v: boolean | null) => update((f) => ({ ...f, aptoCredito: v })),
+		setPage: (p: number) => update((f) => ({ ...f, page: p })),
 		reset: () => {
-			set({ ...DEFAULT_FILTERS });
+			set({ ...DEFAULT_FILTERS, page: 1 });
 			history.replaceState(null, '', window.location.pathname + '?');
 		},
 		initFromUrl: (url: URL) => {
@@ -155,7 +158,8 @@ function createFiltersStore() {
 						| 'centro') || '',
 				aptoCredito: url.searchParams.get('aptoCredito')
 					? url.searchParams.get('aptoCredito') === 'true'
-					: null
+					: null,
+				page: parseInt(url.searchParams.get('page')!) || 1
 			});
 		}
 	};
@@ -191,6 +195,7 @@ export function syncFiltersToUrl() {
 	if (f.publishedDays !== null) params.set('publishedDays', String(f.publishedDays));
 	if (f.zone) params.set('zone', f.zone);
 	if (f.aptoCredito !== null) params.set('aptoCredito', String(f.aptoCredito));
+	if (f.page !== 1) params.set('page', String(f.page));
 	const search = params.toString();
 	const newUrl = search ? `?${search}` : window.location.pathname + '?';
 	replaceState(newUrl, {});

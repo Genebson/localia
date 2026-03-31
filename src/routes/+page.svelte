@@ -20,7 +20,9 @@
 	import FiltersSidebar from '$lib/components/FiltersSidebar.svelte';
 	import PropertyCard from '$lib/components/PropertyCard.svelte';
 	import PropertyMap from '$lib/components/PropertyMap.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 	import { allProperties } from '$lib/stores/properties';
+	import { propertiesStore } from '$lib/stores/properties';
 	import { authModalOpen } from '$lib/stores/authModal';
 	import { auth, isAgent } from '$lib/stores/auth';
 	import {
@@ -34,14 +36,32 @@
 
 	let filtersOpen = false;
 	let lastUrl = '';
+	let currentPage = 1;
+	let totalPages = 0;
+	let totalItems = 0;
 
 	$: if (typeof window !== 'undefined' && $page.url.href !== lastUrl) {
 		lastUrl = $page.url.href;
 		filters.initFromUrl($page.url);
 	}
 
+	async function loadPage(page: number) {
+		const data = await loadHomepageProperties(page, 12);
+		propertiesStore.set(data.items);
+		currentPage = data.currentPage;
+		totalPages = data.totalPages;
+		totalItems = data.totalItems;
+	}
+
+	function handlePageChange(page: number) {
+		filters.setPage(page);
+		syncFiltersToUrl();
+		loadPage(page);
+		document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
+	}
+
 	onMount(() => {
-		loadHomepageProperties();
+		loadPage($filters.page || 1);
 	});
 </script>
 
@@ -241,13 +261,7 @@
 		<div>
 			<h2 class="text-2xl font-bold text-gray-900">Propiedades</h2>
 			<p class="text-gray-500 mt-1">
-				{$filteredProperties.length}
-				{$filteredProperties.length === 1
-					? 'propiedad encontrada'
-					: 'propiedades encontradas'}
-				{#if $filteredProperties.length !== $totalProperties}
-					<span class="text-primary">(de {$totalProperties} total)</span>
-				{/if}
+				Mostrando página {currentPage} de {totalPages} ({totalItems} propiedades)
 			</p>
 		</div>
 		<div class="flex items-center gap-1 border border-gray-200 rounded-lg overflow-hidden">
@@ -288,6 +302,13 @@
 						<PropertyCard {property} />
 					{/each}
 				</div>
+
+				<Pagination
+					{currentPage}
+					{totalPages}
+					{totalItems}
+					onPageChange={handlePageChange}
+				/>
 			{/if}
 		</div>
 	</div>
