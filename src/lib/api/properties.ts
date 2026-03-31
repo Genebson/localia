@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { API_BASE_URL } from '$lib/config';
 
 export interface PropertyAttributes {
@@ -134,34 +135,33 @@ function formatValidationError(message: string | string[]): string {
 	return errors.join('\n');
 }
 
-async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-	const url = `${API_BASE_URL}${endpoint}`;
-	const response = await fetch(url, {
-		...options,
-		headers: {
-			'Content-Type': 'application/json',
-			...options.headers
-		},
-		credentials: 'include'
-	});
-
-	if (!response.ok) {
-		const text = await response.text();
-		try {
-			const error = JSON.parse(text);
-			const msg = Array.isArray(error.message)
-				? formatValidationError(error.message)
-				: (error.message || `HTTP ${response.status}`);
-			throw new Error(msg);
-		} catch (e) {
-			if (e instanceof Error) throw e;
-			throw new Error(`HTTP ${response.status}`);
-		}
+const axiosInstance = axios.create({
+	baseURL: API_BASE_URL,
+	withCredentials: true,
+	headers: {
+		'Content-Type': 'application/json'
 	}
+});
 
-	const text = await response.text();
-	if (!text) return {} as T;
-	return JSON.parse(text);
+async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+	try {
+		const response = await axiosInstance({
+			url: endpoint,
+			method: options.method || 'GET',
+			data: options.body ? JSON.parse(options.body) : undefined,
+			headers: options.headers as Record<string, string> | undefined
+		});
+		return response.data;
+	} catch (error) {
+		if (axios.isAxiosError(error) && error.response) {
+			const data = error.response.data;
+			const msg = Array.isArray(data.message)
+				? formatValidationError(data.message)
+				: (data.message || `HTTP ${error.response.status}`);
+			throw new Error(msg);
+		}
+		throw error;
+	}
 }
 
 export async function createProperty(data: CreatePropertyRequest): Promise<{ property: PropertyResponse }> {

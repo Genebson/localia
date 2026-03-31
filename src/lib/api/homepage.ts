@@ -1,5 +1,5 @@
+import axios from 'axios';
 import { API_BASE_URL } from '$lib/config';
-import { propertiesStore } from '$lib/stores/properties';
 import type { Property } from '$lib/data/properties';
 import type { PropertyResponse } from '$lib/api/properties';
 
@@ -34,15 +34,29 @@ function mapPropertyResponse(p: PropertyResponse): Property {
 	};
 }
 
+const axiosInstance = axios.create({
+	baseURL: API_BASE_URL,
+	withCredentials: true
+});
+
 export async function loadHomepageProperties(
 	page: number = 1,
 	limit: number = 12,
 ): Promise<PageData> {
-	const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-	const res = await fetch(`${API_BASE_URL}/properties/featured?${params}`, {
-		credentials: 'include',
-	});
-	if (!res.ok) {
+	try {
+		const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+		const response = await axiosInstance.get(`/properties/featured?${params}`);
+		const data = response.data;
+
+		return {
+			currentPage: data.currentPage,
+			totalItems: data.totalItems,
+			totalPages: data.totalPages,
+			items: (data.items ?? []).map(mapPropertyResponse),
+			hasNextPage: !!data.links?.next,
+			hasPrevPage: !!data.links?.prev,
+		};
+	} catch {
 		return {
 			currentPage: 1,
 			totalItems: 0,
@@ -52,25 +66,15 @@ export async function loadHomepageProperties(
 			hasPrevPage: false,
 		};
 	}
-	const data = await res.json();
-
-	return {
-		currentPage: data.currentPage,
-		totalItems: data.totalItems,
-		totalPages: data.totalPages,
-		items: (data.items ?? []).map(mapPropertyResponse),
-		hasNextPage: !!data.links?.next,
-		hasPrevPage: !!data.links?.prev,
-	};
 }
 
 export async function loadFeaturedProperties(): Promise<Property[]> {
-	const res = await fetch(`${API_BASE_URL}/properties/featured`, {
-		credentials: 'include',
-	});
-	if (!res.ok) return [];
-	const data = await res.json();
-	const props: PropertyResponse[] = data.items ?? [];
-
-	return props.map(mapPropertyResponse);
+	try {
+		const response = await axiosInstance.get('/properties/featured');
+		const data = response.data;
+		const props: PropertyResponse[] = data.items ?? [];
+		return props.map(mapPropertyResponse);
+	} catch {
+		return [];
+	}
 }
