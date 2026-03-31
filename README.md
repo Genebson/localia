@@ -48,6 +48,7 @@ Opens at [http://localhost:5173/localia/](http://localhost:5173/localia/)
 ## Tech Stack
 
 - **Framework**: SvelteKit with TypeScript
+- **HTTP Client**: Axios
 - **Styling**: Tailwind CSS
 - **Testing**: Playwright
 - **Linting**: ESLint + Prettier
@@ -59,25 +60,36 @@ Opens at [http://localhost:5173/localia/](http://localhost:5173/localia/)
 localia/
 ├── src/
 │   ├── lib/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── data/           # Mock data (properties, agencies, masterplans)
-│   │   └── stores/         # Svelte stores (auth, filters, favorites)
-│   └── routes/             # SvelteKit pages
-├── tests/                  # Playwright E2E tests
-├── docs/                   # System documentation (SISTEMA.md)
-├── eslint.config.js        # ESLint flat config
-├── prettier.config.js      # Prettier config (tabs, 4 spaces)
-├── playwright.config.ts    # Playwright config
-└── svelte.config.js       # SvelteKit config
+│   │   ├── api/           # API client (axios-based)
+│   │   ├── components/    # Reusable UI components
+│   │   ├── data/          # Type definitions and mock data
+│   │   └── stores/        # Svelte stores (auth, filters, favorites)
+│   └── routes/           # SvelteKit pages
+├── tests/                # Playwright E2E tests
+├── docs/                 # System documentation (SISTEMA.md)
+├── eslint.config.js      # ESLint flat config
+├── prettier.config.js   # Prettier config (tabs, 4 spaces)
+├── playwright.config.ts # Playwright config
+└── svelte.config.js    # SvelteKit config
 ```
+
+## API Integration
+
+The frontend integrates with the Localia Core API (NestJS backend). All API calls use axios with `withCredentials: true` for session handling.
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Backend API URL (default: http://localhost:3000) |
 
 ## Architecture Notes
 
-- **Frontend only**: No backend. All data is mocked in localStorage and Svelte stores.
-- **Location**: All mock properties are located in Mercedes, Buenos Aires, Argentina.
+- **Connected to Backend**: API-first architecture with real backend
+- **Location**: All properties are located in Mercedes, Buenos Aires, Argentina
 - **URL base**: `/localia` (configured in svelte.config.js)
-- **Favorites & properties**: Stored in browser localStorage
-- **Filters**: Synchronized with URL query params
+- **Favorites & filters**: Synced with URL query params
+- **Session**: Handled via cookies with Better Auth
 
 ## Code Quality
 
