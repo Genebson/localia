@@ -385,32 +385,21 @@ Todas las propiedades mockeadas incluyen datos para todos los filtros:
 
 ## Notas Técnicas
 
-### Demo UI — Solo Frontend
+### Arquitectura
 
-Este proyecto es un **demo de interfaz de usuario (UI-only)**. No tiene backend real.
+El frontend se conecta a la API de Localia (backend NestJS). Usa axios para las llamadas HTTP con autenticación basada en cookies.
 
-- Todos los datos son mockeados con localStorage y stores de Svelte
-- La autenticación es simulada (mock)
-- Las imágenes se almacenan como base64 en localStorage
-- Los portales externos (ZonaProp, ArgenProp, MercadoLibre) son botones mockeados sin integración real
+### Imágenes
 
-### Limitaciones de almacenamiento (localStorage)
-
-El navegador tiene un límite de almacenamiento (~5-10MB por origen). Como las imágenes se guardan como texto base64 (sin compresión), alcanzar este límite es probable al publicar varias propiedades con múltiples fotos.
-
-**Error que puede aparecer:**
-
-> "No se pudo guardar la propiedad. El almacenamiento está lleno. Probá borrando propiedades anteriores."
-
-**Solución:** Eliminar propiedades publicadas anteriormente desde "Mis Propiedades" para liberar espacio.
+Las imágenes de propiedades se suben a Cloudinary y se almacenan como URLs en la base de datos.
 
 ### Ubicación y configuración
 
-- **Ubicación**: Todas las propiedades mockeadas se encuentran en Mercedes, provincia de Buenos Aires, Argentina.
-- **Dev server**: `npm run dev` en el directorio `/localia`
+- **Ubicación**: Todas las propiedades se encuentran en Mercedes, provincia de Buenos Aires, Argentina.
+- **Dev server frontend**: `npm run dev` en el directorio `/localia`
+- **Dev server backend**: `npm run start:dev` en el directorio `/localia-core-api`
 - **URL base**: `http://localhost:5173/localia/`
 - **Filtros guardados en URL** — La URL refleja el estado de los filtros para poder compartir búsquedas.
-- **Favoritos y propiedades guardadas** — Se almacenan en localStorage del navegador.
 
 ---
 
