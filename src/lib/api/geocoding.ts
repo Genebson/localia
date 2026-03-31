@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 /**
  * Geocoding utility using Nominatim (OpenStreetMap)
  * Free, no API key required
@@ -16,7 +18,7 @@ export async function geocodeAddress(
 	const encoded = encodeURIComponent(query);
 
 	try {
-		const response = await fetch(
+		const response = await axios.get(
 			`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1&addressdetails=1`,
 			{
 				headers: {
@@ -25,13 +27,10 @@ export async function geocodeAddress(
 			}
 		);
 
-		if (!response.ok) return null;
-
-		const data = await response.json();
-		if (data && data.length > 0) {
+		if (response.data && response.data.length > 0) {
 			return {
-				lat: parseFloat(data[0].lat),
-				lng: parseFloat(data[0].lon)
+				lat: parseFloat(response.data[0].lat),
+				lng: parseFloat(response.data[0].lon)
 			};
 		}
 	} catch {

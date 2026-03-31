@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { API_BASE_URL } from '$lib/config';
 
 export type UserRole = 'seeker' | 'agent';
@@ -29,23 +30,22 @@ export interface ApiError {
 	message: string;
 }
 
-export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-	const url = `${API_BASE_URL}${endpoint}`;
-	const response = await fetch(url, {
-		...options,
-		headers: {
-			'Content-Type': 'application/json',
-			...options.headers
-		},
-		credentials: 'include'
-	});
-
-	if (!response.ok) {
-		const error = await response.json().catch(() => ({ message: 'Request failed' }));
-		throw new Error(error.message || `HTTP ${response.status}`);
+const axiosInstance = axios.create({
+	baseURL: API_BASE_URL,
+	withCredentials: true,
+	headers: {
+		'Content-Type': 'application/json'
 	}
+});
 
-	return response.json();
+export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+	const response = await axiosInstance({
+		url: endpoint,
+		method: options.method || 'GET',
+		data: options.body ? JSON.parse(options.body) : undefined,
+		headers: options.headers as Record<string, string> | undefined
+	});
+	return response.data;
 }
 
 export async function signInWithEmail(email: string, password: string): Promise<AuthResponse> {
@@ -69,13 +69,11 @@ export async function signUpWithEmail(
 }
 
 export async function signInWithGoogle(callbackUrl?: string): Promise<void> {
-	const response = await fetch(`${API_BASE_URL}/auth/sign-in/social`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-		body: JSON.stringify({ provider: 'google', callbackURL: callbackUrl || 'http://localhost:5173/localia/' })
+	const response = await axiosInstance.post('/auth/sign-in/social', {
+		provider: 'google',
+		callbackURL: callbackUrl || 'http://localhost:5173/localia/'
 	});
-	const { url } = (await response.json()) as { url: string };
+	const { url } = response.data as { url: string };
 	window.location.href = url;
 }
 

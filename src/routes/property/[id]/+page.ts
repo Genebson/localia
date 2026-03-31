@@ -1,14 +1,20 @@
+import axios from 'axios';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { getProperty } from '$lib/api/properties';
 import { API_BASE_URL } from '$lib/config';
 import type { PropertyResponse } from '$lib/api/properties';
 
-export const load: PageLoad = async ({ params, fetch }) => {
+const axiosInstance = axios.create({
+	baseURL: API_BASE_URL,
+	withCredentials: true
+});
+
+export const load: PageLoad = async ({ params }) => {
 	try {
 		const [propertyRes, featuredRes] = await Promise.all([
 			getProperty(params.id),
-			fetch(`${API_BASE_URL}/properties/featured`, { credentials: 'include' }).then(r => r.ok ? r.json() : { properties: [] }).catch(() => ({ properties: [] }))
+			axiosInstance.get('/properties/featured').then(r => r.data).catch(() => ({ properties: [] }))
 		]);
 		
 		return { 

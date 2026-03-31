@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { writable, derived, get } from 'svelte/store';
 import {
 	getMe,
@@ -61,20 +62,24 @@ function createAuthStore() {
 					role === 'agent' ? 'agent' : 'seeker',
 					licenseNumber
 				);
-				await fetch(`${import.meta.env.VITE_API_URL}/notifications/welcome-email`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						email,
-						name: name || email.split('@')[0]
-					})
-				}).catch(() => {});
+				await sendWelcomeEmail(email, name || email.split('@')[0]);
 			} else {
 				await signInWithEmail(email, _password);
 			}
 			await init();
 		} catch (e) {
 			throw e;
+		}
+	}
+
+	async function sendWelcomeEmail(email: string, name: string) {
+		try {
+			await axios.post(`${import.meta.env.VITE_API_URL}/notifications/welcome-email`, {
+				email,
+				name
+			});
+		} catch {
+			// Ignore
 		}
 	}
 
