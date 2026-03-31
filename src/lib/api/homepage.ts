@@ -45,7 +45,7 @@ export async function loadHomepageProperties(
 ): Promise<PageData> {
 	try {
 		const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-		const response = await axiosInstance.get(`/properties/featured?${params}`);
+		const response = await axiosInstance.get(`/properties?${params}`);
 		const data = response.data;
 
 		return {
@@ -70,7 +70,7 @@ export async function loadHomepageProperties(
 
 export async function loadFeaturedProperties(): Promise<Property[]> {
 	try {
-		const response = await axiosInstance.get('/properties/featured');
+		const response = await axiosInstance.get('/properties');
 		const data = response.data;
 		const props: PropertyResponse[] = data.items ?? [];
 		return props.map(mapPropertyResponse);

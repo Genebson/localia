@@ -172,7 +172,7 @@ export async function createProperty(data: CreatePropertyRequest): Promise<{ pro
 }
 
 export async function listMyProperties(): Promise<{ properties: PropertyResponse[] }> {
-	return apiFetch<{ properties: PropertyResponse[] }>('/properties');
+	return apiFetch<{ properties: PropertyResponse[] }>('/my-properties');
 }
 
 export async function updateProperty(id: string, data: UpdatePropertyRequest): Promise<{ property: PropertyResponse }> {

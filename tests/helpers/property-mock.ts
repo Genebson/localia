@@ -172,17 +172,17 @@ async function setupPropertyRoutes(page: Page) {
 			}
 		});
 
-		await page.route(/\/properties\/featured.*/, async (route) => {
+		await page.route(/\/properties(\?.*)?$/, async (route) => {
 			const url = route.request().url();
 			const pageParam = new URL(url).searchParams.get('page') || '1';
 			const limitParam = new URL(url).searchParams.get('limit') || '12';
 			const page = parseInt(pageParam);
 			const limit = parseInt(limitParam);
-			const featured = sharedProperties.filter((p) => p.featured);
-			const totalItems = featured.length;
+			const published = sharedProperties.filter((p) => p.published !== false);
+			const totalItems = published.length;
 			const totalPages = Math.ceil(totalItems / limit) || 1;
 			const offset = (page - 1) * limit;
-			const items = featured.slice(offset, offset + limit);
+			const items = published.slice(offset, offset + limit);
 			const prevPage = page > 1 ? page - 1 : undefined;
 			const nextPage = page < totalPages ? page + 1 : undefined;
 			await route.fulfill({
@@ -194,8 +194,8 @@ async function setupPropertyRoutes(page: Page) {
 					totalPages,
 					items,
 					links: {
-						prev: prevPage ? `/properties/featured?page=${prevPage}&limit=${limit}` : undefined,
-						next: nextPage ? `/properties/featured?page=${nextPage}&limit=${limit}` : undefined
+						prev: prevPage ? `/properties?page=${prevPage}&limit=${limit}` : undefined,
+						next: nextPage ? `/properties?page=${nextPage}&limit=${limit}` : undefined
 					}
 				})
 			});

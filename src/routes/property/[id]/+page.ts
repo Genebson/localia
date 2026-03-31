@@ -12,14 +12,14 @@ const axiosInstance = axios.create({
 
 export const load: PageLoad = async ({ params }) => {
 	try {
-		const [propertyRes, featuredRes] = await Promise.all([
+		const [propertyRes, allPropsRes] = await Promise.all([
 			getProperty(params.id),
-			axiosInstance.get('/properties/featured').then(r => r.data).catch(() => ({ properties: [] }))
+			axiosInstance.get('/properties').then(r => r.data).catch(() => ({ properties: [] }))
 		]);
 		
 		return { 
 			property: propertyRes.property as PropertyResponse,
-			allProperties: featuredRes.properties as PropertyResponse[]
+			allProperties: allPropsRes.properties as PropertyResponse[]
 		};
 	} catch (e) {
 		error(404, 'Property not found');
