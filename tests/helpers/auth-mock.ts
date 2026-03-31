@@ -206,45 +206,49 @@ function createAuthMocks(page: Page) {
 		});
 
 		await page.route('**/profile', async (route) => {
-			const session = await page.evaluate(() => {
-				const data = localStorage.getItem('localia_mock_session');
-				return data ? JSON.parse(data) : null;
-			});
-			if (session) {
-				const users = await page.evaluate(() => {
-					const data = localStorage.getItem('localia_mock_users');
-					return data ? JSON.parse(data) : [];
+			try {
+				const session = await page.evaluate(() => {
+					const data = localStorage.getItem('localia_mock_session');
+					return data ? JSON.parse(data) : null;
 				});
-				const user = users.find((u: any) => u.id === session.userId);
-				if (user) {
-					await route.fulfill({
-						status: 200,
-						contentType: 'application/json',
-						body: JSON.stringify({
-							data: {
-								id: user.id,
-								attributes: {
-									id: user.id,
-									email: user.email,
-									name: user.name,
-									role: user.role,
-									emailVerified: false,
-									image: null,
-									licenseNumber: user.role === 'agent' ? 'MAT-12345' : null,
-									createdAt: new Date().toISOString(),
-									updatedAt: new Date().toISOString()
-								}
-							}
-						})
+				if (session) {
+					const users = await page.evaluate(() => {
+						const data = localStorage.getItem('localia_mock_users');
+						return data ? JSON.parse(data) : [];
 					});
-					return;
+					const user = users.find((u: any) => u.id === session.userId);
+					if (user) {
+						await route.fulfill({
+							status: 200,
+							contentType: 'application/json',
+							body: JSON.stringify({
+								data: {
+									id: user.id,
+									attributes: {
+										id: user.id,
+										email: user.email,
+										name: user.name,
+										role: user.role,
+										emailVerified: false,
+										image: null,
+										licenseNumber: user.role === 'agent' ? 'MAT-12345' : null,
+										createdAt: new Date().toISOString(),
+										updatedAt: new Date().toISOString()
+									}
+								}
+							})
+						});
+						return;
+					}
 				}
+				await route.fulfill({
+					status: 401,
+					contentType: 'application/json',
+					body: JSON.stringify({ message: 'Unauthorized' })
+				});
+			} catch {
+				await route.abort();
 			}
-			await route.fulfill({
-				status: 401,
-				contentType: 'application/json',
-				body: JSON.stringify({ message: 'Unauthorized' })
-			});
 		});
 
 		await page.route('**/notifications/welcome-email', async (route) => {
@@ -274,10 +278,10 @@ function createAuthMocks(page: Page) {
 
 	async function logout() {
 		await page.context().clearCookies();
-		await page.goto('/');
-		await page.evaluate(() => localStorage.removeItem('localia_mock_session'));
-		await page.reload();
-		await page.waitForLoadState('networkidle');
+		await page.goto('/', { waitUntil: 'commit' });
+		await page.evaluate(() => {
+			localStorage.removeItem('localia_mock_session');
+		});
 	}
 
 	async function loginAs(email: string) {

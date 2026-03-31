@@ -50,7 +50,7 @@ function makeProperty(overrides: Partial<MockProperty> = {}): MockProperty {
 	const priceLabel = operation === 'rent' ? `${formatted}/mes` : formatted;
 	return {
 		id,
-		title: 'Depto Palermo',
+		title: overrides.title ?? 'Depto Palermo',
 		description: 'Excelente propiedad',
 		operation: 'buy',
 		propertyType: 'apartment',
@@ -172,11 +172,32 @@ async function setupPropertyRoutes(page: Page) {
 			}
 		});
 
-		await page.route('**/properties/featured', async (route) => {
+		await page.route(/\/properties\/featured.*/, async (route) => {
+			const url = route.request().url();
+			const pageParam = new URL(url).searchParams.get('page') || '1';
+			const limitParam = new URL(url).searchParams.get('limit') || '12';
+			const page = parseInt(pageParam);
+			const limit = parseInt(limitParam);
+			const featured = sharedProperties.filter((p) => p.featured);
+			const totalItems = featured.length;
+			const totalPages = Math.ceil(totalItems / limit) || 1;
+			const offset = (page - 1) * limit;
+			const items = featured.slice(offset, offset + limit);
+			const prevPage = page > 1 ? page - 1 : undefined;
+			const nextPage = page < totalPages ? page + 1 : undefined;
 			await route.fulfill({
 				status: 200,
 				contentType: 'application/json',
-				body: JSON.stringify({ properties: sharedProperties.filter((p) => p.featured) })
+				body: JSON.stringify({
+					currentPage: page,
+					totalItems,
+					totalPages,
+					items,
+					links: {
+						prev: prevPage ? `/properties/featured?page=${prevPage}&limit=${limit}` : undefined,
+						next: nextPage ? `/properties/featured?page=${nextPage}&limit=${limit}` : undefined
+					}
+				})
 			});
 		});
 	}
