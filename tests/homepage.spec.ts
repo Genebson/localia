@@ -106,3 +106,16 @@ test.describe('Homepage - Search', () => {
 		await expect(searchInput).toHaveValue('Mercedes');
 	});
 });
+
+test.describe('Homepage - Property Cards', () => {
+	test.beforeEach(async ({ page }) => {
+		await mockAuthApi(page);
+		await mockPropertyApi(page);
+		await page.goto('/');
+		await page.waitForTimeout(1000);
+	});
+
+	test('should show "Apto Crédito" badge on property cards with financing eligible', async ({ page }) => {
+		await expect(page.locator('text=Apto Crédito').first()).toBeVisible();
+	});
+});

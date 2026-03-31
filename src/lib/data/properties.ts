@@ -3,16 +3,16 @@ export type PropertyType =
 	| 'house'
 	| 'penthouse'
 	| 'terrain'
-	| 'lote'
 	| 'commercial'
-	| 'chacra'
-	| 'quinta'
-	| 'galpon'
-	| 'estancia'
-	| 'campo'
-	| 'local';
-export type PropertyState = 'nueva' | 'bueno' | 'reformar';
-export type Equipment = 'amueblado' | 'cocina-equipada';
+	| 'lot'
+	| 'farm'
+	| 'country-house'
+	| 'warehouse'
+	| 'estate'
+	| 'land'
+	| 'commercial-space';
+export type PropertyState = 'new' | 'good' | 'needs-renovation';
+export type Equipment = 'furnished' | 'equipped-kitchen';
 
 export interface Property {
 	id: string;
@@ -40,10 +40,10 @@ export interface Property {
 	isUserProperty?: boolean;
 	rooms?: number;
 	bathrooms?: number;
-	estado?: PropertyState;
+	condition?: PropertyState;
 	features?: string[];
-	aptoCredito?: boolean;
-	equipamiento?: Equipment;
+	isFinancingEligible?: boolean;
+	furnishings?: Equipment;
 	petFriendly?: boolean;
 	airConditioning?: boolean;
 	elevator?: boolean;
@@ -85,10 +85,10 @@ export const properties: Property[] = [
 		attributes: { bedrooms: 2, bathrooms: 1, area: 58 },
 		operation: 'buy',
 		featured: true,
-		aptoCredito: true,
-		estado: 'nueva',
+		isFinancingEligible: true,
+		condition: 'new',
 		publishedAt: '2026-03-21T08:00:00Z',
-		equipamiento: 'cocina-equipada',
+		furnishings: 'equipped-kitchen',
 		petFriendly: true,
 		airConditioning: true,
 		elevator: false,
@@ -122,10 +122,10 @@ export const properties: Property[] = [
 		attributes: { bedrooms: 4, bathrooms: 3, area: 280 },
 		operation: 'buy',
 		featured: true,
-		aptoCredito: true,
-		estado: 'bueno',
+		isFinancingEligible: true,
+		condition: 'good',
 		publishedAt: '2026-03-18T14:30:00Z',
-		equipamiento: 'cocina-equipada',
+		furnishings: 'equipped-kitchen',
 		petFriendly: true,
 		airConditioning: true,
 		elevator: false,
@@ -159,9 +159,9 @@ export const properties: Property[] = [
 		attributes: { bedrooms: 5, bathrooms: 4, area: 420 },
 		operation: 'buy',
 		featured: true,
-		estado: 'bueno',
+		condition: 'good',
 		publishedAt: '2026-03-12T15:00:00Z',
-		equipamiento: 'cocina-equipada',
+		furnishings: 'equipped-kitchen',
 		petFriendly: true,
 		airConditioning: true,
 		elevator: false,
@@ -195,9 +195,9 @@ export const properties: Property[] = [
 		attributes: { bedrooms: 4, bathrooms: 5, area: 380 },
 		operation: 'buy',
 		featured: true,
-		estado: 'nueva',
+		condition: 'new',
 		publishedAt: '2026-03-20T14:00:00Z',
-		equipamiento: 'amueblado',
+		furnishings: 'furnished',
 		petFriendly: true,
 		airConditioning: true,
 		elevator: true,
@@ -227,13 +227,13 @@ export const properties: Property[] = [
 			'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80',
 			'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80'
 		],
-		propertyType: 'chacra',
+		propertyType: 'farm',
 		attributes: { bedrooms: 4, bathrooms: 3, area: 120000 },
 		operation: 'buy',
 		featured: true,
-		estado: 'bueno',
+		condition: 'good',
 		publishedAt: '2026-03-17T10:00:00Z',
-		equipamiento: 'cocina-equipada',
+		furnishings: 'equipped-kitchen',
 		petFriendly: true,
 		airConditioning: true,
 		elevator: false,
