@@ -28,7 +28,8 @@ export async function loadFeaturedProperties(): Promise<Property[]> {
 			operation: p.operation,
 			featured: p.featured,
 			agentId: p.agentId,
-			publishedAt: p.createdAt
+			publishedAt: p.createdAt,
+			isFinancingEligible: p.isFinancingEligible
 		})
 	);
 }

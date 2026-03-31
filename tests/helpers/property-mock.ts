@@ -5,7 +5,7 @@ interface MockProperty {
 	title: string;
 	description: string | null;
 	operation: 'buy' | 'rent';
-	propertyType: 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial';
+	propertyType: 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial' | 'lot' | 'farm' | 'country-house' | 'warehouse' | 'estate' | 'land' | 'commercial-space';
 	price: number;
 	currency: 'USD' | 'ARS';
 	location: string;
@@ -15,6 +15,23 @@ interface MockProperty {
 	priceLabel: string;
 	image: string | null;
 	featured: boolean;
+	published: boolean;
+	publishedAt: string | null;
+	listingCode: string | null;
+	isFinancingEligible: boolean;
+	petFriendly: boolean;
+	airConditioning: boolean;
+	elevator: boolean;
+	balcony: boolean;
+	outdoor: boolean;
+	garage: boolean;
+	garden: boolean;
+	pool: boolean;
+	storageRoom: boolean;
+	accessible: boolean;
+	condition: 'new' | 'good' | 'needs-renovation' | null;
+	furnishings: 'furnished' | 'equipped-kitchen' | null;
+	distributedTo: string[];
 	agentId: string;
 	createdAt: string;
 	updatedAt: string;
@@ -46,6 +63,23 @@ function makeProperty(overrides: Partial<MockProperty> = {}): MockProperty {
 		priceLabel,
 		image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
 		featured: true,
+		published: true,
+		publishedAt: new Date().toISOString(),
+		listingCode: `LCL-TEST-${id.slice(-4)}`,
+		isFinancingEligible: false,
+		petFriendly: false,
+		airConditioning: false,
+		elevator: false,
+		balcony: false,
+		outdoor: false,
+		garage: false,
+		garden: false,
+		pool: false,
+		storageRoom: false,
+		accessible: false,
+		condition: null,
+		furnishings: null,
+		distributedTo: [],
 		agentId: 'test-user-1',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),

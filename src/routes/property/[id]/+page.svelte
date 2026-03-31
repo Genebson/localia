@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import type { PropertyResponse } from '$lib/api/properties';
 	import { base } from '$app/paths';
 	import {
 		Heart,
@@ -35,7 +36,8 @@
 	import { incrementViews } from '$lib/api/properties';
 	import { onMount } from 'svelte';
 
-	$: property = $allProperties.find((p) => p.id === $page.params.id);
+	// Use data from load function first, fallback to store for local properties
+	$: property = $page.data.property || $allProperties.find((p) => p.id === $page.params.id);
 	$: isFavorite = property ? $favorites.includes(property.id) : false;
 
 	$: agentAgency = $currentUser?.id
@@ -49,12 +51,17 @@
 				? [property.image]
 				: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'];
 
+	// Combine properties from API load and store for similar properties
+	$: allProps = $page.data.allProperties
+		? [...$page.data.allProperties, ...$allProperties]
+		: $allProperties;
+
 	$: similarProperties = property
-		? $allProperties
+		? allProps
 				.filter(
 					(p) =>
 						p.id !== property.id &&
-						p.published !== false &&
+						(p as PropertyResponse).published !== false &&
 						(p.location === property.location ||
 							p.propertyType === property.propertyType)
 				)
@@ -213,7 +220,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								>
 									{property.operation === 'buy' ? 'Venta' : 'Alquiler'}
 								</span>
-								{#if property.aptoCredito}
+								{#if property.isFinancingEligible}
 									<span
 										class="px-3 py-1 bg-green-600 text-white text-sm font-medium rounded"
 									>
@@ -322,7 +329,18 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 									Características
 								</h2>
 								<div class="flex flex-wrap gap-2">
-									{#each property.features || ['Aire acondicionado', 'Calefacción central', 'Piso de madera', 'Balcón', 'Cochera', 'Seguridad'] as feature}
+									{#each [
+										property.petFriendly && 'Mascotas',
+										property.airConditioning && 'Aire acondicionado',
+										property.elevator && 'Ascensor',
+										property.balcony && 'Balcón',
+										property.outdoor && 'Espacio exterior',
+										property.garage && 'Cochera',
+										property.garden && 'Jardín',
+										property.pool && 'Pileta',
+										property.storageRoom && 'Depósito',
+										property.accessible && 'Accesible',
+									].filter(Boolean) as feature}
 										<span
 											class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full"
 											>{feature}</span

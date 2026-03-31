@@ -32,7 +32,12 @@
 		}
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		try {
-			userProperties = (await listMyProperties()).properties;
+			const props = (await listMyProperties()).properties;
+			userProperties = props.sort((a: { createdAt?: string }, b: { createdAt?: string }) => {
+				const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+				const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+				return dateB - dateA;
+			});
 		} catch {
 			userProperties = [];
 		}
@@ -173,7 +178,7 @@
 								class="block w-full sm:w-[324px] sm:h-full h-40 sm:h-auto sm:flex-shrink-0"
 							>
 								<img
-									src={property.image}
+									src={property.image || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'}
 									alt={property.title}
 									class="w-full h-full object-cover"
 								/>

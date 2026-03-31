@@ -83,7 +83,7 @@
 			>
 				{property.operation === 'buy' ? 'Venta' : 'Alquiler'}
 			</div>
-			{#if property.aptoCredito}
+			{#if property.isFinancingEligible}
 				<div
 					class="absolute bottom-3 right-3 px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded z-10"
 				>

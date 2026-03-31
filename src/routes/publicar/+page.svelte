@@ -23,11 +23,54 @@
 	import { getPropertyById } from '$lib/stores/properties';
 	import { onMount } from 'svelte';
 	import type { PropertyType } from '$lib/data/properties';
-	import { createProperty, updateProperty, uploadImage } from '$lib/api/properties';
+	import { createProperty, updateProperty, uploadImage, getProperty } from '$lib/api/properties';
 
-	onMount(() => {
+	onMount(async () => {
 		auth.init();
+
+		if (isEditing && editId) {
+			try {
+				const { property } = await getProperty(editId);
+				loadPropertyData(property);
+			} catch {
+				// If API fetch fails, try local store
+				const existing = getPropertyById(editId);
+				if (existing) loadPropertyData(existing);
+			}
+		}
 	});
+
+	function loadPropertyData(prop: Record<string, unknown>) {
+		title = String(prop.title || '');
+		description = String(prop.description || '');
+		operation = String(prop.operation || 'buy') as 'buy' | 'rent';
+		propertyType = propertyTypeLabels[String(prop.propertyType) || ''] || '';
+		price = String(prop.price || '');
+		currency = String(prop.currency || 'USD') as 'USD' | 'ARS';
+		location = String(prop.location || '');
+		address = String(prop.address || '');
+		const attrs = prop.attributes as Record<string, number> | undefined;
+		bedrooms = String(attrs?.bedrooms || '');
+		bathrooms = String(attrs?.bathrooms || '');
+		area = String(attrs?.area || '');
+		const imgs = prop.images as string[] | undefined;
+		if (imgs?.length) imagePreviews = imgs;
+		distributedTo = (prop.distributedTo as string[] | undefined) ?? [];
+		aptoCredito = !!prop.isFinancingEligible;
+		condition = (prop.condition as typeof condition) || '';
+		furnishings = (prop.furnishings as typeof furnishings) || '';
+		petFriendly = !!prop.petFriendly;
+		airConditioning = !!prop.airConditioning;
+		elevator = !!prop.elevator;
+		balcony = !!prop.balcony;
+		outdoor = !!prop.outdoor;
+		garage = !!prop.garage;
+		garden = !!prop.garden;
+		pool = !!prop.pool;
+		storageRoom = !!prop.storageRoom;
+		accessible = !!prop.accessible;
+		publishMode = 'form';
+	}
 
 	let editId = $page.url.searchParams.get('edit');
 	let isEditing = !!editId;
@@ -48,6 +91,19 @@
 	let bathrooms = '';
 	let area = '';
 	let aptoCredito = false;
+	let condition: 'new' | 'good' | 'needs-renovation' | '' = '';
+	let furnishings: 'furnished' | 'equipped-kitchen' | '' = '';
+	// Feature booleans
+	let petFriendly = false;
+	let airConditioning = false;
+	let elevator = false;
+	let balcony = false;
+	let outdoor = false;
+	let garage = false;
+	let garden = false;
+	let pool = false;
+	let storageRoom = false;
+	let accessible = false;
 	let images: File[] = [];
 	let imagePreviews: string[] = [];
 	let error = '';
@@ -103,7 +159,14 @@
 		'Terreno',
 		'Quincho',
 		'Dúplex',
-		'Penthouse'
+		'Penthouse',
+		'Lote',
+		'Chacra',
+		'Quinta',
+		'Galpón',
+		'Estancia',
+		'Campo',
+		'Local',
 	];
 
 	const propertyTypeMap: Record<string, PropertyType> = {
@@ -115,7 +178,14 @@
 		Terreno: 'terrain',
 		Quincho: 'house',
 		Dúplex: 'apartment',
-		Penthouse: 'penthouse'
+		Penthouse: 'penthouse',
+		Lote: 'lot',
+		Chacra: 'farm',
+		Quinta: 'country-house',
+		'Galpón': 'warehouse',
+		Estancia: 'estate',
+		Campo: 'land',
+		Local: 'commercial-space',
 	};
 
 	const propertyTypeLabels: Record<string, string> = {
@@ -123,7 +193,14 @@
 		house: 'Casa',
 		penthouse: 'Penthouse',
 		terrain: 'Terreno',
-		commercial: 'Local comercial'
+		commercial: 'Local comercial',
+		lot: 'Lote',
+		farm: 'Chacra',
+		'country-house': 'Quinta',
+		warehouse: 'Galpón',
+		estate: 'Estancia',
+		land: 'Campo',
+		'commercial-space': 'Local',
 	};
 
 	// Mock title generator based on property attributes
@@ -231,26 +308,6 @@
 	function applyDescription(descToApply: string) {
 		description = descToApply;
 		showDescriptionSuggestions = false;
-	}
-
-	if (isEditing && editId) {
-		const existing = getPropertyById(editId);
-		if (existing) {
-			title = existing.title;
-			description = existing.description || '';
-			operation = existing.operation;
-			propertyType = propertyTypeLabels[existing.propertyType] || '';
-			price = existing.price.toString();
-			currency = existing.currency;
-			location = existing.location;
-			address = existing.address;
-			bedrooms = existing.attributes.bedrooms.toString();
-			bathrooms = existing.attributes.bathrooms.toString();
-			area = existing.attributes.area.toString();
-			if (existing.images?.length) imagePreviews = existing.images;
-			distributedTo = existing.distributedTo ?? [];
-			publishMode = 'form';
-		}
 	}
 
 	function handleLoginRedirect() {
@@ -422,12 +479,21 @@
 					| 'house'
 					| 'penthouse'
 					| 'terrain'
-					| 'commercial',
+					| 'commercial'
+					| 'lot'
+					| 'farm'
+					| 'country-house'
+					| 'warehouse'
+					| 'estate'
+					| 'land'
+					| 'commercial-space',
 				price: priceNum,
 				currency: currency as 'USD' | 'ARS',
 				location,
 				address: address || undefined,
-				aptoCredito,
+				isFinancingEligible: aptoCredito,
+				condition: condition || undefined,
+				furnishings: furnishings || undefined,
 				attributes: {
 					bedrooms: parseInt(bedrooms) || 0,
 					bathrooms: parseInt(bathrooms) || 0,
@@ -435,7 +501,17 @@
 				},
 				images: allImages,
 				featured: true,
-				distributedTo
+				distributedTo,
+				petFriendly,
+				airConditioning,
+				elevator,
+				balcony,
+				outdoor,
+				garage,
+				garden,
+				pool,
+				storageRoom,
+				accessible,
 			};
 
 			if (isEditing && editId) {
@@ -1010,6 +1086,37 @@
 							</div>
 						</div>
 
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Estado de la propiedad</label
+								>
+								<select
+									bind:value={condition}
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								>
+									<option value="">Seleccionar...</option>
+									<option value="new">Nueva</option>
+									<option value="good">Bueno</option>
+									<option value="needs-renovation">A refaccionar</option>
+								</select>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-gray-700 mb-1"
+									>Equipamiento</label
+								>
+								<select
+									bind:value={furnishings}
+									class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+								>
+									<option value="">Ninguno</option>
+									<option value="furnished">Amueblado</option>
+									<option value="equipped-kitchen">Cocina Equipada</option>
+								</select>
+							</div>
+						</div>
+
+						{#if operation === 'buy'}
 						<div class="bg-white rounded-2xl shadow-sm p-6">
 							<label class="flex items-center gap-3 cursor-pointer">
 								<input
@@ -1023,6 +1130,93 @@
 										La propiedad es elegible para financiamiento bancario
 									</p>
 								</div>
+							</label>
+						</div>
+						{/if}
+					</div>
+
+					<div class="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+						<h2 class="text-lg font-semibold text-gray-900">Comodidades</h2>
+						<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={petFriendly}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Mascotas</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={airConditioning}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Aire acondicionado</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={elevator}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Ascensor</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={balcony}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Balcón</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={outdoor}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Espacio exterior</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={garage}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Garage</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={garden}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Jardín</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={pool}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Pileta</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={storageRoom}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Depósito</span>
+							</label>
+							<label class="flex items-center gap-3 cursor-pointer">
+								<input
+									type="checkbox"
+									bind:checked={accessible}
+									class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary"
+								/>
+								<span class="text-sm text-gray-700">Accesible</span>
 							</label>
 						</div>
 					</div>

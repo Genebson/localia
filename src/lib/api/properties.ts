@@ -11,7 +11,7 @@ export interface PropertyResponse {
 	title: string;
 	description: string | null;
 	operation: 'buy' | 'rent';
-	propertyType: 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial';
+	propertyType: PropertyTypeDto;
 	price: number;
 	currency: 'USD' | 'ARS';
 	location: string;
@@ -21,6 +21,23 @@ export interface PropertyResponse {
 	priceLabel: string;
 	image: string | null;
 	featured: boolean;
+	published: boolean;
+	publishedAt: string | null;
+	listingCode: string | null;
+	isFinancingEligible: boolean;
+	petFriendly: boolean;
+	airConditioning: boolean;
+	elevator: boolean;
+	balcony: boolean;
+	outdoor: boolean;
+	garage: boolean;
+	garden: boolean;
+	pool: boolean;
+	storageRoom: boolean;
+	accessible: boolean;
+	condition: 'new' | 'good' | 'needs-renovation' | null;
+	furnishings: 'furnished' | 'equipped-kitchen' | null;
+	distributedTo: string[];
 	agentId: string;
 	createdAt: string;
 	updatedAt: string;
@@ -35,7 +52,19 @@ export function getPriceLabel(property: PropertyResponse): string {
 }
 
 export type OperationDto = 'buy' | 'rent';
-export type PropertyTypeDto = 'apartment' | 'house' | 'penthouse' | 'terrain' | 'commercial';
+export type PropertyTypeDto =
+	| 'apartment'
+	| 'house'
+	| 'penthouse'
+	| 'terrain'
+	| 'commercial'
+	| 'lot'
+	| 'farm'
+	| 'country-house'
+	| 'warehouse'
+	| 'estate'
+	| 'land'
+	| 'commercial-space';
 export type CurrencyDto = 'USD' | 'ARS';
 
 export interface CreatePropertyRequest {
@@ -55,7 +84,19 @@ export interface CreatePropertyRequest {
 	images: string[];
 	featured?: boolean;
 	distributedTo?: string[];
-	aptoCredito?: boolean;
+	isFinancingEligible?: boolean;
+	petFriendly?: boolean;
+	airConditioning?: boolean;
+	elevator?: boolean;
+	balcony?: boolean;
+	outdoor?: boolean;
+	garage?: boolean;
+	garden?: boolean;
+	pool?: boolean;
+	storageRoom?: boolean;
+	accessible?: boolean;
+	condition?: 'new' | 'good' | 'needs-renovation';
+	furnishings?: 'furnished' | 'equipped-kitchen';
 }
 
 export interface UpdatePropertyRequest extends Partial<CreatePropertyRequest> {}
