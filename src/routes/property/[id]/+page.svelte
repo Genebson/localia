@@ -29,7 +29,6 @@
 	import ContactForm from '$lib/components/ContactForm.svelte';
 	import { allProperties } from '$lib/stores/properties';
 	import { favorites } from '$lib/stores/favorites';
-	import { viewed } from '$lib/stores/viewed';
 	import { agenciesStore } from '$lib/stores/agencies';
 	import { currentUser, auth } from '$lib/stores/auth';
 	import { authModalOpen } from '$lib/stores/authModal';
@@ -84,7 +83,6 @@
 
 	onMount(() => {
 		if (property && property.published !== false) {
-			viewed.add(property.id);
 			incrementViews(property.id);
 		}
 	});

@@ -9,7 +9,6 @@ import {
 	signOut as apiSignOut
 } from '$lib/api/auth';
 import { authModalMode } from './authModal';
-import { favorites } from './favorites';
 
 export type FrontendRole = 'guest' | 'seeker' | 'agent';
 
@@ -68,7 +67,6 @@ function createAuthStore() {
 				await signInWithEmail(email, _password);
 			}
 			await init();
-			favorites.clearLocalStorage();
 		} catch (e) {
 			throw e;
 		}
