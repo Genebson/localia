@@ -102,6 +102,14 @@ export interface CreatePropertyRequest {
 
 export interface UpdatePropertyRequest extends Partial<CreatePropertyRequest> {}
 
+export interface PaginatedPropertyResponse {
+	properties: PropertyResponse[];
+	total: number;
+	page: number;
+	limit: number;
+	totalPages: number;
+}
+
 function formatValidationError(message: string | string[]): string {
 	if (!Array.isArray(message)) return message;
 	const fieldLabels: Record<string, string> = {
@@ -171,8 +179,17 @@ export async function createProperty(data: CreatePropertyRequest): Promise<{ pro
 	});
 }
 
-export async function listMyProperties(): Promise<{ properties: PropertyResponse[] }> {
-	return apiFetch<{ properties: PropertyResponse[] }>('/my-properties');
+export async function listMyProperties(
+	page?: number,
+	limit?: number,
+	sort?: 'asc' | 'desc',
+): Promise<PaginatedPropertyResponse> {
+	const params = new URLSearchParams();
+	if (page !== undefined) params.set('page', String(page));
+	if (limit !== undefined) params.set('limit', String(limit));
+	if (sort !== undefined) params.set('sort', sort);
+	const query = params.toString();
+	return apiFetch<PaginatedPropertyResponse>(`/my-properties${query ? `?${query}` : ''}`);
 }
 
 export async function updateProperty(id: string, data: UpdatePropertyRequest): Promise<{ property: PropertyResponse }> {
