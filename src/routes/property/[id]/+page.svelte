@@ -104,13 +104,7 @@
 		return `$ ${price.toLocaleString('es-AR')}`;
 	}
 
-	const mockAgent = {
-		name: 'María González',
-		phone: '+54 11 5555 1234',
-		email: 'maria.gonzalez@localia.com',
-		photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
-		matriculado: 'COL-2020-45678'
-	};
+	
 
 	const interiorTypeLabels: Record<string, string> = {
 		chacra: 'Chacra',
@@ -448,40 +442,58 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 
 						<div class="mt-6 pt-6 border-t border-gray-100">
 							<h3 class="font-semibold text-gray-900 mb-4">Tu agente</h3>
-							<div class="flex items-center gap-4">
-								<img
-									src={mockAgent.photo}
-									alt={mockAgent.name}
-									class="w-14 h-14 rounded-full object-cover"
-								/>
-								<div>
-									<p class="font-medium text-gray-900">{mockAgent.name}</p>
-									<p class="text-sm text-gray-500">Agente matriculado</p>
-									<p class="text-xs text-gray-400">{mockAgent.matriculado}</p>
+							{#if $page.data.agent}
+								{@const agent = $page.data.agent}
+								{@const attrs = agent.data.attributes}
+								<div class="flex items-center gap-4">
+									{#if attrs.image}
+										<img
+											src={attrs.image}
+											alt={attrs.name ?? 'Agente'}
+											class="w-14 h-14 rounded-full object-cover"
+										/>
+									{:else}
+										<div
+											class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white text-lg font-bold"
+										>
+											{attrs.name?.charAt(0).toUpperCase() ?? 'A'}
+										</div>
+									{/if}
+									<div>
+										<p class="font-medium text-gray-900">{attrs.name ?? 'Agente'}</p>
+										<p class="text-sm text-gray-500">Agente matriculado</p>
+										{#if attrs.licenseNumber}
+											<p class="text-xs text-gray-400">{attrs.licenseNumber}</p>
+										{/if}
+									</div>
 								</div>
-							</div>
-							<div class="mt-4 space-y-2">
-								<a
-									href="tel:{mockAgent.phone}"
-									class="flex items-center justify-center gap-2 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-								>
-									{mockAgent.phone}
-								</a>
-								<a
-									href="mailto:{mockAgent.email}"
-									class="flex items-center justify-center gap-2 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-								>
-									{mockAgent.email}
-								</a>
-								{#if agentAgency}
+								<div class="mt-4 space-y-2">
+									{#if attrs.phone}
+										<a
+											href="tel:{attrs.phone}"
+											class="flex items-center justify-center gap-2 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+										>
+											{attrs.phone}
+										</a>
+									{/if}
 									<a
-										href="{base}/inmobiliaria/{agentAgency.slug}"
-										class="flex items-center justify-center gap-2 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors"
+										href="mailto:{attrs.email}"
+										class="flex items-center justify-center gap-2 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
 									>
-										Ver inmobiliaria <ExternalLink class="w-4 h-4" />
+										{attrs.email}
 									</a>
-								{/if}
-							</div>
+									{#if agentAgency}
+										<a
+											href="{base}/inmobiliaria/{agentAgency.slug}"
+											class="flex items-center justify-center gap-2 py-2 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors"
+										>
+											Ver inmobiliaria <ExternalLink class="w-4 h-4" />
+										</a>
+									{/if}
+								</div>
+							{:else}
+								<p class="text-sm text-gray-500">Agente no disponible</p>
+							{/if}
 						</div>
 					</div>
 				</div>

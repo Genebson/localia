@@ -16,8 +16,15 @@ export interface FrontendUser {
 	id: string;
 	email: string;
 	name: string;
+	image: string | null;
+	phone: string | null;
 	role: FrontendRole;
 	licenseNumber?: string;
+	tenantCount: number;
+	pets: 'none' | 'has_pet';
+	moveDate: 'asap' | 'flexible' | 'exact_date';
+	monthlyIncome: number | null;
+	introductionLetter: string | null;
 }
 
 export const authLoading = writable(true);
@@ -35,8 +42,15 @@ function createAuthStore() {
 				id: backendUser.id,
 				email: backendUser.email,
 				name: backendUser.name,
+				image: backendUser.image ?? null,
+				phone: backendUser.phone ?? null,
 				role: backendUser.role === 'agent' ? 'agent' : 'seeker',
-				licenseNumber: backendUser.licenseNumber || undefined
+				licenseNumber: backendUser.licenseNumber || undefined,
+				tenantCount: backendUser.tenantCount ?? 1,
+				pets: backendUser.pets ?? 'none',
+				moveDate: backendUser.moveDate ?? 'flexible',
+				monthlyIncome: backendUser.monthlyIncome ?? null,
+				introductionLetter: backendUser.introductionLetter ?? null
 			};
 			set(frontendUser);
 		} catch {
