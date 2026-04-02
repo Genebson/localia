@@ -172,7 +172,7 @@ async function setupPropertyRoutes(page: Page) {
 			}
 		});
 
-		await page.route('**/my-properties', async (route) => {
+		await page.route(/.*\/my-properties.*/, async (route) => {
 			if (route.request().method() === 'GET') {
 				const url = route.request().url();
 				const pageParam = new URL(url).searchParams.get('page') || '1';

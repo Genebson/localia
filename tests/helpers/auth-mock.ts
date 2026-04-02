@@ -332,7 +332,52 @@ function createAuthMocks(page: Page) {
 		await page.waitForTimeout(1500);
 	}
 
-	return { setup, loginAs, logout };
+	async function loginAsNoReload(email: string) {
+		await page.context().clearCookies();
+		await setup();
+		await page.goto('/');
+		await page.waitForLoadState('networkidle');
+		await page.evaluate(() => {
+			localStorage.removeItem('localia_mock_session');
+			localStorage.removeItem('localia_mock_users');
+		});
+		const isAgent = email.includes('agente');
+		const userId = isAgent ? 'test-user-1' : 'test-user-2';
+		await page.evaluate((id) => {
+			localStorage.setItem(
+				'localia_mock_users',
+				JSON.stringify([
+					{
+						id: 'test-user-1',
+						email: 'agente@test.com',
+						name: 'Agente Test',
+						role: 'agent',
+						licenseNumber: 'MAT-12345',
+						passwordHash: '3232323232'
+					},
+					{
+						id: 'test-user-2',
+						email: 'buscador@test.com',
+						name: 'Buscador Test',
+						role: 'seeker',
+						passwordHash: '3232323232'
+					}
+				])
+			);
+			localStorage.setItem(
+				'localia_mock_session',
+				JSON.stringify({
+					userId: id,
+					token:
+						'mock_token_' +
+						Math.random().toString(36).substring(2) +
+						Date.now().toString(36)
+				})
+			);
+		}, userId);
+	}
+
+	return { setup, loginAs, loginAsNoReload, logout };
 }
 
 async function mockAuthApi(page: Page) {
@@ -344,8 +389,12 @@ async function loginAs(page: Page, email: string) {
 	await createAuthMocks(page).loginAs(email);
 }
 
+async function loginAsNoReload(page: Page, email: string) {
+	await createAuthMocks(page).loginAsNoReload(email);
+}
+
 async function logout(page: Page) {
 	await createAuthMocks(page).logout();
 }
 
-export { mockAuthApi, loginAs, logout, TEST_AGENT, TEST_SEEKER, createAuthMocks };
+export { mockAuthApi, loginAs, loginAsNoReload, logout, TEST_AGENT, TEST_SEEKER, createAuthMocks };

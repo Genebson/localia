@@ -6,6 +6,7 @@ test.describe('Mis Propiedades', () => {
 	test.beforeEach(async ({ page }) => {
 		clearProperties();
 		await mockPropertyApi(page);
+		clearProperties();
 	});
 
 	test('should display pagination controls when there are more than 10 properties', async ({ page }) => {
@@ -55,17 +56,19 @@ test.describe('Mis Propiedades', () => {
 		await page.goto('/mis-propiedades');
 		await page.waitForTimeout(1500);
 
+		await expect(page.locator('text=Página 1 de 2')).toBeVisible();
 		await page.locator('button:has-text("Siguiente")').click();
 		await page.waitForTimeout(500);
 
+		await expect(page.locator('text=Página 2 de 2')).toBeVisible();
 		const nextButton = page.locator('button:has-text("Siguiente")');
 		await expect(nextButton).toBeDisabled();
 	});
 
 	test('should change sort to oldest first when selecting option', async ({ page }) => {
 		await loginAs(page, 'agente@test.com');
-		addProperty({ title: 'Propiedad Nueva' });
 		addProperty({ title: 'Propiedad Vieja' });
+		addProperty({ title: 'Propiedad Nueva' });
 		await page.goto('/mis-propiedades');
 		await page.waitForTimeout(1500);
 
