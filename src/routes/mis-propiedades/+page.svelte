@@ -13,7 +13,10 @@
 		Globe,
 		EyeOff as UnpublishIcon,
 		Clock,
-		AlertTriangle
+		AlertTriangle,
+		ChevronLeft,
+		ChevronRight,
+		ArrowUpDown
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
@@ -31,22 +34,51 @@
 			// ignore auth errors
 		}
 		await new Promise((resolve) => setTimeout(resolve, 100));
+		await loadProperties(1, 'desc');
+	});
+
+	async function loadProperties(page: number, sort: 'asc' | 'desc') {
+		isLoading = true;
 		try {
-			const props = (await listMyProperties()).properties;
-			userProperties = props.sort((a: { createdAt?: string }, b: { createdAt?: string }) => {
-				const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-				const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-				return dateB - dateA;
-			});
+			const result = await listMyProperties(page, 10, sort);
+			userProperties = result.properties;
+			total = result.total;
+			totalPages = result.totalPages;
+			currentPage = result.page;
+			sortOrder = sort;
 		} catch {
 			userProperties = [];
+			total = 0;
+			totalPages = 0;
+			currentPage = 1;
 		}
 		isLoading = false;
-	});
+	}
+
+	function goToPrevPage() {
+		if (currentPage > 1) {
+			loadProperties(currentPage - 1, sortOrder);
+		}
+	}
+
+	function goToNextPage() {
+		if (currentPage < totalPages) {
+			loadProperties(currentPage + 1, sortOrder);
+		}
+	}
+
+	function handleSortChange(e: Event) {
+		const target = e.target as HTMLSelectElement;
+		loadProperties(1, target.value as 'asc' | 'desc');
+	}
 
 	let userProperties: any[] = [];
 	let isLoading = true;
 	let showDeleteConfirm: string | null = null;
+	let currentPage = 1;
+	let totalPages = 0;
+	let total = 0;
+	let sortOrder: 'asc' | 'desc' = 'desc';
 
 	function handleLoginRedirect() {
 		authModalOpen.set(true);
@@ -74,7 +106,7 @@
 	async function handleDeleteProperty(id: string) {
 		try {
 			await deleteProperty(id);
-			userProperties = userProperties.filter((p) => p.id !== id);
+			await loadProperties(currentPage, sortOrder);
 		} catch {
 			// Silently fail
 		}
@@ -129,23 +161,35 @@
 		</div>
 	{:else}
 		<div class="max-w-[1216px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-			<div class="flex items-center justify-between mb-8">
+			<div class="flex items-center justify-between mb-6">
 				<div>
 					<h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
 						Mis propiedades
 					</h1>
 					<p class="text-gray-500">
-						{userProperties.length}
-						{userProperties.length === 1 ? 'propiedad' : 'propiedades'} publicadas
+						{total}
+						{total === 1 ? 'propiedad' : 'propiedades'} en total
 					</p>
 				</div>
-				<a
-					href="{base}/publicar"
-					class="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors text-sm sm:text-base"
-				>
-					<Plus class="w-4 h-4 sm:w-5 sm:h-5" />
-					Nueva propiedad
-				</a>
+				<div class="flex items-center gap-3">
+					<div class="flex items-center gap-2">
+						<ArrowUpDown class="w-4 h-4 text-gray-400" />
+						<select
+							on:change={handleSortChange}
+							class="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+						>
+							<option value="desc">Más recientes</option>
+							<option value="asc">Más antiguas</option>
+						</select>
+					</div>
+					<a
+						href="{base}/publicar"
+						class="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-lg transition-colors text-sm sm:text-base"
+					>
+						<Plus class="w-4 h-4 sm:w-5 sm:h-5" />
+						Nueva propiedad
+					</a>
+				</div>
 			</div>
 
 			{#if !isLoading && userProperties.length === 0}
@@ -352,6 +396,30 @@
 						{/if}
 					{/each}
 				</div>
+
+				{#if totalPages > 1}
+					<div class="flex items-center justify-center gap-4 mt-8">
+						<button
+							on:click={goToPrevPage}
+							disabled={currentPage === 1}
+							class="flex items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						>
+							<ChevronLeft class="w-4 h-4" />
+							Anterior
+						</button>
+						<span class="text-sm text-gray-600">
+							Página {currentPage} de {totalPages}
+						</span>
+						<button
+							on:click={goToNextPage}
+							disabled={currentPage >= totalPages}
+							class="flex items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						>
+							Siguiente
+							<ChevronRight class="w-4 h-4" />
+						</button>
+					</div>
+				{/if}
 			{/if}
 		</div>
 	{/if}

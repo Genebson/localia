@@ -172,12 +172,33 @@ async function setupPropertyRoutes(page: Page) {
 			}
 		});
 
-		await page.route('**/my-properties', async (route) => {
+		await page.route(/.*\/my-properties.*/, async (route) => {
 			if (route.request().method() === 'GET') {
+				const url = route.request().url();
+				const pageParam = new URL(url).searchParams.get('page') || '1';
+				const limitParam = new URL(url).searchParams.get('limit') || '10';
+				const sortParam = new URL(url).searchParams.get('sort') || 'desc';
+				const page = parseInt(pageParam);
+				const limit = parseInt(limitParam);
+				const totalItems = sharedProperties.length;
+				const totalPages = Math.ceil(totalItems / limit) || 1;
+				const sorted = [...sharedProperties].sort((a, b) => {
+					const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+					const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+					return sortParam === 'asc' ? dateA - dateB : dateB - dateA;
+				});
+				const offset = (page - 1) * limit;
+				const items = sorted.slice(offset, offset + limit);
 				await route.fulfill({
 					status: 200,
 					contentType: 'application/json',
-					body: JSON.stringify({ properties: sharedProperties })
+					body: JSON.stringify({
+						properties: items,
+						total: totalItems,
+						page,
+						limit,
+						totalPages
+					})
 				});
 			} else {
 				await route.fulfill({ status: 405 });
