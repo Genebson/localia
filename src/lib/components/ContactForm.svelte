@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Check, Phone } from 'lucide-svelte';
-	import { messages } from '$lib/stores/messages';
-	import { notifications } from '$lib/stores/notifications';
+	import { sendEmailToAgent } from '$lib/api/auth';
 
 	export let propertyId: string;
 	export let propertyTitle: string;
@@ -14,44 +13,29 @@
 	let acceptPrivacy = false;
 	let isSubmitting = false;
 	let isSubmitted = false;
+	let submitError = '';
 
 	async function handleSubmit() {
 		if (!name || !email || !phone) return;
 		if (!acceptTerms || !acceptPrivacy) return;
 
 		isSubmitting = true;
+		submitError = '';
 
-		const convId = messages.addConversation({
-			id: crypto.randomUUID(),
-			name,
-			email,
-			phone,
-			propertyId,
-			propertyTitle,
-			lastMessage: message,
-			messages: [
-				{
-					id: crypto.randomUUID(),
-					text: message,
-					sender: 'prospect',
-					timestamp: new Date().toLocaleTimeString('es-AR', {
-						hour: '2-digit',
-						minute: '2-digit'
-					})
-				}
-			]
-		});
-
-		notifications.add({
-			conversationId: convId,
-			propertyId,
-			propertyTitle,
-			prospectName: name,
-			text: message
-		});
-
-		isSubmitting = false;
-		isSubmitted = true;
+		try {
+			await sendEmailToAgent({
+				propertyId,
+				seekerName: name,
+				seekerEmail: email,
+				seekerPhone: phone,
+				message,
+			});
+			isSubmitted = true;
+		} catch {
+			submitError = 'Error al enviar el mensaje. Intenta de nuevo.';
+		} finally {
+			isSubmitting = false;
+		}
 	}
 
 	function handleWhatsApp() {
@@ -171,6 +155,10 @@
 					>
 				</label>
 			</div>
+
+			{#if submitError}
+				<p class="text-sm text-red-600">{submitError}</p>
+			{/if}
 
 			<div class="flex gap-2 pt-1">
 				<button

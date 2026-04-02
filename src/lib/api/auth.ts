@@ -9,7 +9,13 @@ export interface ApiUser {
 	name: string;
 	role: UserRole;
 	licenseNumber?: string | null;
-	image?: string;
+	image?: string | null;
+	phone?: string | null;
+	tenantCount?: number;
+	pets?: 'none' | 'has_pet';
+	moveDate?: 'asap' | 'flexible' | 'exact_date';
+	monthlyIncome?: number | null;
+	introductionLetter?: string | null;
 }
 
 export interface ApiSession {
@@ -109,6 +115,39 @@ export async function updateRole(role: UserRole, licenseNumber?: string): Promis
 	});
 }
 
+export async function updateProfile(name: string, phone: string): Promise<AuthResponse> {
+	return apiFetch<AuthResponse>('/profile', {
+		method: 'PATCH',
+		body: JSON.stringify({ name, phone })
+	});
+}
+
+export async function uploadProfileImage(image: string): Promise<{ url: string }> {
+	return apiFetch<{ url: string }>('/profile/image', {
+		method: 'POST',
+		body: JSON.stringify({ image })
+	});
+}
+
+export async function updateRentalProfile(
+	tenantCount: number,
+	pets: 'none' | 'has_pet',
+	moveDate: 'asap' | 'flexible' | 'exact_date',
+	monthlyIncome?: number | null
+): Promise<AuthResponse> {
+	return apiFetch<AuthResponse>('/profile/rental-profile', {
+		method: 'PATCH',
+		body: JSON.stringify({ tenantCount, pets, moveDate, monthlyIncome })
+	});
+}
+
+export async function updateIntroductionLetter(introductionLetter: string): Promise<AuthResponse> {
+	return apiFetch<AuthResponse>('/profile/introduction-letter', {
+		method: 'PATCH',
+		body: JSON.stringify({ introductionLetter })
+	});
+}
+
 export async function signOut(): Promise<void> {
 	await apiFetch('/auth/sign-out', { method: 'POST' });
 }
@@ -124,5 +163,38 @@ export async function resetPassword(token: string, password: string): Promise<{ 
 	return apiFetch<{ success: boolean }>('/auth/reset-password', {
 		method: 'POST',
 		body: JSON.stringify({ newPassword: password, token }),
+	});
+}
+
+export interface PublicUser {
+	data: {
+		type: 'user';
+		id: string;
+		attributes: {
+			name: string | null;
+			image: string | null;
+			phone: string | null;
+			email: string;
+			licenseNumber: string | null;
+		};
+	};
+}
+
+export async function getPublicUser(userId: string): Promise<PublicUser> {
+	return apiFetch<PublicUser>(`/users/${userId}`);
+}
+
+export interface SendEmailToAgentPayload {
+	propertyId: string;
+	seekerName: string;
+	seekerEmail: string;
+	seekerPhone: string;
+	message: string;
+}
+
+export async function sendEmailToAgent(payload: SendEmailToAgentPayload): Promise<{ success: boolean; message: string }> {
+	return apiFetch<{ success: boolean; message: string }>('/contact/send-email', {
+		method: 'POST',
+		body: JSON.stringify(payload),
 	});
 }

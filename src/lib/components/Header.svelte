@@ -102,9 +102,15 @@
 						>
 							<div class="relative">
 								<div
-									class="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+									class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden"
 								>
-									{#if $currentUser.role === 'agent'}
+									{#if $currentUser.image}
+										<img
+											src={$currentUser.image}
+											alt={$currentUser.name}
+											class="w-full h-full object-cover"
+										/>
+									{:else if $currentUser.role === 'agent'}
 										<Building2 class="w-4 h-4 text-white" />
 									{:else}
 										<User class="w-4 h-4 text-white" />
@@ -249,10 +255,14 @@
 				{#if $currentUser}
 					<div class="pt-3 border-t border-gray-100">
 						<div class="flex items-center gap-3 mb-3">
-							<div
-								class="w-10 h-10 bg-primary rounded-full flex items-center justify-center"
-							>
-								{#if $currentUser.role === 'agent'}
+							<div class="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
+								{#if $currentUser.image}
+									<img
+										src={$currentUser.image}
+										alt={$currentUser.name}
+										class="w-full h-full object-cover"
+									/>
+								{:else if $currentUser.role === 'agent'}
 									<Building2 class="w-5 h-5 text-white" />
 								{:else}
 									<User class="w-5 h-5 text-white" />
