@@ -443,8 +443,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 						<div class="mt-6 pt-6 border-t border-gray-100">
 							<h3 class="font-semibold text-gray-900 mb-4">Tu agente</h3>
 							{#if $page.data.agent}
-								{@const agent = $page.data.agent}
-								{@const attrs = agent.data.attributes}
+								{@const attrs = $page.data.agent.attributes}
 								<div class="flex items-center gap-4">
 									{#if attrs.image}
 										<img
