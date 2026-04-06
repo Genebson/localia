@@ -105,9 +105,9 @@ For domain knowledge, user flows, and feature details, see:
 | `/masterplan`          | List of developments         | Public |
 | `/masterplan/[id]`     | Interactive development map  | Public |
 | `/tablero`             | Public search board          | Public |
-| `/furnisher`           | Virtual staging tool         | Agents |
-| `/publicar`            | Publish property form        | Agents |
-| `/mis-propiedades`     | Agent's property list        | Agents |
-| `/perfil`              | Agent profile & agency       | Agents |
-| `/chepibe`             | WhatsApp CRM mock            | Agents |
+| `/furnisher`           | Virtual staging tool         | Martilleros |
+| `/publicar`            | Publish property form        | Martilleros |
+| `/mis-propiedades`     | Martillero's property list        | Martilleros |
+| `/perfil`              | Martillero profile & agency       | Martilleros |
+| `/chepibe`             | WhatsApp CRM mock            | Martilleros |
 | `/inmobiliaria/[slug]` | Agency landing page          | Public |

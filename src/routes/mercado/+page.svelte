@@ -325,7 +325,7 @@
 					</div>
 					<h3 class="font-semibold text-gray-900">Profesionales Verificados</h3>
 					<p class="text-gray-600 text-sm">
-						12 inmobiliarias activas con más de 50 agentes profesionales verificados
+						12 inmobiliarias activas con más de 50 martilleros profesionales verificados
 						publican propiedades en nuestra plataforma.
 					</p>
 				</div>

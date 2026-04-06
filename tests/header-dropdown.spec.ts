@@ -37,7 +37,7 @@ test.describe('Header Dropdown', () => {
 		});
 	});
 
-	test.describe('Agent (Agente)', () => {
+	test.describe('Martillero', () => {
 		test('should show all options in dropdown', async ({ page }) => {
 			await loginAs(page, agenteEmail);
 

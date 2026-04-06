@@ -29,7 +29,7 @@
 							>Publicar propiedad</a
 						>
 					</li>
-					<li><a href="#" class="hover:text-white transition-colors">Agentes</a></li>
+					<li><a href="#" class="hover:text-white transition-colors">Martilleros</a></li>
 				</ul>
 			</div>
 

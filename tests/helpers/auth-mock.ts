@@ -7,7 +7,7 @@ function createAuthMocks(page: Page) {
 	function mockUser(email: string, isAgent: boolean) {
 		return {
 			email,
-			name: isAgent ? 'Agente Test' : 'Buscador Test',
+			name: isAgent ? 'Martillero Test' : 'Buscador Test',
 			role: (isAgent ? 'agent' : 'seeker') as 'seeker' | 'agent'
 		};
 	}
@@ -26,7 +26,7 @@ function createAuthMocks(page: Page) {
 				{
 					id: 'test-user-1',
 					email: 'agente@test.com',
-					name: 'Agente Test',
+					name: 'Martillero Test',
 					role: 'agent',
 					licenseNumber: 'MAT-12345',
 					passwordHash: '3232323232'
@@ -77,7 +77,7 @@ function createAuthMocks(page: Page) {
 							user: {
 								id: 'test-user-id',
 								email: body.email,
-								name: isAgent ? 'Agente Test' : 'Buscador Test',
+								name: isAgent ? 'Martillero Test' : 'Buscador Test',
 								role: isAgent ? 'agent' : 'seeker',
 								emailVerified: false,
 								image: null,
@@ -282,7 +282,7 @@ function createAuthMocks(page: Page) {
 					{
 						id: 'test-user-1',
 						email: 'agente@test.com',
-						name: 'Agente Test',
+						name: 'Martillero Test',
 						role: 'agent',
 						licenseNumber: 'MAT-12345',
 						passwordHash: '3232323232'

@@ -133,7 +133,7 @@
 				logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(agencyForm.name)}&background=1E3A5F&color=fff&size=128`,
 				banner: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
 				team: [
-					{ name: $currentUser!.name, role: 'Agente', phone: agencyForm.phone.trim() }
+					{ name: $currentUser!.name, role: 'Martillero', phone: agencyForm.phone.trim() }
 				],
 				agentId: $currentUser!.id,
 				propertyCount: 0
@@ -211,7 +211,7 @@
 									class="inline-flex items-center gap-1 px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full"
 								>
 									<Building2 class="w-4 h-4" />
-									Agente Inmobiliario
+									Martillero Inmobiliario
 								</span>
 								{#if $currentUser.licenseNumber}
 									<span

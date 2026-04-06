@@ -32,14 +32,14 @@ test.describe('Authentication Modal', () => {
 		});
 	});
 
-	test('should show role selection (Buscador/Agente) in register form', async ({ page }) => {
+	test('should show role selection (Buscador/Martillero) in register form', async ({ page }) => {
 		await mockAuthApi(page);
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
 		await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 		await page.getByRole('button', { name: 'Crear una' }).click();
 		await expect(page.getByRole('button', { name: 'Buscador' })).toBeVisible({ timeout: 5000 });
-		await expect(page.getByRole('button', { name: 'Agente' })).toBeVisible({ timeout: 5000 });
+		await expect(page.getByRole('button', { name: 'Martillero' })).toBeVisible({ timeout: 5000 });
 	});
 
 	test('should show name field in register form', async ({ page }) => {

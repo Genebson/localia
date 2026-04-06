@@ -12,7 +12,7 @@ const mockAgentLogin = async ({ page }: { page: Page }) => {
 				{
 					id: 'test-user-1',
 					email: 'agente@test.com',
-					name: 'Agente Test',
+					name: 'Martillero Test',
 					role: 'agent',
 					licenseNumber: 'MAT-12345',
 					passwordHash: 'xxx'

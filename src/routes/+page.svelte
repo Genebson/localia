@@ -213,7 +213,7 @@
 						<Building2 class="w-6 h-6 text-accent" />
 					</div>
 					<div>
-						<p class="font-semibold text-gray-900">¿Sos agente inmobiliario?</p>
+						<p class="font-semibold text-gray-900">¿Sos martillero inmobiliario?</p>
 						<p class="text-sm text-gray-600">
 							Publicá tus propiedades y llegá a miles de compradores
 						</p>

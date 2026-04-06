@@ -85,7 +85,7 @@
 		},
 		{
 			id: 'seed-2',
-			name: 'Carlos Agent',
+			name: 'Carlos Martillero',
 			phone: '5491145678901',
 			lastMessage: 'Pasale la casa de San Martín a Juan',
 			messages: [
@@ -112,7 +112,7 @@
 		},
 		{
 			id: 'seed-3',
-			name: 'Laura Agent',
+			name: 'Laura Martillera',
 			phone: '5491123456789',
 			lastMessage: '¿Tenemos algo de 2 dormitorios por menos de USD 50.000?',
 			messages: [
@@ -203,7 +203,7 @@
 			</div>
 			<h1 class="text-2xl font-bold text-gray-900 mb-2">Acceso restringido</h1>
 			<p class="text-gray-500 mb-6">
-				Solo los agentes inmobiliarios pueden acceder a ChePibe CRM.
+				Solo los martilleros inmobiliarios pueden acceder a ChePibe CRM.
 			</p>
 			<a
 				href="{base}/"

@@ -115,9 +115,9 @@
 				>
 					<Building2 class="w-8 h-8 text-accent" />
 				</div>
-				<h1 class="text-2xl font-bold text-gray-900 mb-2">Solo agentes</h1>
+				<h1 class="text-2xl font-bold text-gray-900 mb-2">Solo martilleros</h1>
 				<p class="text-gray-500 mb-6">
-					Tu cuenta es de tipo buscador. Los agentes inmobiliarios pueden gestionar
+					Tu cuenta es de tipo buscador. Los martilleros inmobiliarios pueden gestionar
 					propiedades.
 				</p>
 			</div>

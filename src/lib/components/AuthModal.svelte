@@ -49,7 +49,7 @@
 					return;
 				}
 				if (selectedRole === 'agent' && !licenseNumber) {
-					error = 'La matrícula profesional es obligatoria para agentes';
+					error = 'La matrícula profesional es obligatoria para martilleros';
 					return;
 				}
 				if (selectedRole === 'agent' && licenseNumber.length < 5) {
@@ -144,7 +144,7 @@
 								: 'text-gray-600 hover:text-gray-900'}"
 						>
 							<Building2 class="w-4 h-4" />
-							Agente
+							Martillero
 						</button>
 					</div>
 				{/if}

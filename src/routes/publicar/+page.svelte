@@ -554,16 +554,16 @@
 				</div>
 				<h1 class="text-2xl font-bold text-gray-900 mb-2">Solo para inmobiliarias</h1>
 				<p class="text-gray-500 mb-4">
-					Solo los agentes inmobiliarios pueden publicar propiedades.
+					Solo los martilleros inmobiliarios pueden publicar propiedades.
 				</p>
 				<p class="text-gray-500 mb-6">
-					Si tenés una matrícula profesional, registrate como agente.
+					Si tenés una matrícula profesional, registrate como martillero.
 				</p>
 				<button
 					on:click={handleLoginRedirect}
 					class="w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg transition-colors"
 				>
-					Registrarme como agente
+					Registrarme como martillero
 				</button>
 			</div>
 		</div>

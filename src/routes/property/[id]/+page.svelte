@@ -431,7 +431,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 						<ContactForm propertyId={property.id} propertyTitle={property.title} />
 
 						<div class="mt-6 pt-6 border-t border-gray-100">
-							<h3 class="font-semibold text-gray-900 mb-4">Tu agente</h3>
+							<h3 class="font-semibold text-gray-900 mb-4">Tu martillero</h3>
 							<div class="flex items-center gap-4">
 								<img
 									src={mockAgent.photo}
@@ -440,7 +440,7 @@ El edificio ofrece amenities de primer nivel incluyendo seguridad las 24 horas, 
 								/>
 								<div>
 									<p class="font-medium text-gray-900">{mockAgent.name}</p>
-									<p class="text-sm text-gray-500">Agente matriculado</p>
+									<p class="text-sm text-gray-500">Martillero matriculado</p>
 									<p class="text-xs text-gray-400">{mockAgent.matriculado}</p>
 								</div>
 							</div>

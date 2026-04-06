@@ -13,7 +13,7 @@ Localia tiene dos tipos de cuenta:
 | Rol          | Descripción                       | Funcionalidades                                                                 |
 | ------------ | --------------------------------- | ------------------------------------------------------------------------------- |
 | **Buscador** | Usuario estándar                  | Buscar propiedades, guardar favoritos, publicar búsquedas en el Tablero         |
-| **Agente**   | Corredor inmobiliario matriculado | Todas las anteriores + publicar propiedades, ChePibe CRM, acceso a herramientas |
+| **Martillero**   | Corredor inmobiliario matriculado | Todas las anteriores + publicar propiedades, ChePibe CRM, acceso a herramientas |
 
 Para registrarse como agente se requiere una matrícula profesional válida.
 
@@ -147,11 +147,11 @@ El modal de autenticación permite iniciar sesión o registrarse. Se accede desd
 ### Tipos de cuenta disponibles al registrarse:
 
 1. **Buscador** — Acceso estándar a la plataforma
-2. **Agente inmobiliario** — Requiere matrícula profesional
+2. **Martillero inmobiliario** — Requiere matrícula profesional
 
 ---
 
-## Publicar Propiedad (`/publicar`) — Agentes
+## Publicar Propiedad (`/publicar`) — Martilleros
 
 Solo los usuarios con rol de agente pueden acceder a esta sección.
 
@@ -190,7 +190,7 @@ Tras publicar exitosamente, aparece la opción de ver la publicación o ir a "Mi
 
 ---
 
-## Mis Propiedades (`/mis-propiedades`) — Agentes
+## Mis Propiedades (`/mis-propiedades`) — Martilleros
 
 Página que muestra todas las propiedades publicadas por el agente logueado, incluyendo las creadas a través del formulario y las que se encuentran en localStorage del navegador.
 
@@ -292,7 +292,7 @@ Cualquier usuario logueado puede publicar una búsqueda. Los campos son:
 
 ---
 
-## ChePibe CRM (`/chepibe`) — Agentes
+## ChePibe CRM (`/chepibe`) — Martilleros
 
 Herramienta de CRM que simula la integración con WhatsApp.
 
@@ -301,8 +301,8 @@ Herramienta de CRM que simula la integración con WhatsApp.
 - **Layout tipo WhatsApp** con panel de conversaciones
 - **3 conversaciones mockeadas** mostrando el flujo real del CRM:
     1. Lead que consulta una propiedad → ChePibe pide presupuesto → se registra en CRM
-    2. Agente envía un mensaje formateado para un cliente
-    3. Agente consulta por propiedades disponibles → ChePibe busca y responde
+    2. Martillero envía un mensaje formateado para un cliente
+    3. Martillero consulta por propiedades disponibles → ChePibe busca y responde
 - **Input para interactuar** — Envía mensajes mock que reciben respuestas automáticas
 - **Badge "CRM Conectado"**
 
@@ -423,9 +423,9 @@ El navegador tiene un límite de almacenamiento (~5-10MB por origen). Como las i
 | `/masterplan`          | Lista de loteos                 | Público |
 | `/masterplan/[id]`     | Plano interactivo de loteo      | Público |
 | `/tablero`             | Cartelera de búsquedas          | Público |
-| `/furnisher`           | Staging virtual con IA          | Agentes |
-| `/publicar`            | Formulario de publicación       | Agentes |
-| `/mis-propiedades`     | Propiedades del agente          | Agentes |
-| `/perfil`              | Perfil y gestión de agencia     | Agentes |
-| `/chepibe`             | CRM de WhatsApp                 | Agentes |
+| `/furnisher`           | Staging virtual con IA          | Martilleros |
+| `/publicar`            | Formulario de publicación       | Martilleros |
+| `/mis-propiedades`     | Propiedades del agente          | Martilleros |
+| `/perfil`              | Perfil y gestión de agencia     | Martilleros |
+| `/chepibe`             | CRM de WhatsApp                 | Martilleros |
 | `/inmobiliaria/[slug]` | Landing de inmobiliaria         | Público |

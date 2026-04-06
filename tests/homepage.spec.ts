@@ -65,21 +65,21 @@ test.describe('Homepage - Filters', () => {
 	});
 });
 
-test.describe('Homepage - Agent CTA', () => {
-	test('should show "¿Sos agente?" CTA when not logged in', async ({ page }) => {
+test.describe('Homepage - Martillero CTA', () => {
+	test('should show "¿Sos martillero?" CTA when not logged in', async ({ page }) => {
 		await mockAuthApi(page);
 		await logout(page);
-		await expect(page.getByText('¿Sos agente inmobiliario?')).toBeVisible();
+		await expect(page.getByText('¿Sos martillero inmobiliario?')).toBeVisible();
 	});
 
-	test('should NOT show "¿Sos agente?" CTA when logged in as buscador', async ({ page }) => {
-		await loginAs(page, buscadorEmail);
-		await expect(page.getByText('¿Sos agente inmobiliario?')).not.toBeVisible();
-	});
-
-	test('should NOT show "¿Sos agente?" CTA when logged in as agente', async ({ page }) => {
+	test('should NOT show "¿Sos martillero?" CTA when logged in as buscador', async ({ page }) => {
 		await loginAs(page, agenteEmail);
-		await expect(page.getByText('¿Sos agente inmobiliario?')).not.toBeVisible();
+		await expect(page.getByText('¿Sos martillero inmobiliario?')).not.toBeVisible();
+	});
+
+	test('should NOT show "¿Sos martillero?" CTA when logged in as martillero', async ({ page }) => {
+		await loginAs(page, agenteEmail);
+		await expect(page.getByText('¿Sos martillero inmobiliario?')).not.toBeVisible();
 	});
 });
 
