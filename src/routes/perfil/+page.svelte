@@ -52,6 +52,7 @@
 		authModalOpen.set(true);
 	}
 
+	let showProfileModal = false;
 	let showAgencyModal = false;
 	let showDeleteModal = false;
 
@@ -63,6 +64,9 @@
 	let editingContact = false;
 	let editingRentalProfile = false;
 	let editingIntroLetter = false;
+
+	let profileSuccess = false;
+	let profileError = '';
 
 	let section1Form = {
 		name: $currentUser?.name || '',
@@ -369,6 +373,7 @@
 					{/if}
 					<div class="text-center md:text-left flex-1">
 						<h1 class="text-2xl font-bold text-gray-900 mb-1">{$currentUser.name}</h1>
+						<p class="text-gray-500 mb-3">{$currentUser.email}</p>
 						<div class="flex flex-wrap justify-center md:justify-start gap-3">
 							<span
 								class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full"
@@ -400,14 +405,13 @@
 							{/if}
 						</div>
 					</div>
-
 				</div>
 
 				<div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
 					<div class="flex items-center justify-between mb-4">
 						<h2 class="text-lg font-bold text-gray-900">Información de contacto</h2>
 						<button
-							on:click={() => editingContact = !editingContact}
+							on:click={() => (editingContact = !editingContact)}
 							class="flex items-center gap-1 text-sm text-primary hover:text-primary-light"
 						>
 							<Pencil class="w-4 h-4" />
@@ -451,12 +455,20 @@
 									</label>
 								</div>
 								<div>
-									<label for="profile-photo-input-inline" class="text-sm text-primary hover:underline cursor-pointer">Cambiar foto</label>
-									<p class="text-xs text-gray-500 mt-0.5">Una buena foto transmite más confianza</p>
+									<label
+										for="profile-photo-input-inline"
+										class="text-sm text-primary hover:underline cursor-pointer"
+										>Cambiar foto</label
+									>
+									<p class="text-xs text-gray-500 mt-0.5">
+										Una buena foto transmite más confianza
+									</p>
 								</div>
 							</div>
 							<div>
-								<label class="block text-xs font-medium text-gray-500 mb-1">Nombre completo</label>
+								<label class="block text-xs font-medium text-gray-500 mb-1"
+									>Nombre completo</label
+								>
 								<input
 									type="text"
 									bind:value={section1Form.name}
@@ -464,7 +476,9 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-xs font-medium text-gray-500 mb-1">Teléfono</label>
+								<label class="block text-xs font-medium text-gray-500 mb-1"
+									>Teléfono</label
+								>
 								<input
 									type="tel"
 									bind:value={section1Form.phone}
@@ -484,28 +498,38 @@
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 							{#if $currentUser.email}
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+									<div
+										class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+									>
 										<Mail class="w-5 h-5 text-gray-600" />
 									</div>
 									<div>
 										<p class="text-xs text-gray-500">Email</p>
-										<p class="text-sm font-medium text-gray-900">{$currentUser.email}</p>
+										<p class="text-sm font-medium text-gray-900">
+											{$currentUser.email}
+										</p>
 									</div>
 								</div>
 							{/if}
 							{#if $currentUser.phone}
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+									<div
+										class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+									>
 										<Phone class="w-5 h-5 text-gray-600" />
 									</div>
 									<div>
 										<p class="text-xs text-gray-500">Teléfono</p>
-										<p class="text-sm font-medium text-gray-900">{$currentUser.phone}</p>
+										<p class="text-sm font-medium text-gray-900">
+											{$currentUser.phone}
+										</p>
 									</div>
 								</div>
 							{:else}
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+									<div
+										class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+									>
 										<Phone class="w-5 h-5 text-gray-600" />
 									</div>
 									<div>
@@ -523,7 +547,7 @@
 						<div class="flex items-center justify-between mb-4">
 							<h2 class="text-lg font-bold text-gray-900">Perfil para alquilar</h2>
 							<button
-								on:click={() => editingRentalProfile = !editingRentalProfile}
+								on:click={() => (editingRentalProfile = !editingRentalProfile)}
 								class="flex items-center gap-1 text-sm text-primary hover:text-primary-light"
 							>
 								<Pencil class="w-4 h-4" />
@@ -533,7 +557,9 @@
 						{#if editingRentalProfile}
 							<div class="space-y-4">
 								<div>
-									<label class="block text-xs font-medium text-gray-500 mb-1.5">Número de personas</label>
+									<label class="block text-xs font-medium text-gray-500 mb-1.5"
+										>Número de personas</label
+									>
 									<div class="flex items-center gap-2">
 										<button
 											on:click={decrementTenant}
@@ -543,7 +569,10 @@
 											<Minus class="w-3.5 h-3.5" />
 										</button>
 										<span class="text-sm font-medium w-20 text-center">
-											{section2Form.tenantCount} {section2Form.tenantCount === 1 ? 'persona' : 'personas'}
+											{section2Form.tenantCount}
+											{section2Form.tenantCount === 1
+												? 'persona'
+												: 'personas'}
 										</span>
 										<button
 											on:click={incrementTenant}
@@ -555,7 +584,9 @@
 									</div>
 								</div>
 								<div>
-									<label class="block text-xs font-medium text-gray-500 mb-1.5">Mascotas</label>
+									<label class="block text-xs font-medium text-gray-500 mb-1.5"
+										>Mascotas</label
+									>
 									<div class="flex gap-4">
 										<label class="flex items-center gap-2 cursor-pointer">
 											<input
@@ -565,7 +596,9 @@
 												bind:group={section2Form.pets}
 												class="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary"
 											/>
-											<span class="text-sm text-gray-700">No tengo mascota</span>
+											<span class="text-sm text-gray-700"
+												>No tengo mascota</span
+											>
 										</label>
 										<label class="flex items-center gap-2 cursor-pointer">
 											<input
@@ -580,7 +613,9 @@
 									</div>
 								</div>
 								<div>
-									<label class="block text-xs font-medium text-gray-500 mb-1.5">Fecha de mudanza</label>
+									<label class="block text-xs font-medium text-gray-500 mb-1.5"
+										>Fecha de mudanza</label
+									>
 									<div class="flex flex-wrap gap-3">
 										<label class="flex items-center gap-1.5 cursor-pointer">
 											<input
@@ -590,7 +625,9 @@
 												bind:group={section2Form.moveDate}
 												class="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary"
 											/>
-											<span class="text-xs text-gray-700">Lo antes posible</span>
+											<span class="text-xs text-gray-700"
+												>Lo antes posible</span
+											>
 										</label>
 										<label class="flex items-center gap-1.5 cursor-pointer">
 											<input
@@ -600,7 +637,9 @@
 												bind:group={section2Form.moveDate}
 												class="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary"
 											/>
-											<span class="text-xs text-gray-700">Tengo flexibilidad</span>
+											<span class="text-xs text-gray-700"
+												>Tengo flexibilidad</span
+											>
 										</label>
 										<label class="flex items-center gap-1.5 cursor-pointer">
 											<input
@@ -610,14 +649,20 @@
 												bind:group={section2Form.moveDate}
 												class="w-3.5 h-3.5 text-primary border-gray-300 focus:ring-primary"
 											/>
-											<span class="text-xs text-gray-700">En fecha exacta</span>
+											<span class="text-xs text-gray-700"
+												>En fecha exacta</span
+											>
 										</label>
 									</div>
 								</div>
 								<div>
-									<label class="block text-xs font-medium text-gray-500 mb-1">Ingresos mensuales (opcional)</label>
+									<label class="block text-xs font-medium text-gray-500 mb-1"
+										>Ingresos mensuales (opcional)</label
+									>
 									<div class="relative">
-										<DollarSign class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+										<DollarSign
+											class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400"
+										/>
 										<input
 											type="number"
 											bind:value={section2Form.monthlyIncome}
@@ -637,47 +682,71 @@
 						{:else}
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+									<div
+										class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+									>
 										<Users class="w-5 h-5 text-gray-600" />
 									</div>
 									<div>
 										<p class="text-xs text-gray-500">Número de personas</p>
-										<p class="text-sm font-medium text-gray-900">{$currentUser.tenantCount} {$currentUser.tenantCount === 1 ? 'persona' : 'personas'}</p>
+										<p class="text-sm font-medium text-gray-900">
+											{$currentUser.tenantCount}
+											{$currentUser.tenantCount === 1
+												? 'persona'
+												: 'personas'}
+										</p>
 									</div>
 								</div>
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+									<div
+										class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+									>
 										<PawPrint class="w-5 h-5 text-gray-600" />
 									</div>
 									<div>
 										<p class="text-xs text-gray-500">Mascotas</p>
-										<p class="text-sm font-medium text-gray-900">{$currentUser.pets === 'has_pet' ? 'Tengo mascota' : 'No tengo mascota'}</p>
+										<p class="text-sm font-medium text-gray-900">
+											{$currentUser.pets === 'has_pet'
+												? 'Tengo mascota'
+												: 'No tengo mascota'}
+										</p>
 									</div>
 								</div>
 								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+									<div
+										class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+									>
 										<Calendar class="w-5 h-5 text-gray-600" />
 									</div>
 									<div>
 										<p class="text-xs text-gray-500">Fecha de mudanza</p>
 										<p class="text-sm font-medium text-gray-900">
-											{#if $currentUser.moveDate === 'asap'}Lo antes posible{:else if $currentUser.moveDate === 'flexible'}Tengo flexibilidad{:else}En fecha exacta{/if}
+											{#if $currentUser.moveDate === 'asap'}Lo antes posible{:else if $currentUser.moveDate === 'flexible'}Tengo
+												flexibilidad{:else}En fecha exacta{/if}
 										</p>
 									</div>
 								</div>
 								{#if $currentUser.monthlyIncome}
 									<div class="flex items-center gap-3">
-										<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+										<div
+											class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+										>
 											<DollarSign class="w-5 h-5 text-gray-600" />
 										</div>
 										<div>
 											<p class="text-xs text-gray-500">Ingresos mensuales</p>
-											<p class="text-sm font-medium text-gray-900">${$currentUser.monthlyIncome.toLocaleString('es-AR')}</p>
+											<p class="text-sm font-medium text-gray-900">
+												${$currentUser.monthlyIncome.toLocaleString(
+													'es-AR'
+												)}
+											</p>
 										</div>
 									</div>
 								{:else}
 									<div class="flex items-center gap-3">
-										<div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+										<div
+											class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center"
+										>
 											<DollarSign class="w-5 h-5 text-gray-600" />
 										</div>
 										<div>
@@ -689,6 +758,12 @@
 							</div>
 						{/if}
 					</div>
+
+					<div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
+						<div class="flex items-center justify-between mb-4">
+							<h2 class="text-lg font-bold text-gray-900">Carta de presentación</h2>
+							<button
+								on:click={() => (editingIntroLetter = !editingIntroLetter)}
 								class="flex items-center gap-1 text-sm text-primary hover:text-primary-light"
 							>
 								<Pencil class="w-4 h-4" />
@@ -717,19 +792,21 @@
 									{section3Saving ? 'Guardando...' : 'Guardar'}
 								</button>
 							</div>
+						{:else if $currentUser.introductionLetter}
+							<p class="text-sm text-gray-600 whitespace-pre-wrap">
+								{$currentUser.introductionLetter}
+							</p>
 						{:else}
-							{#if $currentUser.introductionLetter}
-								<p class="text-sm text-gray-600 whitespace-pre-wrap">{$currentUser.introductionLetter}</p>
-							{:else}
-								<p class="text-sm text-gray-400">No completado</p>
-							{/if}
+							<p class="text-sm text-gray-400">No completado</p>
 						{/if}
 					</div>
 				{/if}
 
 				<div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
 					<h2 class="text-lg font-bold text-gray-900 mb-4">Seguridad</h2>
-					<p class="text-sm text-gray-500 mb-2">Recibí un email para cambiar tu contraseña.</p>
+					<p class="text-sm text-gray-500 mb-2">
+						Recibí un email para cambiar tu contraseña.
+					</p>
 					<button
 						on:click={sendPasswordReset}
 						class="text-sm text-primary hover:text-primary-light font-medium"
@@ -910,8 +987,6 @@
 		</div>
 	{/if}
 </main>
-
-
 
 {#if showAgencyModal}
 	<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
